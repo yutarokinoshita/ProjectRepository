@@ -5,3 +5,4 @@
 
 void PlayerSystemInit(void);
 void PlayerDrawInit(void);
+void PlayerControl(void);
