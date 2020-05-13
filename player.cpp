@@ -1,7 +1,10 @@
 #include "DxLib.h"
 #include "main.h"
 #include "player.h"
+<<<<<<< HEAD
 #include "keycheck.h"
+=======
+>>>>>>> e928399d299ad8e6ff2c5fbc3299ecb37a63f41d
 
 CHARACTER player1;	//プレイヤー１の構造体
 
@@ -9,12 +12,17 @@ void PlayerSystemInit(void)
 {
 	player1.pos.x = 200;
 	player1.pos.y = 200;
+<<<<<<< HEAD
 	player1.moveDir = DIR_DOWN;
+=======
+
+>>>>>>> e928399d299ad8e6ff2c5fbc3299ecb37a63f41d
 }
 
 void PlayerDrawInit(void)
 {
 	// 仮置きのプレイヤー
+<<<<<<< HEAD
 	if (player1.moveDir == DIR_DOWN)
 	{
 		DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 0, 0), true);
@@ -56,4 +64,7 @@ void PlayerControl(void)
 		player1.moveDir = DIR_LEFT;
 		player1.pos.x = player1.pos.x -2;
 	}
+=======
+	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 0, 0), true);
+>>>>>>> e928399d299ad8e6ff2c5fbc3299ecb37a63f41d
 }
