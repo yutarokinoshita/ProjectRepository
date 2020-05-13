@@ -6,7 +6,7 @@
 bool keyOld[KEY_ID_MAX];	// 1フレーム前のキー
 bool keyNew[KEY_ID_MAX];	// 現在のキー
 bool keyDownTrigger[KEY_ID_MAX];	// キー押下時のトリガー
-bool KeyUpTrigger[KEY_ID_MAX];		// キーを離した際のトリガー
+bool keyUpTrigger[KEY_ID_MAX];		// キーを離した際のトリガー
 
 void keyInit(void)
 {
@@ -15,7 +15,7 @@ void keyInit(void)
 		keyOld[keyID] = false;
 		keyNew[keyID] = false;	
 		keyDownTrigger[keyID] = false;
-		KeyUpTrigger[keyID] = false;
+		keyUpTrigger[keyID] = false;
 	}
 }
 
@@ -33,17 +33,23 @@ void keyCheck(void)
 	keyNew[KEY_ID_P1RIGHT] = CheckHitKey(KEY_INPUT_D);
 	keyNew[KEY_ID_P1UP] = CheckHitKey(KEY_INPUT_W);
 	keyNew[KEY_ID_P1LEFT] = CheckHitKey(KEY_INPUT_A);
+	keyNew[KEY_ID_PLAYER_ACSION] = CheckHitKey(KEY_INPUT_Z);
 	
 	// トリガー情報の取得
 	for (int keyID = 0;keyID < KEY_ID_MAX;keyID++)
 	{
 		// トリガー情報の初期化
 		keyDownTrigger[keyID] = false;
-		KeyUpTrigger[keyID] = false;
+		keyUpTrigger[keyID] = false;
 
 		if (!keyOld[keyID] && keyNew[keyID])
 		{
 			keyDownTrigger[keyID] = true;
+		}
+
+		if (keyOld[keyID] && !keyNew[keyID])
+		{
+			keyUpTrigger[keyID] = true;
 		}
 	}
 }
