@@ -33,4 +33,17 @@ void keyCheck(void)
 	keyNew[KEY_ID_P1RIGHT] = CheckHitKey(KEY_INPUT_D);
 	keyNew[KEY_ID_P1UP] = CheckHitKey(KEY_INPUT_W);
 	keyNew[KEY_ID_P1LEFT] = CheckHitKey(KEY_INPUT_A);
+	
+	// トリガー情報の取得
+	for (int keyID = 0;keyID < KEY_ID_MAX;keyID++)
+	{
+		// トリガー情報の初期化
+		keyDownTrigger[keyID] = false;
+		KeyUpTrigger[keyID] = false;
+
+		if (!keyOld[keyID] && keyNew[keyID])
+		{
+			keyDownTrigger[keyID] = true;
+		}
+	}
 }
