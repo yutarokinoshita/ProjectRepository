@@ -3,6 +3,8 @@
 #include "player.h"
 #include "keycheck.h"
 
+#define dashStart	16	// ダッシュを始めるまでの時間
+
 CHARACTER player1;	//プレイヤー１の構造体
 bool turnFlag;		// 振り向き制御用
 int dashCnt;		// ダッシュを始めるまで
@@ -14,6 +16,7 @@ void PlayerSystemInit(void)
 	player1.moveDir = DIR_DOWN;
 	player1.moveSpeed = 2;
 	turnFlag = false;
+	dashCnt = 0;
 }
 
 void PlayerDrawInit(void)
@@ -45,22 +48,60 @@ void PlayerControl(void)
 	if (keyNew[KEY_ID_P1DOWN])
 	{
 		player1.moveDir = DIR_DOWN;
-		player1.pos.y = player1.pos.y + 2;
+		dashCnt++;
+		if (dashCnt <= dashStart)
+		{
+			player1.pos.y += player1.moveSpeed;
+		}
+		else
+		{
+			player1.pos.y += player1.moveSpeed * 2;
+		}
 	}
 	if (keyNew[KEY_ID_P1RIGHT])
 	{
 		player1.moveDir = DIR_RIGHT;
-		player1.pos.x = player1.pos.x + 2;
+		dashCnt++;
+		if (dashCnt <= dashStart)
+		{
+			player1.pos.x += player1.moveSpeed;
+		}
+		else
+		{
+			player1.pos.x += player1.moveSpeed*2;
+		}
 	}
 	if (keyNew[KEY_ID_P1UP])
 	{
 		player1.moveDir = DIR_UP;
-		player1.pos.y = player1.pos.y - 2;
+		dashCnt++;
+		if (dashCnt <= dashStart)
+		{
+			player1.pos.y -= player1.moveSpeed;
+		}
+		else
+		{
+			player1.pos.y -= player1.moveSpeed*2;
+		}
 	}
 	if (keyNew[KEY_ID_P1LEFT])
 	{
 		player1.moveDir = DIR_LEFT;
-		player1.pos.x = player1.pos.x - 2;
+		dashCnt++;
+		if (dashCnt <= dashStart)
+		{
+			player1.pos.x -= player1.moveSpeed;
+		}
+		else
+		{
+			player1.pos.x -= player1.moveSpeed*2;
+		}
+	}
+
+	// ボタンを離したときダッシュを止める
+	if (keyUpTrigger[KEY_ID_P1DOWN]|| keyUpTrigger[KEY_ID_P1RIGHT]|| keyUpTrigger[KEY_ID_P1UP]|| keyUpTrigger[KEY_ID_P1LEFT])
+	{
+		dashCnt = 0;
 	}
 
 	if (keyDownTrigger[KEY_ID_PLAYER_ACSION])

@@ -14,6 +14,7 @@ enum KEY_ID {
 extern bool keyOld[KEY_ID_MAX];	// 1フレーム前のキー
 extern bool keyNew[KEY_ID_MAX];	// 現在のキー
 extern bool keyDownTrigger[KEY_ID_MAX];	// キー押下時
+extern bool keyUpTrigger[KEY_ID_MAX];	// キーを離した時
 
 void keyInit(void);		// キー配列初期化処理
 void keyCheck(void);	// キー情報取得処理
