@@ -22,6 +22,7 @@ struct XY{
 // キャラクタ構造体
 struct CHARACTER {
 	DIR moveDir;		// キャラクタの向き
+	DIR oldmoveDir;		// キャラクタの1フレーム前の向き
 	XY pos;				// キャラクタ座標
 	XY size;			// キャラクタ画像のサイズ
 	XY sizeOffset;		// キャラクタの中央から左上まで
