@@ -26,5 +26,6 @@ struct CHARACTER {
 	XY pos;				// キャラクタ座標
 	XY size;			// キャラクタ画像のサイズ
 	XY sizeOffset;		// キャラクタの中央から左上まで
-	int moveSpeed;
+	int moveSpeed;		// キャラクタの移動速度
+	bool DamageFlag;	// キャラクタが攻撃を受けたかの確認
 };

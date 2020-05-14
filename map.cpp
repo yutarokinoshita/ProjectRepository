@@ -2,9 +2,9 @@
 #include "main.h"
 #include "map.h"
 
-int mapImage;								// ”wŒi‰æ‘œ
+int mapImage;							// ”wŒi‰æ‘œ
 int cloudImage;							// ‰_‰æ‘œ
-int gloundImage;	// ’n–Ê‚Ì‰æ‘œ
+int gloundImage;						// ’n–Ê‚Ì‰æ‘œ
 XY cloud[CLOUD_MAX];
 int soilImage[7];		
 CHARACTER soil[MAP_SIZE_X][MAP_SIZE_Y];
@@ -27,6 +27,7 @@ void StageInit(void)
 		{
 			soil[x][y].pos.x = 0 + CHIP_SIZE_X * x;
 			soil[x][y].pos.y = 128 + CHIP_SIZE_Y * y;
+			soil[x][y].DamageFlag = false;
 		}
 	}
 }
@@ -72,3 +73,21 @@ void StageDrawInit(void)
 		}
 	}
 }
+
+//bool SoilCheckHit(XY dPos, int dSize)
+//{
+//	for (int x = 0;x < MAP_SIZE_X;x++)
+//	{
+//		for (int y = 0;y < MAP_SIZE_Y;y++)
+//		{
+//			if (!soil[x][y].DamageFlag)
+//			{
+//				switch (soilImage)
+//				{
+//				default:
+//					break;
+//				}
+//			}
+//		}
+//	}
+//}
