@@ -5,8 +5,9 @@
 int mapImage;								// ”wŒi‰æ‘œ
 int cloudImage;							// ‰_‰æ‘œ
 int gloundImage;	// ’n–Ê‚Ì‰æ‘œ
-CHARACTER cloud[CLOUD_MAX];
+XY cloud[CLOUD_MAX];
 int soilImage[7];		
+CHARACTER soil[MAP_SIZE_X][MAP_SIZE_Y];
 XY mapPos;
 
 void StageInit(void)
@@ -17,8 +18,16 @@ void StageInit(void)
 	LoadDivGraph("image/soil.png", 7, 7, 1, CHIP_SIZE_X, CHIP_SIZE_Y,soilImage,false);
 	for (int clo = 0;clo < CLOUD_MAX;clo++)
 	{
-		cloud[clo].pos.x = 0 + CLOUD_SIZE_X * clo;
-		cloud[clo].pos.y = 32;
+		cloud[clo].x = 0 + CLOUD_SIZE_X * clo;
+		cloud[clo].y = 32;
+	}
+	for (int x = 0;x < MAP_SIZE_X;x++)
+	{
+		for (int y = 0;y < MAP_SIZE_Y;y++)
+		{
+			soil[x][y].pos.x = 0 + CHIP_SIZE_X * x;
+			soil[x][y].pos.y = 128 + CHIP_SIZE_Y * y;
+		}
 	}
 }
 void StageDrawInit(void)
@@ -26,11 +35,11 @@ void StageDrawInit(void)
 	DrawGraph(0, 0, mapImage, true);
 	for (int clo = 0;clo < CLOUD_MAX;clo++)
 	{
-		DrawGraph(cloud[clo].pos.x, cloud[clo].pos.y, cloudImage, true);
-		cloud[clo].pos.x--;
-		if (cloud[clo].pos.x <= -CLOUD_SIZE_X)
+		DrawGraph(cloud[clo].x, cloud[clo].y, cloudImage, true);
+		cloud[clo].x--;
+		if (cloud[clo].x <= -CLOUD_SIZE_X)
 		{
-			cloud[clo].pos.x = SCREEN_SIZE_X;
+			cloud[clo].x = SCREEN_SIZE_X;
 		}
 	}
 	for (int x = 0;x < MAP_SIZE_X;x++)
@@ -50,15 +59,15 @@ void StageDrawInit(void)
 			//}
 			if (y <= 5)
 			{
-				DrawGraph(0 + CHIP_SIZE_X * x, 128 + CHIP_SIZE_Y * y, soilImage[0], true);
+				DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[0], true);
 			}
 			if (5 < y && y <= 10)
 			{
-				DrawGraph(0 + CHIP_SIZE_X * x, 128 + CHIP_SIZE_Y * y, soilImage[1], true);
+				DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[1], true);
 			}
 			if (10 < y)
 			{
-				DrawGraph(0 + CHIP_SIZE_X * x, 128 + CHIP_SIZE_Y * y, soilImage[3], true);
+				DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[3], true);
 			}
 		}
 	}

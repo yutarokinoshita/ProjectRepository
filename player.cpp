@@ -2,6 +2,7 @@
 #include "main.h"
 #include "player.h"
 #include "keycheck.h"
+#include "playerAction.h"
 
 #define dashStart	16	// ダッシュを始めるまでの時間
 
@@ -9,6 +10,7 @@ CHARACTER player1;	//プレイヤー１の構造体
 int playerImage;
 bool turnFlag;		// 振り向き制御用
 int dashCnt;		// ダッシュを始めるまで
+bool digFlag;		// 採掘可能か否か
 
 void PlayerSystemInit(void)
 {
@@ -17,11 +19,14 @@ void PlayerSystemInit(void)
 	player1.pos.y = 200;
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
+	player1.sizeOffset.x = player1.size.x / 2;
+	player1.sizeOffset.y = player1.size.y / 2;
 	player1.moveDir = DIR_DOWN;
 	player1.oldmoveDir = player1.moveDir;
 	player1.moveSpeed = 2;
 	turnFlag = false;
 	dashCnt = 0;
+	digFlag = false;
 }
 
 void PlayerDrawInit(void)
@@ -50,6 +55,7 @@ void PlayerDrawInit(void)
 void PlayerControl(void)
 {
 	bool moveFlag = false;
+	digFlag = false;
 
 	if (keyNew[KEY_ID_P1DOWN])
 	{
@@ -163,24 +169,15 @@ void PlayerControl(void)
 	{
 		dashCnt = 0;
 	}
-
-	if (keyDownTrigger[KEY_ID_PLAYER_ACSION])
+	// 移動していないとき採掘ができる
+	if (!keyNew[KEY_ID_P1DOWN] && !keyNew[KEY_ID_P1RIGHT] && !keyNew[KEY_ID_P1UP] && !keyNew[KEY_ID_P1LEFT])
 	{
-		if (player1.moveDir == DIR_DOWN)
-		{
-			DrawBox(player1.pos.x, player1.pos.y+32, player1.pos.x + 32, player1.pos.y + 64, GetColor(255, 255, 255), true);
-		}
-		if (player1.moveDir == DIR_RIGHT)
-		{
-			DrawBox(player1.pos.x+32, player1.pos.y, player1.pos.x + 64, player1.pos.y + 32, GetColor(255, 255, 255), true);
-		}
-		if (player1.moveDir == DIR_UP)
-		{
-			DrawBox(player1.pos.x, player1.pos.y-32, player1.pos.x + 32, player1.pos.y, GetColor(255, 255, 255), true);
-		}
-		if (player1.moveDir == DIR_LEFT)
-		{
-			DrawBox(player1.pos.x-32, player1.pos.y, player1.pos.x, player1.pos.y + 32, GetColor(255, 255, 255), true);
-		}
+		digFlag = true;
 	}
+
+	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag)
+	{
+		CliateDig(player1.pos, player1.moveDir);
+	}
+
 }

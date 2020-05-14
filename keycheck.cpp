@@ -33,7 +33,7 @@ void keyCheck(void)
 	keyNew[KEY_ID_P1RIGHT] = CheckHitKey(KEY_INPUT_D);
 	keyNew[KEY_ID_P1UP] = CheckHitKey(KEY_INPUT_W);
 	keyNew[KEY_ID_P1LEFT] = CheckHitKey(KEY_INPUT_A);
-	keyNew[KEY_ID_PLAYER_ACSION] = CheckHitKey(KEY_INPUT_Z);
+	keyNew[KEY_ID_PLAYER_ACTION] = CheckHitKey(KEY_INPUT_Z);
 	
 	// ƒgƒŠƒK[î•ñ‚Ìæ“¾
 	for (int keyID = 0;keyID < KEY_ID_MAX;keyID++)
