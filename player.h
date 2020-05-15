@@ -8,7 +8,7 @@
 
 void PlayerSystemInit(void);
 
-void PlayerDrawInit(void);
+void PlayerGameDraw(void);
 void PlayerControl(void);
 
-void PlayerDrawInit(void);
+void PlayerGameDraw(void);

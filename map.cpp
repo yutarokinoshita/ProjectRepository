@@ -102,7 +102,7 @@ void StageDrawInit(void)
 	}
 }
 
-// 地形判定
+// 地形攻撃判定
 bool SoilCheckHit(XY dPos, int dSize)
 {
 	for (int x = 0;x < MAP_SIZE_X;x++)
@@ -127,4 +127,26 @@ bool SoilCheckHit(XY dPos, int dSize)
 		}
 	}
 	return false;
+}
+
+// 地形通過判定
+bool SoilIsPass(XY pPos, int pSize)
+{
+	for (int x = 0;x < MAP_SIZE_X;x++)
+	{
+		for (int y = 0;y < MAP_SIZE_Y;y++)
+		{
+			if (!soil[x][y].DamageFlag)
+			{
+				if (soil[x][y].pos.x - soil[x][y].size.x / 2 < pPos.x + pSize
+					&& soil[x][y].pos.x + soil[x][y].size.x / 2 > pPos.x - pSize
+					&& soil[x][y].pos.y - soil[x][y].size.y / 2 < pPos.y + pSize
+					&& soil[x][y].pos.y + soil[x][y].size.y / 2 > pPos.y - pSize)
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return true;
 }

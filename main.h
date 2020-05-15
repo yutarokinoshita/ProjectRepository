@@ -30,4 +30,5 @@ struct CHARACTER {
 	bool DamageFlag;	// キャラクタが攻撃を受けたかの確認
 	int life;			// キャラクタのライフ
 	int distance;		// キャラクタが移動できる距離
+	int AnimCnt;		// キャラクタのアニメーション
 };

@@ -24,7 +24,7 @@ void DigControl(void)
 	{
 		DrawBox(dig.pos.x, dig.pos.y, dig.pos.x + DIG_SIZE_X, dig.pos.y + DIG_SIZE_Y, GetColor(255, 255, 255), true);
 	
-		if (SoilCheckHit(dig.pos,dig.size.x/2))
+		if (SoilCheckHit(dig.pos,dig.sizeOffset.x))
 		{
 
 		}

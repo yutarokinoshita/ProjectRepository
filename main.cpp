@@ -63,7 +63,7 @@ void GameDraw(void)
 
 
 	StageDrawInit();
-	PlayerDrawInit();
+	PlayerGameDraw();
 }
 void GameMain(void)
 {
