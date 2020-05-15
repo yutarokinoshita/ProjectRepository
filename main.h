@@ -28,4 +28,5 @@ struct CHARACTER {
 	XY sizeOffset;		// キャラクタの中央から左上まで
 	int moveSpeed;		// キャラクタの移動速度
 	bool DamageFlag;	// キャラクタが攻撃を受けたかの確認
+	int life;			// キャラクタのライフ
 };

@@ -15,15 +15,15 @@ bool digFlag;		// 採掘可能か否か
 void PlayerSystemInit(void)
 {
 	playerImage = LoadGraph("image/mole.png");
-	player1.pos.x = 200;
-	player1.pos.y = 200;
+	player1.pos.x = 16;
+	player1.pos.y = 16;
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
 	player1.sizeOffset.x = player1.size.x / 2;
 	player1.sizeOffset.y = player1.size.y / 2;
 	player1.moveDir = DIR_DOWN;
 	player1.oldmoveDir = player1.moveDir;
-	player1.moveSpeed = 2;
+	player1.moveSpeed = 32;
 	turnFlag = false;
 	dashCnt = 0;
 	digFlag = false;
@@ -32,22 +32,23 @@ void PlayerSystemInit(void)
 void PlayerDrawInit(void)
 {
 	// 仮置きのプレイヤー
-	if (player1.moveDir == DIR_DOWN)
-	{
-		DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 0, 0), true);
-	}
-	if (player1.moveDir == DIR_RIGHT)
-	{
-		DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(0, 255, 255), true);
-	}
-	if (player1.moveDir == DIR_UP)
-	{
-		DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(0, 0, 255), true);
-	}
-	if (player1.moveDir == DIR_LEFT)
-	{
-		DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 255, 255), true);
-	}
+	//if (player1.moveDir == DIR_DOWN)
+	//{
+	//	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 0, 0), true);
+	//}
+	//if (player1.moveDir == DIR_RIGHT)
+	//{
+	//	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(0, 255, 255), true);
+	//}
+	//if (player1.moveDir == DIR_UP)
+	//{
+	//	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(0, 0, 255), true);
+	//}
+	//if (player1.moveDir == DIR_LEFT)
+	//{
+	//	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 255, 255), true);
+	//}
+	DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage, true);
 	DrawFormatString(0, 16, GetColor(255, 0, 0), "%d,%d", player1.pos.x, player1.pos.y);
 	DrawFormatString(0, 32, GetColor(255, 0, 0), "%d", player1.moveDir);
 }

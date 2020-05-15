@@ -10,3 +10,4 @@
 
 void StageInit(void);
 void StageDrawInit(void);
+bool SoilCheckHit(XY dPos, int dSize);

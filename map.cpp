@@ -27,7 +27,23 @@ void StageInit(void)
 		{
 			soil[x][y].pos.x = 0 + CHIP_SIZE_X * x;
 			soil[x][y].pos.y = 128 + CHIP_SIZE_Y * y;
+			soil[x][y].size.x = CHIP_SIZE_X;
+			soil[x][y].size.y = CHIP_SIZE_Y;
+			soil[x][y].sizeOffset.x = CHIP_SIZE_X / 2;
+			soil[x][y].sizeOffset.y = CHIP_SIZE_Y / 2;
 			soil[x][y].DamageFlag = false;
+			if (y <= 5)
+			{
+				soil[x][y].life = 1;
+			}
+			if (5 < y && y <= 10)
+			{
+				soil[x][y].life = 2;
+			}
+			if (10 < y)
+			{
+				soil[x][y].life = 3;
+			}
 		}
 	}
 }
@@ -58,36 +74,57 @@ void StageDrawInit(void)
 			//{
 			//	DrawBox(32 * x, 32 * y, 32 * x + 32, 32 * y + 32, GetColor(0, 255, 0), false);
 			//}
-			if (y <= 5)
+			if (soil[x][y].life >= 1)
 			{
-				DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[0], true);
+				if (y <= 5)
+				{
+					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[0], true);
+				}
+				if (5 < y && y <= 10)
+				{
+					if(soil[x][y].life==2)
+						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[1], true);
+					if(soil[x][y].life==1)
+						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[2], true);
+				}
+				if (10 < y)
+				{
+					if (soil[x][y].life == 3)
+						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[3], true);
+					if (soil[x][y].life == 2)
+						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[4], true);
+					if (soil[x][y].life == 1)
+						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[5], true);
+				}
 			}
-			if (5 < y && y <= 10)
-			{
-				DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[1], true);
-			}
-			if (10 < y)
-			{
-				DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[3], true);
-			}
+			DrawFormatString(soil[x][y].pos.x, soil[x][y].pos.y, GetColor(255, 255, 255), "%d", soil[x][y].life);
 		}
 	}
 }
 
-//bool SoilCheckHit(XY dPos, int dSize)
-//{
-//	for (int x = 0;x < MAP_SIZE_X;x++)
-//	{
-//		for (int y = 0;y < MAP_SIZE_Y;y++)
-//		{
-//			if (!soil[x][y].DamageFlag)
-//			{
-//				switch (soilImage)
-//				{
-//				default:
-//					break;
-//				}
-//			}
-//		}
-//	}
-//}
+// ’nŒ`”»’è
+bool SoilCheckHit(XY dPos, int dSize)
+{
+	for (int x = 0;x < MAP_SIZE_X;x++)
+	{
+		for (int y = 0;y < MAP_SIZE_Y;y++)
+		{
+			if (!soil[x][y].DamageFlag)
+			{
+				if (soil[x][y].pos.x - soil[x][y].size.x/2 < dPos.x + dSize
+					&& soil[x][y].pos.x + soil[x][y].size.x/2 > dPos.x - dSize
+					&& soil[x][y].pos.y - soil[x][y].size.y/2 < dPos.y + dSize
+					&& soil[x][y].pos.y + soil[x][y].size.y/2 > dPos.y - dSize)
+				{
+					soil[x][y].life--;
+					if (soil[x][y].life <= 0)
+					{
+						soil[x][y].DamageFlag = true;
+					}
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
