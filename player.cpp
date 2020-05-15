@@ -4,29 +4,31 @@
 #include "keycheck.h"
 #include "playerAction.h"
 
-#define dashStart	16	// ダッシュを始めるまでの時間
-
 CHARACTER player1;	//プレイヤー１の構造体
 int playerImage;
 bool turnFlag;		// 振り向き制御用
-int dashCnt;		// ダッシュを始めるまで
+bool dashFlag;		// ダッシュを始めるまで
 bool digFlag;		// 採掘可能か否か
+bool moveFlag;		// 移動可能か否か
+bool runFlag;		// 移動中か否か
 
 void PlayerSystemInit(void)
 {
 	playerImage = LoadGraph("image/mole.png");
-	player1.pos.x = 16;
-	player1.pos.y = 16;
+	player1.pos.x = 112;
+	player1.pos.y = 112;
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
 	player1.sizeOffset.x = player1.size.x / 2;
 	player1.sizeOffset.y = player1.size.y / 2;
 	player1.moveDir = DIR_DOWN;
 	player1.oldmoveDir = player1.moveDir;
-	player1.moveSpeed = 32;
+	player1.moveSpeed = 2;
 	turnFlag = false;
-	dashCnt = 0;
+	dashFlag = false;
 	digFlag = false;
+	moveFlag = false;
+	runFlag = false;
 }
 
 void PlayerDrawInit(void)
@@ -55,56 +57,59 @@ void PlayerDrawInit(void)
 
 void PlayerControl(void)
 {
-	bool moveFlag = false;
-	digFlag = false;
 
-	if (keyNew[KEY_ID_P1DOWN])
+	digFlag = true;
+	if (keyDownTrigger[KEY_ID_P1DOWN])
 	{
 		player1.moveDir = DIR_DOWN;
 		// 向きが変わった場合ダッシュをやめる
 		if (player1.moveDir == player1.oldmoveDir)
 		{
 			moveFlag = true;
+			player1.distance = PLAYER_DISTANCE;
 		}
 		else
 		{
-			dashCnt = 0;
+			dashFlag = false;
 		}
 	}
-	if (keyNew[KEY_ID_P1RIGHT])
+	if (keyDownTrigger[KEY_ID_P1RIGHT])
 	{
 		player1.moveDir = DIR_RIGHT;
 		if (player1.moveDir == player1.oldmoveDir)
 		{
 			moveFlag = true;
+			player1.distance = PLAYER_DISTANCE;
 		}
 		else
 		{
-			dashCnt = 0;
+			dashFlag = false;
 		}
 	}
-	if (keyNew[KEY_ID_P1UP])
+	if (keyDownTrigger[KEY_ID_P1UP])
 	{
 		player1.moveDir = DIR_UP;
 		if (player1.moveDir == player1.oldmoveDir)
 		{
 			moveFlag = true;
+			player1.distance = PLAYER_DISTANCE;
 		}
 		else
 		{
-			dashCnt = 0;
+			dashFlag = false;
 		}
 	}
-	if (keyNew[KEY_ID_P1LEFT])
+	if (keyDownTrigger[KEY_ID_P1LEFT])
 	{
 		player1.moveDir = DIR_LEFT;
 		if (player1.moveDir == player1.oldmoveDir)
 		{
 			moveFlag = true;
+			player1.distance = PLAYER_DISTANCE;
 		}
 		else
 		{
-			dashCnt = 0;
+			dashFlag = false;
 		}
 	}
 
@@ -114,52 +119,62 @@ void PlayerControl(void)
 		switch (player1.moveDir)
 		{
 		case DIR_DOWN:
-			dashCnt++;
-			if (dashCnt <= dashStart)
-			{
-				player1.pos.y += player1.moveSpeed;
+			digFlag = false;
+			if (dashFlag)
+			{		
+				player1.distance -= player1.moveSpeed * 2;
+				player1.pos.y += player1.moveSpeed * 2;
 			}
 			else
 			{
-				player1.pos.y += player1.moveSpeed * 2;
+				player1.distance -= player1.moveSpeed;
+				player1.pos.y += player1.moveSpeed;
 			}
 			break;
 		case DIR_RIGHT:
-			dashCnt++;
-			if (dashCnt <= dashStart)
+			digFlag = false;
+			if (dashFlag)
 			{
-				player1.pos.x += player1.moveSpeed;
+				player1.distance -= player1.moveSpeed * 2;
+				player1.pos.x += player1.moveSpeed * 2;
 			}
 			else
 			{
-				player1.pos.x += player1.moveSpeed * 2;
+				player1.distance -= player1.moveSpeed;
+				player1.pos.x += player1.moveSpeed;
+
 			}
 			break;
 		case DIR_UP:
-			dashCnt++;
-			if (dashCnt <= dashStart)
+			digFlag = false;
+			if (dashFlag)
 			{
-				player1.pos.y -= player1.moveSpeed;
+				player1.distance -= player1.moveSpeed * 2;
+				player1.pos.y -= player1.moveSpeed * 2;
 			}
 			else
 			{
-				player1.pos.y -= player1.moveSpeed * 2;
+				player1.distance -= player1.moveSpeed;
+				player1.pos.y -= player1.moveSpeed;
 			}
 			break;
 		case DIR_LEFT:
-			dashCnt++;
-			if (dashCnt <= dashStart)
+			digFlag = false;
+			if (dashFlag)
 			{
-				player1.pos.x -= player1.moveSpeed;
+				player1.distance -= player1.moveSpeed * 2;
+				player1.pos.x -= player1.moveSpeed * 2;
 			}
 			else
 			{
-				player1.pos.x -= player1.moveSpeed * 2;
+				player1.distance -= player1.moveSpeed;
+				player1.pos.x -= player1.moveSpeed;
 			}
 			break;
 		default:
 			break;
 		}
+		runFlag = true;
 	}
 
 	// 現在の向きを記録
@@ -168,12 +183,26 @@ void PlayerControl(void)
 	// ボタンを離したときダッシュを止める
 	if (keyUpTrigger[KEY_ID_P1DOWN]|| keyUpTrigger[KEY_ID_P1RIGHT]|| keyUpTrigger[KEY_ID_P1UP]|| keyUpTrigger[KEY_ID_P1LEFT])
 	{
-		dashCnt = 0;
+		dashFlag = false;
 	}
 	// 移動していないとき採掘ができる
-	if (!keyNew[KEY_ID_P1DOWN] && !keyNew[KEY_ID_P1RIGHT] && !keyNew[KEY_ID_P1UP] && !keyNew[KEY_ID_P1LEFT])
+	//if (!keyNew[KEY_ID_P1DOWN] && !keyNew[KEY_ID_P1RIGHT] && !keyNew[KEY_ID_P1UP] && !keyNew[KEY_ID_P1LEFT])
+	//{
+	//	digFlag = true;
+	//}
+
+	if (player1.distance <= 0)
 	{
-		digFlag = true;
+		if (keyNew[KEY_ID_P1DOWN] || keyNew[KEY_ID_P1RIGHT] || keyNew[KEY_ID_P1UP] || keyNew[KEY_ID_P1LEFT])
+		{
+			player1.distance = 32;
+			dashFlag = true;
+		}
+		else
+		{
+			runFlag = false;
+			moveFlag = false;
+		}
 	}
 
 	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag)

@@ -29,4 +29,5 @@ struct CHARACTER {
 	int moveSpeed;		// キャラクタの移動速度
 	bool DamageFlag;	// キャラクタが攻撃を受けたかの確認
 	int life;			// キャラクタのライフ
+	int distance;		// キャラクタが移動できる距離
 };
