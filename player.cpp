@@ -57,6 +57,9 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 16, GetColor(255, 0, 0), "%d,%d", player1.pos.x, player1.pos.y);
 	DrawFormatString(0, 32, GetColor(255, 0, 0), "%d", player1.moveDir);
 	DrawFormatString(0, 48, GetColor(255, 0, 0), "%d", player1.distance);
+	// デバッグ用のプレイヤーの当たり枠
+	DrawBox(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y,
+		player1.pos.x + player1.sizeOffset.x, player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
 }
 
 void PlayerControl(void)
@@ -78,6 +81,9 @@ void PlayerControl(void)
 	{
 		player1.pos.y = 584;
 	}
+
+	XY PlayerPosCopy = player1.pos;
+
 	if (!moveFlag)
 	{
 		if (keyDownTrigger[KEY_ID_P1DOWN])
@@ -86,8 +92,12 @@ void PlayerControl(void)
 			// 向きが変わった場合ダッシュをやめる
 			if (player1.moveDir == player1.oldmoveDir)
 			{
-				moveFlag = true;
-				player1.distance = PLAYER_DISTANCE;
+				PlayerPosCopy.y += PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
+				{
+					moveFlag = true;
+					player1.distance = PLAYER_DISTANCE;
+				}
 			}
 			else
 			{
@@ -99,8 +109,12 @@ void PlayerControl(void)
 			player1.moveDir = DIR_RIGHT;
 			if (player1.moveDir == player1.oldmoveDir)
 			{
-				moveFlag = true;
-				player1.distance = PLAYER_DISTANCE;
+				PlayerPosCopy.x += PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
+				{
+					moveFlag = true;
+					player1.distance = PLAYER_DISTANCE;
+				}
 			}
 			else
 			{
@@ -112,7 +126,8 @@ void PlayerControl(void)
 			player1.moveDir = DIR_UP;
 			if (player1.moveDir == player1.oldmoveDir)
 			{
-				if (player1.pos.y >112)
+				PlayerPosCopy.y -= PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
 				{
 					moveFlag = true;
 					player1.distance = PLAYER_DISTANCE;
@@ -128,8 +143,12 @@ void PlayerControl(void)
 			player1.moveDir = DIR_LEFT;
 			if (player1.moveDir == player1.oldmoveDir)
 			{
-				moveFlag = true;
-				player1.distance = PLAYER_DISTANCE;
+				PlayerPosCopy.x -= PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
+				{
+					moveFlag = true;
+					player1.distance = PLAYER_DISTANCE;
+				}
 			}
 			else
 			{
@@ -139,23 +158,23 @@ void PlayerControl(void)
 	}
 
 
-	if (moveFlag)
+	if (moveFlag && player1.distance > 0)
 	{
 		//player1.distance = PLAYER_DISTANCE;
 		switch (player1.moveDir)
 		{
 		case DIR_DOWN:
 			digFlag = false;
-			if (dashFlag)
-			{
-				player1.distance -= player1.moveSpeed * 2;
-				player1.pos.y += player1.moveSpeed * 2;
-			}
-			else
-			{
-				player1.distance -= player1.moveSpeed;
-				player1.pos.y += player1.moveSpeed;
-			}
+				if (dashFlag)
+				{
+					player1.distance -= player1.moveSpeed * 2;
+					player1.pos.y += player1.moveSpeed * 2;
+				}
+				else
+				{
+					player1.distance -= player1.moveSpeed;
+					player1.pos.y += player1.moveSpeed;
+				}
 			break;
 		case DIR_RIGHT:
 			digFlag = false;
@@ -224,14 +243,14 @@ void PlayerControl(void)
 	//	digFlag = true;
 	//}
 
-	if (player1.distance <= 0)
+	if (player1.distance <= 0 && moveFlag)
 	{
 		if (keyNew[KEY_ID_P1DOWN] && player1.moveDir == DIR_DOWN
-			|| keyNew[KEY_ID_P1RIGHT] && player1.moveDir == DIR_RIGHT 
-			|| keyNew[KEY_ID_P1UP] && player1.moveDir == DIR_UP 
-			|| keyNew[KEY_ID_P1LEFT] && player1.moveDir == DIR_LEFT)
+			||keyNew[KEY_ID_P1RIGHT] && player1.moveDir == DIR_RIGHT
+			||keyNew[KEY_ID_P1UP] && player1.moveDir == DIR_UP
+			||keyNew[KEY_ID_P1LEFT] && player1.moveDir == DIR_LEFT)
 		{
-			player1.distance = 32;
+			player1.distance = PLAYER_DISTANCE;
 			dashFlag = true;
 		}
 		else

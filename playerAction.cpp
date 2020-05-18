@@ -40,10 +40,10 @@ void CliateDig(XY Pos,DIR Dir)
 	{
 	case DIR_DOWN:
 		dig.pos.x = Pos.x-dig.sizeOffset.x;
-		dig.pos.y = Pos.y + dig.sizeOffset.y;
+		dig.pos.y = Pos.y + dig.sizeOffset.y*2;
 		break;
 	case DIR_RIGHT:
-		dig.pos.x = Pos.x + dig.sizeOffset.x;
+		dig.pos.x = Pos.x + dig.sizeOffset.x*2;
 		dig.pos.y = Pos.y - dig.sizeOffset.y;
 		break;
 	case DIR_UP:

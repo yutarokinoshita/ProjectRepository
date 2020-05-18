@@ -78,7 +78,7 @@ void StageDrawInit(void)
 			{
 				if (y <= 5)
 				{
-					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[0], true);
+					DrawGraph(soil[x][y].pos.x , soil[x][y].pos.y, soilImage[0], true);
 				}
 				if (5 < y && y <= 10)
 				{
@@ -96,6 +96,9 @@ void StageDrawInit(void)
 					if (soil[x][y].life == 1)
 						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[5], true);
 				}
+				// デバッグ用当たり枠
+				//DrawBox(soil[x][y].pos.x , soil[x][y].pos.y ,
+				//	soil[x][y].pos.x + soil[x][y].size.x, soil[x][y].pos.y + soil[x][y].size.y, GetColor(0, 0, 255), false);
 			}
 			DrawFormatString(soil[x][y].pos.x, soil[x][y].pos.y, GetColor(255, 255, 255), "%d", soil[x][y].life);
 		}
@@ -103,18 +106,18 @@ void StageDrawInit(void)
 }
 
 // 地形攻撃判定
-bool SoilCheckHit(XY dPos, int dSize)
+bool SoilCheckHit(XY dPos,int dSize)
 {
 	for (int x = 0;x < MAP_SIZE_X;x++)
 	{
 		for (int y = 0;y < MAP_SIZE_Y;y++)
 		{
-			if (!soil[x][y].DamageFlag)
+			if (!soil[x][y].life==0)
 			{
-				if (soil[x][y].pos.x - soil[x][y].size.x/2 < dPos.x + dSize
-					&& soil[x][y].pos.x + soil[x][y].size.x/2 > dPos.x - dSize
-					&& soil[x][y].pos.y - soil[x][y].size.y/2 < dPos.y + dSize
-					&& soil[x][y].pos.y + soil[x][y].size.y/2 > dPos.y - dSize)
+				if (soil[x][y].pos.x  < dPos.x+dSize
+					&& soil[x][y].pos.x + soil[x][y].size.x > dPos.x - dSize
+					&& soil[x][y].pos.y  < dPos.y + dSize
+					&& soil[x][y].pos.y + soil[x][y].size.y > dPos.y-dSize)
 				{
 					soil[x][y].life--;
 					if (soil[x][y].life <= 0)
@@ -130,23 +133,23 @@ bool SoilCheckHit(XY dPos, int dSize)
 }
 
 // 地形通過判定
-bool SoilIsPass(XY pPos, int pSize)
+bool SoilIsPass(XY pPos)
 {
 	for (int x = 0;x < MAP_SIZE_X;x++)
 	{
 		for (int y = 0;y < MAP_SIZE_Y;y++)
 		{
-			if (!soil[x][y].DamageFlag)
+			if (soil[x][y].pos.x  < pPos.x
+				&& soil[x][y].pos.x + soil[x][y].size.x > pPos.x
+				&& soil[x][y].pos.y  < pPos.y
+				&& soil[x][y].pos.y + soil[x][y].size.y  > pPos.y)
 			{
-				if (soil[x][y].pos.x - soil[x][y].size.x / 2 < pPos.x + pSize
-					&& soil[x][y].pos.x + soil[x][y].size.x / 2 > pPos.x - pSize
-					&& soil[x][y].pos.y - soil[x][y].size.y / 2 < pPos.y + pSize
-					&& soil[x][y].pos.y + soil[x][y].size.y / 2 > pPos.y - pSize)
+				if (soil[x][y].life == 0)
 				{
-					return false;
+					return true;
 				}
 			}
 		}
 	}
-	return true;
+	return false;
 }
