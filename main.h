@@ -27,10 +27,11 @@ struct CHARACTER {
 	XY size;			// キャラクタ画像のサイズ
 	XY sizeOffset;		// キャラクタの中央から左上まで
 	int moveSpeed;		// キャラクタの移動速度
-	bool DamageFlag;	// キャラクタが攻撃を受けたかの確認
+	bool Flag;			// キャラクタの状態の確認
 	int life;			// キャラクタのライフ
 	int distance;		// キャラクタが移動できる距離
 	int AnimCnt;		// キャラクタのアニメーション
 	int slot;			// キャラクタのアイテム保持数
 	int score;			// キャラクタのスコア
+	XY effectMoveSpeed;	// キャラクタの特殊な移動
 };

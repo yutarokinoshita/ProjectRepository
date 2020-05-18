@@ -20,31 +20,6 @@ void StageInit(void)
 		cloud[clo].x = 0 + CLOUD_SIZE_X * clo;
 		cloud[clo].y = 32;
 	}
-	//for (int x = 0;x < MAP_SIZE_X;x++)
-	//{
-	//	for (int y = 0;y < MAP_SIZE_Y;y++)
-	//	{
-	//		soil[x][y].pos.x = 0 + CHIP_SIZE_X * x;
-	//		soil[x][y].pos.y = 128 + CHIP_SIZE_Y * y;
-	//		soil[x][y].size.x = CHIP_SIZE_X;
-	//		soil[x][y].size.y = CHIP_SIZE_Y;
-	//		soil[x][y].sizeOffset.x = CHIP_SIZE_X / 2;
-	//		soil[x][y].sizeOffset.y = CHIP_SIZE_Y / 2;
-	//		soil[x][y].DamageFlag = false;
-	//		if (y <= 5)
-	//		{
-	//			soil[x][y].life = 1;
-	//		}
-	//		if (5 < y && y <= 10)
-	//		{
-	//			soil[x][y].life = 2;
-	//		}
-	//		if (10 < y)
-	//		{
-	//			soil[x][y].life = 3;
-	//		}
-	//	}
-	//}
 }
 void StageDrawInit(void)
 {
@@ -63,43 +38,6 @@ void StageDrawInit(void)
 		for (int y = 0;y < MAP_SIZE_Y;y++)
 		{
 			DrawGraph(0 + CHIP_SIZE_X * x, 128 + CHIP_SIZE_Y * y, gloundImage, true);
-	//		//DrawBox(32 * x, 32 * y, 32 * x + 32, 32 * y + 32, GetColor(0, 255, 0), false);
-	//		//DrawBox(32 * x, 32 * y, 32 * x + 32, 32 * y + 32, GetColor(0, 255, 0), true);
-	//		////if (x == 18)
-	//		////{
-	//		////	DrawBox(32 * x, 32 * y, 32 * x + 32, 32 * y + 32, GetColor(255, 0, 0), true);
-	//		////}
-	//		//if (CheckHitKey(KEY_INPUT_SPACE))
-	//		//{
-	//		//	DrawBox(32 * x, 32 * y, 32 * x + 32, 32 * y + 32, GetColor(0, 255, 0), false);
-	//		//}
-	//		if (soil[x][y].life >= 1)
-	//		{
-	//			if (y <= 5)
-	//			{
-	//				DrawGraph(soil[x][y].pos.x , soil[x][y].pos.y, soilImage[0], true);
-	//			}
-	//			if (5 < y && y <= 10)
-	//			{
-	//				if(soil[x][y].life==2)
-	//					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[1], true);
-	//				if(soil[x][y].life==1)
-	//					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[2], true);
-	//			}
-	//			if (10 < y)
-	//			{
-	//				if (soil[x][y].life == 3)
-	//					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[3], true);
-	//				if (soil[x][y].life == 2)
-	//					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[4], true);
-	//				if (soil[x][y].life == 1)
-	//					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[5], true);
-	//			}
-	//			// デバッグ用当たり枠
-	//			//DrawBox(soil[x][y].pos.x , soil[x][y].pos.y ,
-	//			//	soil[x][y].pos.x + soil[x][y].size.x, soil[x][y].pos.y + soil[x][y].size.y, GetColor(0, 0, 255), false);
-	//		}
-	//		DrawFormatString(soil[x][y].pos.x, soil[x][y].pos.y, GetColor(255, 255, 255), "%d", soil[x][y].life);
 		}
 	}
 }

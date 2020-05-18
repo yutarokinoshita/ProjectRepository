@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "main.h"
 #include "treasure.h"
+#include "effect.h"
 
 CHARACTER treasure[TREASURE_MAX];
 int treasureImage;
@@ -19,7 +20,8 @@ void TreasureInit(void)
 		treasure[x].size.y = TREASURE_SIZE_Y;
 		treasure[x].sizeOffset.x = TREASURE_SIZE_X / 2;
 		treasure[x].sizeOffset.y = TREASURE_SIZE_Y / 2;
-		treasure[x].DamageFlag = false;
+		treasure[x].Flag = false;
+		treasure[x].moveSpeed = 0;
 		treasureFlag = false;
 		treasureReset = 0;
 	}
@@ -30,7 +32,7 @@ void TreasureDraw(void)
 {
 	for (int x = 0;x < TREASURE_MAX;x++)
 	{
-		if(!treasure[x].DamageFlag)//if (!treasureFlag)
+		if(!treasure[x].Flag)//if (!treasureFlag)
 		{
 			DrawGraph(treasure[x].pos.x - treasure[x].sizeOffset.x, treasure[x].pos.y - treasure[x].sizeOffset.y, treasureImage, true);
 		}
@@ -42,7 +44,7 @@ bool TreasureGet(XY pPos,int slot)
 {
 	for (int x = 0;x < TREASURE_MAX;x++)
 	{
-		if (!treasure[x].DamageFlag)//if (!treasureFlag)
+		if (!treasure[x].Flag)//if (!treasureFlag)
 		{
 			if (treasure[x].pos.x - treasure[x].sizeOffset.x < pPos.x
 				&& treasure[x].pos.x + treasure[x].sizeOffset.x > pPos.x
@@ -51,7 +53,8 @@ bool TreasureGet(XY pPos,int slot)
 			{
 				if (slot <= 2)
 				{
-					treasure[x].DamageFlag = true;
+					//TreasureMove(slot);
+					treasure[x].Flag = true;
 					//treasureFlag = true;
 					return true;
 				}

@@ -20,7 +20,7 @@ void soilSystemInit(void)
 			soil[x][y].size.y = CHIP_SIZE_Y;
 			soil[x][y].sizeOffset.x = CHIP_SIZE_X / 2;
 			soil[x][y].sizeOffset.y = CHIP_SIZE_Y / 2;
-			soil[x][y].DamageFlag = false;
+			soil[x][y].Flag = false;
 			if (y <= 2)
 			{
 				soil[x][y].life = -1;
@@ -119,7 +119,7 @@ bool SoilCheckHit(XY dPos)
 					soil[x][y].life--;
 					if (soil[x][y].life <= 0)
 					{
-						soil[x][y].DamageFlag = true;
+						soil[x][y].Flag = true;
 					}
 					return true;
 				}

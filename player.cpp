@@ -7,17 +7,19 @@
 #include "treasure.h"
 #include "soil.h"
 
-CHARACTER player1;	//プレイヤー１の構造体
-int playerImage[16];
-bool turnFlag;		// 振り向き制御用
-bool dashFlag;		// ダッシュを始めるまで
-bool digFlag;		// 採掘可能か否か
-bool moveFlag;		// 移動可能か否か
-bool runFlag;		// 移動中か否か
+CHARACTER player1;		//プレイヤー１の構造体
+int playerImage[16];	
+bool turnFlag;			// 振り向き制御用
+bool dashFlag;			// ダッシュを始めるまで
+bool digFlag;			// 採掘可能か否か
+bool moveFlag;			// 移動可能か否か
+bool runFlag;			// 移動中か否か
+int treasureGetImage;	// 現在のアイテム取得数表示用
 
 void PlayerSystemInit(void)
 {
 	LoadDivGraph("image/moleOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
+	treasureGetImage = LoadGraph("image/ptate.png");
 	player1.pos.x = 336;//112;
 	player1.pos.y = 336;//112;
 	player1.size.x = PLAYER_SIZE_X;
@@ -57,6 +59,10 @@ void PlayerGameDraw(void)
 	//{
 	//	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 255, 255), true);
 	//}
+	for (int tre = 0;tre < player1.slot;tre++)
+	{
+		DrawGraph(32 + 32 * tre, 32, treasureGetImage, true);
+	}
 	if (dashFlag)
 	{
 		DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
