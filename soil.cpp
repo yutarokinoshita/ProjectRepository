@@ -103,7 +103,7 @@ void soilDrawInit(void)
 
 
 // ínå`çUåÇîªíË
-bool SoilCheckHit(XY dPos, int dSize)
+bool SoilCheckHit(XY dPos)
 {
 	for (int x = 0;x < MAP_SIZE_X;x++)
 	{
@@ -111,10 +111,10 @@ bool SoilCheckHit(XY dPos, int dSize)
 		{
 			if (!soil[x][y].life == 0)
 			{
-				if (soil[x][y].pos.x  < dPos.x + dSize
-					&& soil[x][y].pos.x + soil[x][y].size.x > dPos.x - dSize
-					&& soil[x][y].pos.y  < dPos.y + dSize
-					&& soil[x][y].pos.y + soil[x][y].size.y > dPos.y - dSize)
+				if (soil[x][y].pos.x  < dPos.x
+					&& soil[x][y].pos.x + soil[x][y].size.x > dPos.x
+					&& soil[x][y].pos.y  < dPos.y
+					&& soil[x][y].pos.y + soil[x][y].size.y > dPos.y)
 				{
 					soil[x][y].life--;
 					if (soil[x][y].life <= 0)

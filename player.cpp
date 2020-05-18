@@ -18,8 +18,8 @@ bool runFlag;		// ˆÚ“®’†‚©”Û‚©
 void PlayerSystemInit(void)
 {
 	LoadDivGraph("image/moleOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
-	player1.pos.x = 112;
-	player1.pos.y = 112;
+	player1.pos.x = 336;//112;
+	player1.pos.y = 336;//112;
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
 	player1.sizeOffset.x = player1.size.x / 2;

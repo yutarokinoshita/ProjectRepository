@@ -2,7 +2,7 @@
 #include "main.h"
 #include "treasure.h"
 
-CHARACTER treasure[10];
+CHARACTER treasure[TREASURE_MAX];
 int treasureImage;
 bool treasureFlag;
 int treasureReset;		// アイテムが残っているかの把握用
@@ -11,10 +11,10 @@ int treasureReset;		// アイテムが残っているかの把握用
 void TreasureInit(void)
 {
 	treasureImage = LoadGraph("image/potato.png");
-	for (int x = 0;x < 10;x++)
+	for (int x = 0;x < TREASURE_MAX;x++)
 	{	
-		treasure[x].pos.x = 208 + TREASURE_SIZE_X * x;
-		treasure[x].pos.y = 208;
+		treasure[x].pos.x = 16 + TREASURE_SIZE_X * GetRand(25);
+		treasure[x].pos.y = 144 + TREASURE_SIZE_Y * GetRand(13);
 		treasure[x].size.x = TREASURE_SIZE_X;
 		treasure[x].size.y = TREASURE_SIZE_Y;
 		treasure[x].sizeOffset.x = TREASURE_SIZE_X / 2;
@@ -28,7 +28,7 @@ void TreasureInit(void)
 // アイテム描画
 void TreasureDraw(void)
 {
-	for (int x = 0;x < 10;x++)
+	for (int x = 0;x < TREASURE_MAX;x++)
 	{
 		if(!treasure[x].DamageFlag)//if (!treasureFlag)
 		{
@@ -40,7 +40,7 @@ void TreasureDraw(void)
 // アイテムを獲得する処理
 bool TreasureGet(XY pPos,int slot)
 {
-	for (int x = 0;x < 10;x++)
+	for (int x = 0;x < TREASURE_MAX;x++)
 	{
 		if (!treasure[x].DamageFlag)//if (!treasureFlag)
 		{

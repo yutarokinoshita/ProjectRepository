@@ -23,9 +23,9 @@ void DigControl(void)
 {
 	if (digAction)
 	{
-		DrawBox(dig.pos.x, dig.pos.y, dig.pos.x + DIG_SIZE_X, dig.pos.y + DIG_SIZE_Y, GetColor(255, 255, 255), true);
+		DrawBox(dig.pos.x-dig.sizeOffset.x, dig.pos.y-dig.sizeOffset.y, dig.pos.x + dig.sizeOffset.x, dig.pos.y + dig.sizeOffset.y, GetColor(255, 255, 255), true);
 	
-		if (SoilCheckHit(dig.pos,dig.sizeOffset.x))
+		if (SoilCheckHit(dig.pos))
 		{
 
 		}
@@ -40,20 +40,20 @@ void CliateDig(XY Pos,DIR Dir)
 	switch (dig.moveDir)
 	{
 	case DIR_DOWN:
-		dig.pos.x = Pos.x-dig.sizeOffset.x;
-		dig.pos.y = Pos.y + dig.sizeOffset.y*2;
+		dig.pos.x = Pos.x;
+		dig.pos.y = Pos.y + DIG_SIZE_Y;
 		break;
 	case DIR_RIGHT:
-		dig.pos.x = Pos.x + dig.sizeOffset.x*2;
-		dig.pos.y = Pos.y - dig.sizeOffset.y;
+		dig.pos.x = Pos.x + DIG_SIZE_X;
+		dig.pos.y = Pos.y;
 		break;
 	case DIR_UP:
-		dig.pos.x = Pos.x - dig.sizeOffset.x;
-		dig.pos.y = Pos.y - dig.sizeOffset.y*5;
+		dig.pos.x = Pos.x ;
+		dig.pos.y = Pos.y - DIG_SIZE_Y;
 		break;
 	case DIR_LEFT:
-		dig.pos.x = Pos.x - dig.sizeOffset.y*5;
-		dig.pos.y = Pos.y - dig.sizeOffset.y;
+		dig.pos.x = Pos.x - DIG_SIZE_X;
+		dig.pos.y = Pos.y;
 	default:
 		break;
 	}
