@@ -28,6 +28,7 @@ void PlayerSystemInit(void)
 	player1.oldmoveDir = player1.moveDir;
 	player1.moveSpeed = 2;
 	player1.AnimCnt = 0;
+	player1.slot = 0;
 	turnFlag = false;
 	dashFlag = false;
 	digFlag = false;
@@ -59,6 +60,7 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 16, GetColor(255, 0, 0), "%d,%d", player1.pos.x, player1.pos.y);
 	DrawFormatString(0, 32, GetColor(255, 0, 0), "%d", player1.moveDir);
 	DrawFormatString(0, 48, GetColor(255, 0, 0), "%d", player1.distance);
+	DrawFormatString(0, 64, GetColor(255, 0, 0), "%d", player1.slot);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -265,6 +267,11 @@ void PlayerControl(void)
 	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag)
 	{
 		CliateDig(player1.pos, player1.moveDir);
+	}
+
+	if (TreasureGet(player1.pos, player1.slot))
+	{
+		player1.slot++;
 	}
 
 }

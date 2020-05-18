@@ -4,6 +4,7 @@
 
 CHARACTER treasure;
 int treasureImage;
+bool treasureFlag;
 
 void TreasureInit(void)
 {
@@ -14,9 +15,32 @@ void TreasureInit(void)
 	treasure.size.y = TREASURE_SIZE_Y;
 	treasure.sizeOffset.x = TREASURE_SIZE_X / 2;
 	treasure.sizeOffset.y = TREASURE_SIZE_Y / 2;
+	treasureFlag = false;
 }
 
 void TreasureDraw(void)
 {
-	DrawGraph(treasure.pos.x - treasure.sizeOffset.x, treasure.pos.y - treasure.sizeOffset.y, treasureImage, true);
+	if (!treasureFlag)
+	{
+		DrawGraph(treasure.pos.x - treasure.sizeOffset.x, treasure.pos.y - treasure.sizeOffset.y, treasureImage, true);
+	}
+}
+
+bool TreasureGet(XY pPos,int slot)
+{
+	if (!treasureFlag)
+	{
+		if (treasure.pos.x - treasure.sizeOffset.x < pPos.x
+			&& treasure.pos.x + treasure.sizeOffset.x > pPos.x
+			&& treasure.pos.y - treasure.sizeOffset.y  < pPos.y
+			&& treasure.pos.y + treasure.sizeOffset.y  > pPos.y)
+		{
+			if (slot <= 2)
+			{
+				treasureFlag = true;
+				return true;
+			}
+		}
+	}
+	return false;
 }

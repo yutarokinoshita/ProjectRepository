@@ -67,8 +67,8 @@ void GameDraw(void)
 
 
 	StageDrawInit();
-	TreasureDraw();
 	soilDrawInit();
+	TreasureDraw();
 	PlayerGameDraw();
 }
 void GameMain(void)

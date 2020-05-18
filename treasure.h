@@ -5,3 +5,4 @@
 
 void TreasureInit(void);
 void TreasureDraw(void);
+bool TreasureGet(XY pPos, int slot);

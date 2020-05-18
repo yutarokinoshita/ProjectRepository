@@ -2,7 +2,7 @@
 
 // 定義
 #define SCREEN_SIZE_X	800	// 画面サイズ横
-#define SCREEN_SIZE_Y	600	// 画面サイズ縦
+#define SCREEN_SIZE_Y	608	// 画面サイズ縦
 
 // 向き管理用
 enum DIR {
@@ -31,4 +31,5 @@ struct CHARACTER {
 	int life;			// キャラクタのライフ
 	int distance;		// キャラクタが移動できる距離
 	int AnimCnt;		// キャラクタのアニメーション
+	int slot;			// キャラクタのアイテム保持数
 };
