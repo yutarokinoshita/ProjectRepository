@@ -32,4 +32,5 @@ struct CHARACTER {
 	int distance;		// キャラクタが移動できる距離
 	int AnimCnt;		// キャラクタのアニメーション
 	int slot;			// キャラクタのアイテム保持数
+	int score;			// キャラクタのスコア
 };

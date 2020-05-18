@@ -29,6 +29,7 @@ void PlayerSystemInit(void)
 	player1.moveSpeed = 2;
 	player1.AnimCnt = 0;
 	player1.slot = 0;
+	player1.score = 0;
 	turnFlag = false;
 	dashFlag = false;
 	digFlag = false;
@@ -56,11 +57,19 @@ void PlayerGameDraw(void)
 	//{
 	//	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 255, 255), true);
 	//}
-	DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+	if (dashFlag)
+	{
+		DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
+	}
+	else
+	{
+		DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+	}
 	DrawFormatString(0, 16, GetColor(255, 0, 0), "%d,%d", player1.pos.x, player1.pos.y);
 	DrawFormatString(0, 32, GetColor(255, 0, 0), "%d", player1.moveDir);
 	DrawFormatString(0, 48, GetColor(255, 0, 0), "%d", player1.distance);
 	DrawFormatString(0, 64, GetColor(255, 0, 0), "%d", player1.slot);
+	DrawFormatString(0, 80, GetColor(255, 0, 0), "%d", player1.score);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -254,8 +263,58 @@ void PlayerControl(void)
 			||keyNew[KEY_ID_P1UP] && player1.moveDir == DIR_UP
 			||keyNew[KEY_ID_P1LEFT] && player1.moveDir == DIR_LEFT)
 		{
-			player1.distance = PLAYER_DISTANCE;
-			dashFlag = true;
+			if (player1.moveDir == DIR_DOWN)
+			{
+				PlayerPosCopy.y += PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
+				{
+					player1.distance = PLAYER_DISTANCE;
+					dashFlag = true;
+				}
+				else
+				{
+					moveFlag = false;
+				}
+			}
+			if (player1.moveDir == DIR_RIGHT)
+			{
+				PlayerPosCopy.x += PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
+				{
+					player1.distance = PLAYER_DISTANCE;
+					dashFlag = true;
+				}
+				else
+				{
+					moveFlag = false;
+				}
+			}
+			if (player1.moveDir == DIR_UP)
+			{
+				PlayerPosCopy.y -= PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
+				{
+					player1.distance = PLAYER_DISTANCE;
+					dashFlag = true;
+				}
+				else
+				{
+					moveFlag = false;
+				}
+			}
+			if (player1.moveDir==DIR_LEFT)
+			{
+				PlayerPosCopy.x -= PLAYER_DISTANCE;
+				if (SoilIsPass(PlayerPosCopy))
+				{
+					player1.distance = PLAYER_DISTANCE;
+					dashFlag = true;
+				}
+				else
+				{
+					moveFlag = false;
+				}
+			}
 		}
 		else
 		{
@@ -274,4 +333,10 @@ void PlayerControl(void)
 		player1.slot++;
 	}
 
+	if (player1.pos.y <= 112)
+	{
+		player1.score += player1.slot;
+		OllTreasure(player1.slot);
+		player1.slot = 0;
+	}
 }
