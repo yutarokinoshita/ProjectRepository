@@ -2,6 +2,7 @@
 #include "main.h"
 #include "map.h"
 #include "playerAction.h"
+#include "soil.h"
 
 CHARACTER dig;
 bool digAction;		// アクションを行う

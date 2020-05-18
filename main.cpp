@@ -9,6 +9,7 @@
 #include "keycheck.h"
 #include "playerAction.h"
 #include "treasure.h"
+#include "soil.h"
 
 // ïœêî
 int gameCounter;
@@ -37,6 +38,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	keyInit();
 	DigSystemInit();
 	TreasureInit();
+	soilSystemInit();
 
 	// πﬁ∞—Ÿ∞Ãﬂ
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
@@ -66,6 +68,7 @@ void GameDraw(void)
 
 	StageDrawInit();
 	TreasureDraw();
+	soilDrawInit();
 	PlayerGameDraw();
 }
 void GameMain(void)

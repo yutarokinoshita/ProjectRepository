@@ -4,6 +4,8 @@
 #include "map.h"
 #include "keycheck.h"
 #include "playerAction.h"
+#include "treasure.h"
+#include "soil.h"
 
 CHARACTER player1;	//プレイヤー１の構造体
 int playerImage[16];

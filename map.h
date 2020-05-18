@@ -1,7 +1,7 @@
 //#pragma once
 
 #define MAP_SIZE_X	25	// マップの横
-#define MAP_SIZE_Y	20	// マップの縦
+#define MAP_SIZE_Y	14	// マップの縦
 #define CHIP_SIZE_X 32	//
 #define CHIP_SIZE_Y 32
 #define CLOUD_MAX	9
@@ -10,5 +10,3 @@
 
 void StageInit(void);
 void StageDrawInit(void);
-bool SoilCheckHit(XY dPos,int dSize);		// 地形攻撃判定
-bool SoilIsPass(XY pPos);		// 地形通過判定
