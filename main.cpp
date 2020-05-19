@@ -37,7 +37,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	StageInit();
 	PlayerSystemInit();
 	keyInit();
-	DigSystemInit();
+	ItemSystemInit();
 	TreasureInit();
 	soilSystemInit();
 	//TreasureEffectInit();
@@ -72,12 +72,13 @@ void GameDraw(void)
 	soilDrawInit();
 	TreasureDraw();
 	//TreasureEffectDraw();
+	ItemDrawInit();
 	PlayerGameDraw();
 }
 void GameMain(void)
 {
 	GameDraw();
 	PlayerControl();
-	DigControl();
+	ItemControl();
 	//effectControl();
 }
