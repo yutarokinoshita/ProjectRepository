@@ -28,7 +28,7 @@ void ItemSystemInit(void)
 	drill.sizeOffset.x = ITEM_SIZE_X / 2;
 	drill.sizeOffset.y = ITEM_SIZE_Y / 2;
 	drill.moveDir = DIR_DOWN;
-	drill.moveSpeed = 0;
+	drill.moveSpeed = 4;
 	drill.AnimCnt = 0;
 	drill.Flag = false;
 }
@@ -79,6 +79,10 @@ void ItemControl(void)
 			break;
 		default:
 			break;
+		}
+		if (SoilCheckHit(drill.pos))
+		{
+
 		}
 	}
 }
