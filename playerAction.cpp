@@ -7,11 +7,11 @@
 CHARACTER dig;
 CHARACTER drill;
 bool digAction;		// アクションを行う
-int drillImage[2];	// ドリルの画像格納用
+int drillImage[8];	// ドリルの画像格納用
 
 void ItemSystemInit(void)
 {
-	LoadDivGraph("image/drill.png", 2, 2, 1, ITEM_SIZE_X, ITEM_SIZE_Y, drillImage);
+	LoadDivGraph("image/drill.png", 8, 2, 4, ITEM_SIZE_X, ITEM_SIZE_Y, drillImage,false);
 	dig.pos.x = 0;
 	dig.pos.y = 0;
 	dig.size.x = ITEM_SIZE_X;
@@ -28,7 +28,7 @@ void ItemSystemInit(void)
 	drill.sizeOffset.x = ITEM_SIZE_X / 2;
 	drill.sizeOffset.y = ITEM_SIZE_Y / 2;
 	drill.moveDir = DIR_DOWN;
-	drill.moveSpeed = 8;
+	drill.moveSpeed = 0;
 	drill.AnimCnt = 0;
 	drill.Flag = false;
 }
@@ -43,8 +43,10 @@ void ItemDrawInit(void)
 	}
 	if (drill.Flag)
 	{
-		DrawGraph(drill.pos.x - drill.sizeOffset.x, drill.pos.y - drill.sizeOffset.y, drillImage[drill.AnimCnt / 4 % 2],true);
+		DrawGraph(drill.pos.x - drill.sizeOffset.x, drill.pos.y - drill.sizeOffset.y, drillImage[drill.moveDir * 2 + (drill.AnimCnt / 4) % 2],true);
 	}
+	DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
+	DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
 }
 
 void ItemControl(void)
