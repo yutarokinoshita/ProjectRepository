@@ -9,6 +9,7 @@
 void ItemSystemInit(void);
 void ItemDrawInit(void);
 void ItemControl(void);
-void CliateDig(XY Pos,DIR Dir);
-void CliateDrill(XY Pos, DIR Dir);
-void CliateBomb(XY Pos, DIR Dir);
+void CliateDig(XY Pos,DIR Dir);		// 採掘アクション発生
+void CliateDrill(XY Pos, DIR Dir);	// ドリル発生
+void CliateBomb(XY Pos, DIR Dir);	// 爆弾発生
+bool CheckItemStock(ITEM Item);		// アイテム使用確認

@@ -30,7 +30,7 @@ void ItemSystemInit(void)
 	drill.sizeOffset.x = ITEM_SIZE_X / 2;
 	drill.sizeOffset.y = ITEM_SIZE_Y / 2;
 	drill.moveDir = DIR_DOWN;
-	drill.moveSpeed = 0;
+	drill.moveSpeed = 4;
 	drill.distance = 0;
 	drill.life = 0;
 	drill.AnimCnt = 0;
@@ -60,7 +60,7 @@ void ItemDrawInit(void)
 	}
 	if (drill.Flag)
 	{
-		//DrawGraph(drill.pos.x - drill.sizeOffset.x, drill.pos.y - drill.sizeOffset.y, drillImage[drill.moveDir * 2 + (drill.AnimCnt / 4) % 2],true);
+		DrawGraph(drill.pos.x - drill.sizeOffset.x, drill.pos.y - drill.sizeOffset.y, drillImage[drill.moveDir * 2 + (drill.AnimCnt / 4) % 2],true);
 	}
 	if (bomb.Flag)
 	{
@@ -105,6 +105,13 @@ void ItemControl(void)
 		{
 			drill.life--;
 		}
+		if (drill.pos.x > SCREEN_SIZE_X + drill.sizeOffset.x
+			|| drill.pos.y > SCREEN_SIZE_Y + drill.sizeOffset.y
+			|| drill.pos.x < 0
+			|| drill.pos.y < 0)
+		{
+			drill.Flag = false;
+		}
 	}
 
 	if (bomb.Flag)
@@ -146,31 +153,34 @@ void CliateDig(XY Pos,DIR Dir)
 
 void CliateDrill(XY Pos, DIR Dir)
 {
-	drill.moveDir = Dir;
-	switch (drill.moveDir)
+	if (!drill.Flag)
 	{
-	case DIR_DOWN:
-		drill.pos.x = Pos.x;
-		drill.pos.y = Pos.y + ITEM_SIZE_Y;
-		break;
-	case DIR_RIGHT:
-		drill.pos.x = Pos.x + ITEM_SIZE_X;
-		drill.pos.y = Pos.y;
-		break;
-	case DIR_UP:
-		drill.pos.x = Pos.x;
-		drill.pos.y = Pos.y - ITEM_SIZE_Y;
-		break;
-	case DIR_LEFT:
-		drill.pos.x = Pos.x - ITEM_SIZE_X;
-		drill.pos.y = Pos.y;
-		break;
-	default:
-		break;
+		drill.moveDir = Dir;
+		switch (drill.moveDir)
+		{
+		case DIR_DOWN:
+			drill.pos.x = Pos.x;
+			drill.pos.y = Pos.y + ITEM_SIZE_Y;
+			break;
+		case DIR_RIGHT:
+			drill.pos.x = Pos.x + ITEM_SIZE_X;
+			drill.pos.y = Pos.y;
+			break;
+		case DIR_UP:
+			drill.pos.x = Pos.x;
+			drill.pos.y = Pos.y - ITEM_SIZE_Y;
+			break;
+		case DIR_LEFT:
+			drill.pos.x = Pos.x - ITEM_SIZE_X;
+			drill.pos.y = Pos.y;
+			break;
+		default:
+			break;
+		}
+		drill.distance = DRILL_MOVE;
+		drill.life = DRILL_LIFE;
+		drill.Flag = true;
 	}
-	drill.distance = DRILL_MOVE;
-	drill.life = DRILL_LIFE;
-	drill.Flag= true;
 }
 
 void CliateBomb(XY Pos, DIR Dir)
@@ -199,4 +209,29 @@ void CliateBomb(XY Pos, DIR Dir)
 	}
 	bomb.life = BOMB_COUNT;
 	bomb.Flag = true;
+}
+
+// アイテム使用確認
+bool CheckItemStock(ITEM Item)
+{
+	switch (Item)
+	{
+	case ITEM_DRILL:
+		if (!drill.Flag)
+		{
+			return true;
+		}
+		break;
+	case ITEM_BOMB:
+		if (!bomb.Flag)
+		{
+			return true;
+		}
+		break;
+	case ITEM_MAX:
+		break;
+	default:
+		break;
+	}
+	return false;
 }

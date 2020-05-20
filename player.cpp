@@ -9,7 +9,7 @@
 
 CHARACTER player1;		//プレイヤー１の構造体
 int playerImage[16];	// プレイヤーの画像格納用
-int playerAct[4];		
+int playerAct[4];		// プレイヤーのアクションの画像格納用
 bool turnFlag;			// 振り向き制御用
 bool dashFlag;			// ダッシュを始めるまで
 bool digFlag;			// 採掘可能か否か
@@ -17,12 +17,16 @@ bool moveFlag;			// 移動可能か否か
 bool runFlag;			// 移動中か否か
 int treasureGetImage;	// 現在のアイテム取得数表示用
 int actTime;			// アクションを行う時間
+int stockDrillImage;	// 所持中のドリルの画像格納用
+int stockBombImage;		// 所持中の爆弾の画像格納用
 
 void PlayerSystemInit(void)
 {
 	LoadDivGraph("image/moleOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
 	LoadDivGraph("image/digAction.png", 4, 1, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerAct, false);
 	treasureGetImage = LoadGraph("image/potato.png");
+	stockDrillImage = LoadGraph("image/DrillIcon.png");
+	stockBombImage = LoadGraph("image/BombIcon.png");
 	player1.pos.x = 336;//112;
 	player1.pos.y = 336;//112;
 	player1.size.x = PLAYER_SIZE_X;
@@ -35,6 +39,8 @@ void PlayerSystemInit(void)
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
+	player1.item = ITEM_BOMB;
+	player1.itemStock = 3;
 	turnFlag = false;
 	dashFlag = false;
 	digFlag = false;
@@ -66,7 +72,21 @@ void PlayerGameDraw(void)
 	//}
 	for (int tre = 0;tre < player1.slot;tre++)
 	{
-		DrawGraph(32 + 32 * tre, 32, treasureGetImage, true);
+		DrawGraph(32 + 32 * tre, 0, treasureGetImage, true);
+	}
+	for (int Item = 0;Item < player1.itemStock;Item++)
+	{
+		switch (player1.item)
+		{
+		case ITEM_DRILL:
+			DrawGraph(32 + 34 * Item, 32, stockDrillImage, true);
+			break;
+		case ITEM_BOMB:
+			DrawGraph(32 + 34 * Item, 32, stockBombImage, true);
+			break;
+		default:
+			break;
+		}
 	}
 	if (actTime >= 0)
 	{
@@ -349,8 +369,24 @@ void PlayerControl(void)
 	}
 	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag)
 	{
-		CliateDrill(player1.pos, player1.moveDir);
-		CliateBomb(player1.pos, player1.moveDir);
+		if (player1.itemStock > 0)
+		{
+			if (CheckItemStock(player1.item))
+			{
+				player1.itemStock--;
+				switch (player1.item)
+				{
+				case ITEM_DRILL:
+					CliateDrill(player1.pos, player1.moveDir);
+					break;
+				case ITEM_BOMB:
+					CliateBomb(player1.pos, player1.moveDir);
+					break;
+				default:
+					break;
+				}
+			}
+		}
 	}
 
 	if (TreasureGet(player1.pos, player1.slot))
