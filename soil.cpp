@@ -103,7 +103,7 @@ void soilDrawInit(void)
 
 
 // ínå`çUåÇîªíË
-bool SoilCheckHit(XY dPos)
+bool SoilCheckHit(XY dPos,int size,bool Bomb)
 {
 	for (int x = 0;x < MAP_SIZE_X;x++)
 	{
@@ -111,12 +111,19 @@ bool SoilCheckHit(XY dPos)
 		{
 			if (!soil[x][y].life == 0)
 			{
-				if (soil[x][y].pos.x  < dPos.x
-					&& soil[x][y].pos.x + soil[x][y].size.x > dPos.x
-					&& soil[x][y].pos.y  < dPos.y
-					&& soil[x][y].pos.y + soil[x][y].size.y > dPos.y)
+				if (soil[x][y].pos.x + soil[x][y].sizeOffset.x < dPos.x + size
+					&& soil[x][y].pos.x + soil[x][y].sizeOffset.x > dPos.x - size
+					&& soil[x][y].pos.y + soil[x][y].sizeOffset.y   < dPos.y + size
+					&& soil[x][y].pos.y + soil[x][y].sizeOffset.x > dPos.y - size)
 				{
-					soil[x][y].life--;
+					if (Bomb)
+					{
+						soil[x][y].life = 0;
+					}
+					else
+					{
+						soil[x][y].life--;
+					}
 					if (soil[x][y].life <= 0)
 					{
 						soil[x][y].Flag = true;

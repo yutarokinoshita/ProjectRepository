@@ -299,18 +299,20 @@ void PlayerControl(void)
 	}
 	if (itemFlag)
 	{
+		player1.moveDir = DIR_UP;
+		player1.distance = 0;
 		if (keyUpTrigger[KEY_ID_P1UP])
 		{
 			player1.item = ITEM_DRILL;
 			player1.itemStock = 3;
-			player1.moveDir == DIR_DOWN;
+			player1.moveDir = DIR_DOWN;
 			itemFlag = false;
 		}
 		if (keyUpTrigger[KEY_ID_P1RIGHT])
 		{
 			player1.item = ITEM_BOMB;
 			player1.itemStock = 2;
-			player1.moveDir == DIR_DOWN;
+			player1.moveDir = DIR_DOWN;
 			itemFlag = false;
 		}
 	}
@@ -410,7 +412,7 @@ void PlayerControl(void)
 		{
 			if (CheckItemStock(player1.item))
 			{
-				player1.itemStock--;
+				//player1.itemStock--;
 				switch (player1.item)
 				{
 				case ITEM_DRILL:

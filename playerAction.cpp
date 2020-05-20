@@ -7,7 +7,6 @@
 CHARACTER dig;
 CHARACTER drill;
 CHARACTER bomb;
-bool digAction;		// ƒAƒNƒVƒ‡ƒ“‚ðs‚¤
 int drillImage[8];	// ƒhƒŠƒ‹‚Ì‰æ‘œŠi”[—p
 int bombImage[6];	// ”š’e‚Ì‰æ‘œŠi”[—p
 void ItemSystemInit(void)
@@ -21,7 +20,7 @@ void ItemSystemInit(void)
 	dig.sizeOffset.x = ITEM_SIZE_X / 2;
 	dig.sizeOffset.y = ITEM_SIZE_Y / 2;
 	dig.moveDir = DIR_DOWN;
-	digAction = false;
+	dig.Flag = false;
 
 	drill.pos.x = 0;
 	drill.pos.y = 0;
@@ -43,7 +42,7 @@ void ItemSystemInit(void)
 	bomb.sizeOffset.x = ITEM_SIZE_X / 2;
 	bomb.sizeOffset.y = ITEM_SIZE_Y / 2;
 	bomb.moveDir = DIR_DOWN;
-	bomb.moveSpeed = 0;
+	bomb.moveSpeed = 8;
 	bomb.distance = 0;
 	bomb.life = 0;
 	bomb.AnimCnt = 0;
@@ -54,7 +53,7 @@ void ItemDrawInit(void)
 {
 	drill.AnimCnt++;
 
-	if (digAction)
+	if (dig.Flag)
 	{
 		DrawBox(dig.pos.x - dig.sizeOffset.x, dig.pos.y - dig.sizeOffset.y, dig.pos.x + dig.sizeOffset.x, dig.pos.y + dig.sizeOffset.y, GetColor(255, 255, 255), true);
 	}
@@ -66,24 +65,28 @@ void ItemDrawInit(void)
 	{
 		DrawGraph(bomb.pos.x - bomb.sizeOffset.x, bomb.pos.y - bomb.sizeOffset.y, bombImage[bomb.life / 15 % 6], true);
 	}
+	else
+	{
+		DrawBox(bomb.pos.x - bomb.sizeOffset.x - ITEM_SIZE_X, bomb.pos.y - bomb.sizeOffset.y - ITEM_SIZE_Y,
+			bomb.pos.x + bomb.sizeOffset.x + ITEM_SIZE_X, bomb.pos.y + bomb.sizeOffset.y + ITEM_SIZE_Y, GetColor(0, 0, 255), false);
+	}
 	DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
 	DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
 }
 
 void ItemControl(void)
 {
-	if (digAction)
+	if (dig.Flag)
 	{
-		
-	
-		if (SoilCheckHit(dig.pos))
+		if (SoilCheckHit(dig.pos,dig.sizeOffset.x,false))
 		{
 		}
 	}
-	digAction = false;
+
 
 	if (drill.Flag)
 	{
+		drill.distance -= drill.moveSpeed;
 		switch (drill.moveDir)
 		{
 		case DIR_DOWN:
@@ -101,14 +104,17 @@ void ItemControl(void)
 		default:
 			break;
 		}
-		if (SoilCheckHit(drill.pos))
+		if (SoilCheckHit(drill.pos,drill.sizeOffset.x,false))
 		{
 			drill.life--;
 		}
+		// ‰æ–ÊŠO‚Öo‚½‚çÁ‚·
 		if (drill.pos.x > SCREEN_SIZE_X + drill.sizeOffset.x
 			|| drill.pos.y > SCREEN_SIZE_Y + drill.sizeOffset.y
 			|| drill.pos.x < 0
-			|| drill.pos.y < 0)
+			|| drill.pos.y < 0
+			|| drill.distance <= 0
+			|| drill.life <= 0)
 		{
 			drill.Flag = false;
 		}
@@ -117,11 +123,51 @@ void ItemControl(void)
 	if (bomb.Flag)
 	{
 		bomb.life--;
+		if (bomb.pos.x<dig.pos.x + dig.sizeOffset.x
+			&& bomb.pos.x>dig.pos.x - dig.sizeOffset.x
+			&& bomb.pos.y<dig.pos.y + dig.sizeOffset.y
+			&& bomb.pos.y>dig.pos.y - dig.sizeOffset.y
+			&& dig.Flag)
+		{
+			bomb.moveDir = dig.moveDir;
+			bomb.life -= BOMB_COUNT * 2 / 3;
+			bomb.distance = 32;
+		}
+		if (bomb.distance > 0 && bomb.life > 0)
+		{
+			switch (bomb.moveDir)
+			{
+			case DIR_UP:
+				bomb.distance -= bomb.moveSpeed;
+				bomb.pos.y -= bomb.moveSpeed;
+				break;
+			case DIR_RIGHT:
+				bomb.distance -= bomb.moveSpeed;
+				bomb.pos.x += bomb.moveSpeed;
+				break;
+			case DIR_DOWN:
+				bomb.distance -= bomb.moveSpeed;
+				bomb.pos.y += bomb.moveSpeed;
+				break;
+			case DIR_LEFT:
+				bomb.distance -= bomb.moveSpeed;
+				bomb.pos.x -= bomb.moveSpeed;
+				break;
+			default:
+				break;
+			}
+		}
 		if (bomb.life <= 0)
 		{
-			bomb.Flag = false;
+			for (int hit = 0;hit <= 9;hit++)
+			{
+				SoilCheckHit(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X,true);
+				bomb.distance = 0;
+				bomb.Flag = false;
+			}
 		}
 	}
+	dig.Flag = false;
 }
 
 void CliateDig(XY Pos,DIR Dir)
@@ -148,7 +194,7 @@ void CliateDig(XY Pos,DIR Dir)
 	default:
 		break;
 	}
-	digAction = true;
+	dig.Flag = true;
 }
 
 void CliateDrill(XY Pos, DIR Dir)
@@ -156,6 +202,7 @@ void CliateDrill(XY Pos, DIR Dir)
 	if (!drill.Flag)
 	{
 		drill.moveDir = Dir;
+		drill.distance = DRILL_MOVE;
 		switch (drill.moveDir)
 		{
 		case DIR_DOWN:
