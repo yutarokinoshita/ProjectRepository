@@ -8,7 +8,6 @@ CHARACTER dig;
 CHARACTER drill;
 bool digAction;		// アクションを行う
 int drillImage[8];	// ドリルの画像格納用
-
 void ItemSystemInit(void)
 {
 	LoadDivGraph("image/drill.png", 8, 2, 4, ITEM_SIZE_X, ITEM_SIZE_Y, drillImage,false);
@@ -28,7 +27,9 @@ void ItemSystemInit(void)
 	drill.sizeOffset.x = ITEM_SIZE_X / 2;
 	drill.sizeOffset.y = ITEM_SIZE_Y / 2;
 	drill.moveDir = DIR_DOWN;
-	drill.moveSpeed = 4;
+	drill.moveSpeed = 0;
+	drill.distance = 0;
+	drill.life = 0;
 	drill.AnimCnt = 0;
 	drill.Flag = false;
 }
@@ -82,7 +83,7 @@ void ItemControl(void)
 		}
 		if (SoilCheckHit(drill.pos))
 		{
-
+			drill.life--;
 		}
 	}
 }
@@ -138,5 +139,7 @@ void CliateDrill(XY Pos, DIR Dir)
 	default:
 		break;
 	}
+	drill.distance = DRILL_MOVE;
+	drill.life = DRILL_LIFE;
 	drill.Flag= true;
 }

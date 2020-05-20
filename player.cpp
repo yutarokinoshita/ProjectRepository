@@ -9,16 +9,19 @@
 
 CHARACTER player1;		//プレイヤー１の構造体
 int playerImage[16];	// プレイヤーの画像格納用
+int playerAct[4];		
 bool turnFlag;			// 振り向き制御用
 bool dashFlag;			// ダッシュを始めるまで
 bool digFlag;			// 採掘可能か否か
 bool moveFlag;			// 移動可能か否か
 bool runFlag;			// 移動中か否か
 int treasureGetImage;	// 現在のアイテム取得数表示用
+int actTime;			// アクションを行う時間
 
 void PlayerSystemInit(void)
 {
 	LoadDivGraph("image/moleOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
+	LoadDivGraph("image/digAction.png", 4, 1, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerAct, false);
 	treasureGetImage = LoadGraph("image/potato.png");
 	player1.pos.x = 336;//112;
 	player1.pos.y = 336;//112;
@@ -37,11 +40,13 @@ void PlayerSystemInit(void)
 	digFlag = false;
 	moveFlag = false;
 	runFlag = false;
+	actTime = 0;
 }
 
 void PlayerGameDraw(void)
 {
 	player1.AnimCnt++;
+	actTime--;
 	// 仮置きのプレイヤー
 	//if (player1.moveDir == DIR_DOWN)
 	//{
@@ -63,13 +68,21 @@ void PlayerGameDraw(void)
 	{
 		DrawGraph(32 + 32 * tre, 32, treasureGetImage, true);
 	}
-	if (dashFlag)
+	if (actTime >= 0)
 	{
-		DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
+		DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerAct[player1.moveDir], true);
+
 	}
 	else
 	{
-		DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+		if (dashFlag)
+		{
+			DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
+		}
+		else
+		{
+			DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+		}
 	}
 	DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
 	DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
@@ -332,6 +345,7 @@ void PlayerControl(void)
 	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag)
 	{
 		CliateDig(player1.pos, player1.moveDir);
+		actTime = 10;
 	}
 	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag)
 	{
