@@ -350,6 +350,7 @@ void PlayerControl(void)
 	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag)
 	{
 		CliateDrill(player1.pos, player1.moveDir);
+		CliateBomb(player1.pos, player1.moveDir);
 	}
 
 	if (TreasureGet(player1.pos, player1.slot))
