@@ -15,10 +15,12 @@ bool dashFlag;			// ダッシュを始めるまで
 bool digFlag;			// 採掘可能か否か
 bool moveFlag;			// 移動可能か否か
 bool runFlag;			// 移動中か否か
+bool itemFlag;			// アイテムを取得するためのフラグ 
 int treasureGetImage;	// 現在のアイテム取得数表示用
 int actTime;			// アクションを行う時間
 int stockDrillImage;	// 所持中のドリルの画像格納用
 int stockBombImage;		// 所持中の爆弾の画像格納用
+int selectImage[2];		// アイテム選択画面の格納用
 
 void PlayerSystemInit(void)
 {
@@ -27,6 +29,7 @@ void PlayerSystemInit(void)
 	treasureGetImage = LoadGraph("image/potato.png");
 	stockDrillImage = LoadGraph("image/DrillIcon.png");
 	stockBombImage = LoadGraph("image/BombIcon.png");
+	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
 	player1.pos.x = 336;//112;
 	player1.pos.y = 336;//112;
 	player1.size.x = PLAYER_SIZE_X;
@@ -39,13 +42,14 @@ void PlayerSystemInit(void)
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
-	player1.item = ITEM_BOMB;
+	player1.item = ITEM_DRILL;
 	player1.itemStock = 3;
 	turnFlag = false;
 	dashFlag = false;
 	digFlag = false;
 	moveFlag = false;
 	runFlag = false;
+	itemFlag = false;
 	actTime = 0;
 }
 
@@ -88,20 +92,27 @@ void PlayerGameDraw(void)
 			break;
 		}
 	}
-	if (actTime >= 0)
+	if (itemFlag)
 	{
-		DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerAct[player1.moveDir], true);
-
+		DrawGraph(player1.pos.x - SELECT_SIZE_X / 2, player1.pos.y - SELECT_SIZE_Y/2, selectImage[player1.AnimCnt / 10 % 2], true);
 	}
 	else
 	{
-		if (dashFlag)
+		if (actTime >= 0)
 		{
-			DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
+			DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerAct[player1.moveDir], true);
+
 		}
 		else
 		{
-			DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+			if (dashFlag)
+			{
+				DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
+			}
+			else
+			{
+				DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+			}
 		}
 	}
 	DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
@@ -109,6 +120,7 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
 	DrawFormatString(0, 64, GetColor(255, 0, 0), "SLOT:%d", player1.slot);
 	DrawFormatString(0, 80, GetColor(255, 0, 0), "SCORE:%d", player1.score);
+	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -209,7 +221,6 @@ void PlayerControl(void)
 		}
 	}
 
-
 	if (moveFlag && player1.distance > 0)
 	{
 		//player1.distance = PLAYER_DISTANCE;
@@ -279,6 +290,29 @@ void PlayerControl(void)
 			break;
 		}
 		runFlag = true;
+	}
+
+	// 一定座標かつ下向きでない場合に採掘ボタンを押した場合
+	if (player1.pos.y < 144 && player1.distance == 0 && !(player1.moveDir == DIR_DOWN) && keyDownTrigger[KEY_ID_PLAYER_ACTION])
+	{
+		itemFlag = true;
+	}
+	if (itemFlag)
+	{
+		if (keyUpTrigger[KEY_ID_P1UP])
+		{
+			player1.item = ITEM_DRILL;
+			player1.itemStock = 3;
+			player1.moveDir == DIR_DOWN;
+			itemFlag = false;
+		}
+		if (keyUpTrigger[KEY_ID_P1RIGHT])
+		{
+			player1.item = ITEM_BOMB;
+			player1.itemStock = 2;
+			player1.moveDir == DIR_DOWN;
+			itemFlag = false;
+		}
 	}
 
 	// 現在の向きを記録
@@ -362,11 +396,14 @@ void PlayerControl(void)
 		}
 	}
 
+	// 穴掘りアクション
 	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag)
 	{
 		CliateDig(player1.pos, player1.moveDir);
 		actTime = 10;
 	}
+
+	// アイテム使用
 	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag)
 	{
 		if (player1.itemStock > 0)
@@ -389,11 +426,13 @@ void PlayerControl(void)
 		}
 	}
 
+	// 得点アイテム取得時の処理
 	if (TreasureGet(player1.pos, player1.slot))
 	{
 		player1.slot++;
 	}
 
+	// 得点アイテムの回収処理
 	if (player1.pos.y <= 112)
 	{
 		player1.score += player1.slot;
