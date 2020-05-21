@@ -53,22 +53,22 @@ void ItemDrawInit(void)
 {
 	drill.AnimCnt++;
 
-	if (dig.Flag)
-	{
-		DrawBox(dig.pos.x - dig.sizeOffset.x, dig.pos.y - dig.sizeOffset.y, dig.pos.x + dig.sizeOffset.x, dig.pos.y + dig.sizeOffset.y, GetColor(255, 255, 255), true);
-	}
+	//if (dig.Flag)
+	//{
+	//	DrawBox(dig.pos.x - dig.sizeOffset.x, dig.pos.y - dig.sizeOffset.y, dig.pos.x + dig.sizeOffset.x, dig.pos.y + dig.sizeOffset.y, GetColor(255, 255, 255), true);
+	//}
 	if (drill.Flag)
 	{
-		DrawGraph(drill.pos.x - drill.sizeOffset.x, drill.pos.y - drill.sizeOffset.y, drillImage[drill.moveDir * 2 + (drill.AnimCnt / 4) % 2],true);
+		DrawGraph(drill.pos.x - drill.sizeOffset.x, -mapPos.y + drill.pos.y - drill.sizeOffset.y, drillImage[drill.moveDir * 2 + (drill.AnimCnt / 4) % 2],true);
 	}
 	if (bomb.Flag)
 	{
-		DrawGraph(bomb.pos.x - bomb.sizeOffset.x, bomb.pos.y - bomb.sizeOffset.y, bombImage[bomb.life / 15 % 6], true);
+		DrawGraph(bomb.pos.x - bomb.sizeOffset.x, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y, bombImage[bomb.life / 15 % 6], true);
 	}
 	else
 	{
-		DrawBox(bomb.pos.x - bomb.sizeOffset.x - ITEM_SIZE_X, bomb.pos.y - bomb.sizeOffset.y - ITEM_SIZE_Y,
-			bomb.pos.x + bomb.sizeOffset.x + ITEM_SIZE_X, bomb.pos.y + bomb.sizeOffset.y + ITEM_SIZE_Y, GetColor(0, 0, 255), false);
+		DrawBox(bomb.pos.x - bomb.sizeOffset.x - ITEM_SIZE_X, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y - ITEM_SIZE_Y,
+			bomb.pos.x + bomb.sizeOffset.x + ITEM_SIZE_X, -mapPos.y + bomb.pos.y + bomb.sizeOffset.y + ITEM_SIZE_Y, GetColor(0, 0, 255), false);
 	}
 	DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
 	DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
@@ -110,11 +110,11 @@ void ItemControl(void)
 		}
 		// 画面外へ出るか指定距離移動するか耐久値がなくなった場合消える
 		if (drill.pos.x > SCREEN_SIZE_X + drill.sizeOffset.x
-			|| drill.pos.y > SCREEN_SIZE_Y + drill.sizeOffset.y
+			|| -mapPos.y + drill.pos.y > SCREEN_SIZE_Y + drill.sizeOffset.y
 			|| drill.pos.x < 0
-			|| drill.pos.y < 0
-			|| drill.distance <= 0
-			|| drill.life <= 0)
+			|| -mapPos.y + drill.pos.y < 0
+			)//|| drill.distance <= 0
+			//|| drill.life <= 0)
 		{
 			drill.Flag = false;
 		}

@@ -23,10 +23,10 @@ void StageInit(void)
 }
 void StageDrawInit(void)
 {
-	DrawGraph(0, 0, mapImage, true);
+	DrawGraph(0, -mapPos.y, mapImage, true);
 	for (int clo = 0;clo < CLOUD_MAX;clo++)
 	{
-		DrawGraph(cloud[clo].x, cloud[clo].y, cloudImage, true);
+		DrawGraph(cloud[clo].x, -mapPos.y + cloud[clo].y, cloudImage, true);
 		cloud[clo].x--;
 		if (cloud[clo].x <= -CLOUD_SIZE_X)
 		{
@@ -37,7 +37,7 @@ void StageDrawInit(void)
 	{
 		for (int y = 0;y < MAP_SIZE_Y;y++)
 		{
-			DrawGraph(0 + CHIP_SIZE_X * x, 128 + CHIP_SIZE_Y * y, gloundImage, true);
+			DrawGraph(0 + CHIP_SIZE_X * x, -mapPos.y + 128 + CHIP_SIZE_Y * y, gloundImage, true);
 		}
 	}
 }

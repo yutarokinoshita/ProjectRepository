@@ -41,10 +41,10 @@ void soilSystemInit(void)
 			{
 				soil[x][y].life = 3;
 			}
-			if (y == 18)
-			{
-				soil[x][y].life = 999;
-			}
+			//if (y == 18)
+			//{
+			//	soil[x][y].life = 0;
+			//}
 		}
 	}
 }
@@ -60,42 +60,42 @@ void soilDrawInit(void)
 			{
 				if (y <= 8)
 				{
-					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[0], true);
+					DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[0], true);
 				}
 				if (8 < y && y <= 13)
 				{
 					if (soil[x][y].life == 2)
 					{
-						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[1], true);
+						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[1], true);
 					}
 					if (soil[x][y].life == 1)
 					{
-						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[2], true);
+						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[2], true);
 					}
 				}
 				if (13 < y)
 				{
 					if (soil[x][y].life == 3)
 					{
-						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[3], true);
+						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[3], true);
 					}
 					if (soil[x][y].life == 2)
 					{
-						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[4], true);
+						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[4], true);
 					}
 					if (soil[x][y].life == 1)
 					{
-						DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[5], true);
+						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[5], true);
 					}
 				}
 				if (y == 18)
 				{
-					DrawGraph(soil[x][y].pos.x, soil[x][y].pos.y, soilImage[6], true);
+					DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[6], true);
 				}
 				// デバッグ用当たり枠
 				//DrawBox(soil[x][y].pos.x , soil[x][y].pos.y ,
 				//	soil[x][y].pos.x + soil[x][y].size.x, soil[x][y].pos.y + soil[x][y].size.y, GetColor(0, 0, 255), false);
-				DrawFormatString(soil[x][y].pos.x, soil[x][y].pos.y, GetColor(255, 255, 255), "%d", soil[x][y].life);
+				DrawFormatString(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, GetColor(255, 255, 255), "%d", soil[x][y].life);
 			}
 		}
 	}

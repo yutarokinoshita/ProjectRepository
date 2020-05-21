@@ -8,8 +8,6 @@
 #define PLAYER_DISTANCE 32		// 一度の入力で移動する距離
 #define DASH_START	16			// ダッシュを始めるまでの時間
 
-#define SLOT_MAX 3				// アイテム最大所持数
-
 void PlayerSystemInit(void);
 
 void PlayerGameDraw(void);

@@ -44,3 +44,5 @@ struct CHARACTER {
 	ITEM item;			// キャラクタの所持アイテム
 	int itemStock;		// キャラクタのアイテム所持数
 };
+
+extern XY mapPos;			// マップ座標

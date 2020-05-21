@@ -74,6 +74,7 @@ void GameDraw(void)
 	//TreasureEffectDraw();
 	ItemDrawInit();
 	PlayerGameDraw();
+	DrawFormatString(500, 0, GetColor(255, 255, 255), "%d,%d", mapPos.x,mapPos.y);
 }
 void GameMain(void)
 {
@@ -81,4 +82,14 @@ void GameMain(void)
 	PlayerControl();
 	ItemControl();
 	//effectControl();
+
+	// デバッグ用　後で消してよし
+	if (CheckHitKey(KEY_INPUT_UP))
+	{
+		mapPos.y++;
+	}
+	if (CheckHitKey(KEY_INPUT_DOWN))
+	{
+		mapPos.y--;
+	}
 }

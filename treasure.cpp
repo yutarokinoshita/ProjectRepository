@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "main.h"
 #include "treasure.h"
+#include "map.h"
 #include "effect.h"
 
 CHARACTER treasure[TREASURE_MAX];
@@ -34,7 +35,7 @@ void TreasureDraw(void)
 	{
 		if(!treasure[x].Flag)//if (!treasureFlag)
 		{
-			DrawGraph(treasure[x].pos.x - treasure[x].sizeOffset.x, treasure[x].pos.y - treasure[x].sizeOffset.y, treasureImage, true);
+			DrawGraph(treasure[x].pos.x - treasure[x].sizeOffset.x, -mapPos.y + treasure[x].pos.y - treasure[x].sizeOffset.y, treasureImage, true);
 		}
 	}
 }

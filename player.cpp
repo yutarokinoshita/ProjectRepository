@@ -7,6 +7,11 @@
 #include "treasure.h"
 #include "soil.h"
 
+
+#define PLAYER_DEF_SPEED	2	// プレイヤーの初期速度
+#define PLAYER_DASH_SPEED	4	// プレイヤーの走行中速度
+#define SLOT_MAX 3				// アイテム最大所持数
+
 CHARACTER player1;		//プレイヤー１の構造体
 int playerImage[16];	// プレイヤーの画像格納用
 int playerAct[4];		// プレイヤーのアクションの画像格納用
@@ -44,7 +49,7 @@ void PlayerSystemInit(void)
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
-	player1.item = ITEM_CALL;
+	player1.item = ITEM_DRILL;
 	player1.itemStock = 3;
 	turnFlag = false;
 	dashFlag = false;
@@ -99,24 +104,24 @@ void PlayerGameDraw(void)
 	}
 	if (itemFlag)
 	{
-		DrawGraph(player1.pos.x - SELECT_SIZE_X / 2, player1.pos.y - SELECT_SIZE_Y/2, selectImage[player1.AnimCnt / 10 % 2], true);
+		DrawGraph(player1.pos.x - SELECT_SIZE_X / 2, -mapPos.y + player1.pos.y - SELECT_SIZE_Y/2, selectImage[player1.AnimCnt / 10 % 2], true);
 	}
 	else
 	{
 		if (actTime >= 0)
 		{
-			DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerAct[player1.moveDir], true);
+			DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerAct[player1.moveDir], true);
 
 		}
 		else
 		{
-			if (dashFlag)
+			if (player1.moveSpeed>=PLAYER_DASH_SPEED)
 			{
-				DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
+				DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
 			}
 			else
 			{
-				DrawGraph(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+				DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
 			}
 		}
 	}
@@ -127,29 +132,29 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 80, GetColor(255, 0, 0), "SCORE:%d", player1.score);
 	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
 	// デバッグ用のプレイヤーの当たり枠
-	DrawBox(player1.pos.x - player1.sizeOffset.x, player1.pos.y - player1.sizeOffset.y,
-		player1.pos.x + player1.sizeOffset.x, player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
+	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
+		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
 }
 
 void PlayerControl(void)
 {
 	digFlag = true;
-	if (player1.pos.y < 112)
-	{
-		player1.pos.y = 112;
-	}
-	if (player1.pos.x < 16)
-	{
-		player1.pos.x = 16;
-	}
-	if (player1.pos.x > 784)
-	{
-		player1.pos.x = 784;
-	}
-	if (player1.pos.y > 584)
-	{
-		player1.pos.y = 584;
-	}
+	////if (player1.pos.y < 112)
+	////{
+	////	player1.pos.y = 112;
+	////}
+	//if (player1.pos.x < 16)
+	//{
+	//	player1.pos.x = 16;
+	//}
+	//if (player1.pos.x > 784)
+	//{
+	//	player1.pos.x = 784;
+	//}
+	////if (player1.pos.y >= 592)
+	////{
+	////	player1.pos.y = 592;
+	////}
 
 	XY PlayerPosCopy = player1.pos;
 
@@ -170,7 +175,7 @@ void PlayerControl(void)
 			}
 			else
 			{
-				dashFlag = false;
+				player1.moveSpeed = PLAYER_DEF_SPEED;
 			}
 		}
 		if (keyDownTrigger[KEY_ID_P1RIGHT])
@@ -187,7 +192,7 @@ void PlayerControl(void)
 			}
 			else
 			{
-				dashFlag = false;
+				player1.moveSpeed = PLAYER_DEF_SPEED;
 			}
 		}
 		if (keyDownTrigger[KEY_ID_P1UP])
@@ -204,7 +209,7 @@ void PlayerControl(void)
 			}
 			else
 			{
-				dashFlag = false;
+				player1.moveSpeed = PLAYER_DEF_SPEED;
 			}
 		}
 		if (keyDownTrigger[KEY_ID_P1LEFT])
@@ -221,7 +226,7 @@ void PlayerControl(void)
 			}
 			else
 			{
-				dashFlag = false;
+				player1.moveSpeed = PLAYER_DEF_SPEED;
 			}
 		}
 	}
@@ -233,63 +238,32 @@ void PlayerControl(void)
 		{
 		case DIR_DOWN:
 			digFlag = false;
-				if (dashFlag)
-				{
-					player1.distance -= player1.moveSpeed * 2;
-					player1.pos.y += player1.moveSpeed * 2;
-				}
-				else
-				{
-					player1.distance -= player1.moveSpeed;
-					player1.pos.y += player1.moveSpeed;
-				}
+			player1.distance -= player1.moveSpeed;
+			player1.pos.y += player1.moveSpeed;
+			if (player1.pos.y - mapPos.y > SCREEN_SIZE_Y - (CHIP_SIZE_Y * 5 - player1.sizeOffset.y) 
+				&& player1.pos.y <= CHIP_SIZE_Y * (MAP_SIZE_Y - 5) + player1.sizeOffset.y)
+			{
+				mapPos.y += player1.moveSpeed;
+			}
 			break;
 		case DIR_RIGHT:
 			digFlag = false;
-			if (dashFlag)
-			{
-				player1.distance -= player1.moveSpeed * 2;
-				player1.pos.x += player1.moveSpeed * 2;
-			}
-			else
-			{
-				player1.distance -= player1.moveSpeed;
-				player1.pos.x += player1.moveSpeed;
-
-			}
+			player1.distance -= player1.moveSpeed;
+			player1.pos.x += player1.moveSpeed;
 			break;
 		case DIR_UP:
 			digFlag = false;
-			if (player1.pos.y >= 112)
+			player1.distance -= player1.moveSpeed;
+			player1.pos.y -= player1.moveSpeed;
+			if (player1.pos.y - mapPos.y < CHIP_SIZE_Y * 5 - player1.sizeOffset.y && mapPos.y>0)
 			{
-				if (dashFlag)
-				{
-					player1.distance -= player1.moveSpeed * 2;
-					player1.pos.y -= player1.moveSpeed * 2;
-				}
-				else
-				{
-					player1.distance -= player1.moveSpeed;
-					player1.pos.y -= player1.moveSpeed;
-				}
-			}
-			else
-			{
-				player1.distance = 0;
+				mapPos.y -= player1.moveSpeed;
 			}
 			break;
 		case DIR_LEFT:
 			digFlag = false;
-			if (dashFlag)
-			{
-				player1.distance -= player1.moveSpeed * 2;
-				player1.pos.x -= player1.moveSpeed * 2;
-			}
-			else
-			{
-				player1.distance -= player1.moveSpeed;
-				player1.pos.x -= player1.moveSpeed;
-			}
+			player1.distance -= player1.moveSpeed;
+			player1.pos.x -= player1.moveSpeed;
 			break;
 		default:
 			break;
@@ -297,8 +271,8 @@ void PlayerControl(void)
 		runFlag = true;
 	}
 
-	// 一定座標かつ下向きでない場合に採掘ボタンを押した場合
-	if (player1.pos.y < 144 && player1.distance == 0 && !(player1.moveDir == DIR_DOWN) && keyDownTrigger[KEY_ID_PLAYER_ACTION])
+	// 一定座標でアイテムボタンを押した場合
+	if (player1.pos.y < 144 && player1.distance == 0 && keyDownTrigger[KEY_ID_PLAYER_ITEM])
 	{
 		itemFlag = true;
 	}
@@ -335,7 +309,7 @@ void PlayerControl(void)
 	// ボタンを離したときダッシュを止める
 	if (keyUpTrigger[KEY_ID_P1DOWN]|| keyUpTrigger[KEY_ID_P1RIGHT]|| keyUpTrigger[KEY_ID_P1UP]|| keyUpTrigger[KEY_ID_P1LEFT])
 	{
-		dashFlag = false;
+		player1.moveSpeed = PLAYER_DEF_SPEED;
 	}
 	// 移動していないとき採掘ができる
 	//if (!keyNew[KEY_ID_P1DOWN] && !keyNew[KEY_ID_P1RIGHT] && !keyNew[KEY_ID_P1UP] && !keyNew[KEY_ID_P1LEFT])
@@ -356,7 +330,7 @@ void PlayerControl(void)
 				if (SoilIsPass(PlayerPosCopy))
 				{
 					player1.distance = PLAYER_DISTANCE;
-					dashFlag = true;
+					player1.moveSpeed = PLAYER_DASH_SPEED;
 				}
 				else
 				{
@@ -369,7 +343,7 @@ void PlayerControl(void)
 				if (SoilIsPass(PlayerPosCopy))
 				{
 					player1.distance = PLAYER_DISTANCE;
-					dashFlag = true;
+					player1.moveSpeed = PLAYER_DASH_SPEED;
 				}
 				else
 				{
@@ -382,7 +356,7 @@ void PlayerControl(void)
 				if (SoilIsPass(PlayerPosCopy))
 				{
 					player1.distance = PLAYER_DISTANCE;
-					dashFlag = true;
+					player1.moveSpeed = PLAYER_DASH_SPEED;
 				}
 				else
 				{
@@ -395,7 +369,7 @@ void PlayerControl(void)
 				if (SoilIsPass(PlayerPosCopy))
 				{
 					player1.distance = PLAYER_DISTANCE;
-					dashFlag = true;
+					player1.moveSpeed = PLAYER_DASH_SPEED;
 				}
 				else
 				{
@@ -418,7 +392,7 @@ void PlayerControl(void)
 	}
 
 	// アイテム使用
-	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag)
+	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag && !itemFlag)
 	{
 		if (player1.itemStock > 0)
 		{
@@ -428,18 +402,18 @@ void PlayerControl(void)
 				{
 				case ITEM_DRILL:
 					CliateDrill(player1.pos, player1.moveDir);
-					player1.itemStock--;
+					//player1.itemStock--;
 					break;
 				case ITEM_BOMB:
 					CliateBomb(player1.pos, player1.moveDir);
-					player1.itemStock--;
+					//player1.itemStock--;
 					break;
 				case ITEM_CALL:
 					if (player1.slot > 0)
 					{
 						player1.slot--;
 						player1.score++;
-						player1.itemStock--;
+						//player1.itemStock--;
 					}
 					break;
 				default:
@@ -450,7 +424,7 @@ void PlayerControl(void)
 	}
 
 	// 得点アイテム取得時の処理
-	if (TreasureGet(player1.pos, player1.slot))
+	if(TreasureGet(player1.pos, player1.slot))
 	{
 		player1.slot++;
 	}
