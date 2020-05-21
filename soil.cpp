@@ -111,10 +111,10 @@ bool SoilCheckHit(XY dPos,int size,bool Bomb)
 		{
 			if (!soil[x][y].life == 0)
 			{
-				if (soil[x][y].pos.x + soil[x][y].sizeOffset.x < dPos.x + size
-					&& soil[x][y].pos.x + soil[x][y].sizeOffset.x > dPos.x - size
-					&& soil[x][y].pos.y + soil[x][y].sizeOffset.y   < dPos.y + size
-					&& soil[x][y].pos.y + soil[x][y].sizeOffset.x > dPos.y - size)
+				if (soil[x][y].pos.x < dPos.x + size
+					&& soil[x][y].pos.x + soil[x][y].size.x > dPos.x - size
+					&& soil[x][y].pos.y  < dPos.y + size
+					&& soil[x][y].pos.y + soil[x][y].size.y > dPos.y - size)
 				{
 					if (Bomb)
 					{

@@ -14,3 +14,6 @@ void PlayerGameDraw(void);
 void PlayerControl(void);
 
 void PlayerGameDraw(void);
+
+
+bool PlayerHitCheck(XY pos, int size);	// ƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è

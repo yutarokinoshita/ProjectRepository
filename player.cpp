@@ -26,7 +26,8 @@ int actTime;			// アクションを行う時間
 int stockDrillImage;	// 所持中のドリルの画像格納用
 int stockBombImage;		// 所持中の爆弾の画像格納用
 int stockCallImage;		// 所持中の通信機の画像格納用
-int selectImage[2];		// アイテム選択画面の格納用
+int selectImage[2];		// アイテム選択画面の画像格納用
+int damageImage[4];		// ダメージ時のプレイヤー画像格納用
 
 void PlayerSystemInit(void)
 {
@@ -37,6 +38,7 @@ void PlayerSystemInit(void)
 	stockBombImage = LoadGraph("image/BombIcon.png");
 	stockCallImage = LoadGraph("image/CallIcon.png");
 	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
+	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
 	player1.pos.x = 336;//112;
 	player1.pos.y = 336;//112;
 	player1.size.x = PLAYER_SIZE_X;
@@ -45,11 +47,12 @@ void PlayerSystemInit(void)
 	player1.sizeOffset.y = player1.size.y / 2;
 	player1.moveDir = DIR_DOWN;
 	player1.oldmoveDir = player1.moveDir;
-	player1.moveSpeed = 2;
+	player1.moveSpeed = PLAYER_DEF_SPEED;
+	player1.Flag = false;
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
-	player1.item = ITEM_DRILL;
+	player1.item = ITEM_BOMB;
 	player1.itemStock = 3;
 	turnFlag = false;
 	dashFlag = false;
@@ -102,9 +105,15 @@ void PlayerGameDraw(void)
 			break;
 		}
 	}
+
 	if (itemFlag)
 	{
 		DrawGraph(player1.pos.x - SELECT_SIZE_X / 2, -mapPos.y + player1.pos.y - SELECT_SIZE_Y/2, selectImage[player1.AnimCnt / 10 % 2], true);
+	}
+	else if (player1.Flag)
+	{
+		// ダメージ時に表示する処理
+		DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, damageImage[(player1.AnimCnt / 5) % 4], true);
 	}
 	else
 	{
@@ -131,6 +140,7 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 64, GetColor(255, 0, 0), "SLOT:%d", player1.slot);
 	DrawFormatString(0, 80, GetColor(255, 0, 0), "SCORE:%d", player1.score);
 	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
+	DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -436,4 +446,48 @@ void PlayerControl(void)
 		OllTreasure(player1.slot);
 		player1.slot = 0;
 	}
+	// テスト用
+	//if (keyDownTrigger[KEY_ID_SPACE])
+	//{
+	//	player1.Flag = true;
+	//}
+	if (CheckHitKey(KEY_INPUT_C))
+	{
+		player1.Flag = false;
+	}
+
+	//if (player1.Flag)
+	//{
+	//	if (player1.slot > 0)
+	//	{
+	//		player1.slot--;
+	//		
+	//	}
+	//}
+	//player1.Flag = false;
+}
+
+// プレイヤーの当たり判定
+bool PlayerHitCheck(XY pos, int size)
+{
+	//if (player1.pos.x - player1.sizeOffset.x<pos.x + size
+	//	&& player1.pos.x + player1.sizeOffset.x > pos.x - size
+	//	&& player1.pos.y - player1.sizeOffset.y <pos.y + size
+	//	&& player1.pos.y + player1.sizeOffset.y > pos.y - size
+	//	&& !player1.Flag)
+	if (player1.pos.x - player1.sizeOffset.x <pos.x + size
+		&& player1.pos.x + player1.sizeOffset.x > pos.x - size
+		&& player1.pos.y - player1.sizeOffset.y <pos.y + size
+		&& player1.pos.y + player1.sizeOffset.y > pos.y - size
+		&& !player1.Flag)
+	{
+		if (player1.slot > 0)
+		{
+			player1.slot--;
+			
+		}
+		player1.Flag = true;
+		return true;
+	}
+	return false;
 }

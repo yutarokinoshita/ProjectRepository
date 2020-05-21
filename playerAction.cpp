@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "main.h"
 #include "map.h"
+#include "player.h"
 #include "playerAction.h"
 #include "soil.h"
 
@@ -162,6 +163,7 @@ void ItemControl(void)
 			for (int hit = 0;hit <= 9;hit++)
 			{
 				SoilCheckHit(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X,true);
+				PlayerHitCheck(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
 				bomb.distance = 0;
 				bomb.Flag = false;
 			}
