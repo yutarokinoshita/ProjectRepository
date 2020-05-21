@@ -16,6 +16,7 @@ enum DIR {
 enum ITEM {
 	ITEM_DRILL,
 	ITEM_BOMB,
+	ITEM_CALL,
 	ITEM_MAX
 };
 

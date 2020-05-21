@@ -108,7 +108,7 @@ void ItemControl(void)
 		{
 			drill.life--;
 		}
-		// 画面外へ出たら消す
+		// 画面外へ出るか指定距離移動するか耐久値がなくなった場合消える
 		if (drill.pos.x > SCREEN_SIZE_X + drill.sizeOffset.x
 			|| drill.pos.y > SCREEN_SIZE_Y + drill.sizeOffset.y
 			|| drill.pos.x < 0
@@ -274,6 +274,9 @@ bool CheckItemStock(ITEM Item)
 		{
 			return true;
 		}
+		break;
+	case ITEM_CALL:
+		return true;
 		break;
 	case ITEM_MAX:
 		break;

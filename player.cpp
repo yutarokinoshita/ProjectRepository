@@ -20,6 +20,7 @@ int treasureGetImage;	// Œ»Ý‚ÌƒAƒCƒeƒ€Žæ“¾”•\Ž¦—p
 int actTime;			// ƒAƒNƒVƒ‡ƒ“‚ðs‚¤ŽžŠÔ
 int stockDrillImage;	// ŠŽ’†‚ÌƒhƒŠƒ‹‚Ì‰æ‘œŠi”[—p
 int stockBombImage;		// ŠŽ’†‚Ì”š’e‚Ì‰æ‘œŠi”[—p
+int stockCallImage;		// ŠŽ’†‚Ì’ÊM‹@‚Ì‰æ‘œŠi”[—p
 int selectImage[2];		// ƒAƒCƒeƒ€‘I‘ð‰æ–Ê‚ÌŠi”[—p
 
 void PlayerSystemInit(void)
@@ -29,6 +30,7 @@ void PlayerSystemInit(void)
 	treasureGetImage = LoadGraph("image/potato.png");
 	stockDrillImage = LoadGraph("image/DrillIcon.png");
 	stockBombImage = LoadGraph("image/BombIcon.png");
+	stockCallImage = LoadGraph("image/CallIcon.png");
 	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
 	player1.pos.x = 336;//112;
 	player1.pos.y = 336;//112;
@@ -42,7 +44,7 @@ void PlayerSystemInit(void)
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
-	player1.item = ITEM_DRILL;
+	player1.item = ITEM_CALL;
 	player1.itemStock = 3;
 	turnFlag = false;
 	dashFlag = false;
@@ -87,6 +89,9 @@ void PlayerGameDraw(void)
 			break;
 		case ITEM_BOMB:
 			DrawGraph(32 + 34 * Item, 32, stockBombImage, true);
+			break;
+		case ITEM_CALL:
+			DrawGraph(32 + 34 * Item, 32, stockCallImage, true);
 			break;
 		default:
 			break;
@@ -315,6 +320,13 @@ void PlayerControl(void)
 			player1.moveDir = DIR_DOWN;
 			itemFlag = false;
 		}
+		if (keyUpTrigger[KEY_ID_P1DOWN])
+		{
+			player1.item = ITEM_CALL;
+			player1.itemStock = 1;
+			player1.moveDir = DIR_DOWN;
+			itemFlag = false;
+		}
 	}
 
 	// Œ»Ý‚ÌŒü‚«‚ð‹L˜^
@@ -412,14 +424,23 @@ void PlayerControl(void)
 		{
 			if (CheckItemStock(player1.item))
 			{
-				//player1.itemStock--;
 				switch (player1.item)
 				{
 				case ITEM_DRILL:
 					CliateDrill(player1.pos, player1.moveDir);
+					player1.itemStock--;
 					break;
 				case ITEM_BOMB:
 					CliateBomb(player1.pos, player1.moveDir);
+					player1.itemStock--;
+					break;
+				case ITEM_CALL:
+					if (player1.slot > 0)
+					{
+						player1.slot--;
+						player1.score++;
+						player1.itemStock--;
+					}
 					break;
 				default:
 					break;
