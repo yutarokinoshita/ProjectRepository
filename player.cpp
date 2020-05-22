@@ -27,11 +27,13 @@ int actTime;			// アクションを行う時間
 int stockDrillImage;	// 所持中のドリルの画像格納用
 int stockBombImage;		// 所持中の爆弾の画像格納用
 int stockCallImage;		// 所持中の通信機の画像格納用
+int stockSearchImage;	// 所持中のレーダーアイテムの画像格納用
 int selectImage[2];		// アイテム選択画面の画像格納用
 int damageImage[4];		// ダメージ時のプレイヤー画像格納用
 int radarImage[4];		// レーダー画像格納用
 XY	playerDamagePos;	// プレイヤーがダメージを受けた地点の座標
 int radarSearch;		// アイテムまでの距離
+int SearchTime;			// レーダーアイテムの使用時間
 
 void PlayerSystemInit(void)
 {
@@ -41,6 +43,7 @@ void PlayerSystemInit(void)
 	stockDrillImage = LoadGraph("image/DrillIcon.png");
 	stockBombImage = LoadGraph("image/BombIcon.png");
 	stockCallImage = LoadGraph("image/CallIcon.png");
+	stockSearchImage = LoadGraph("image/SearchIcon.png");
 	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
 	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
 	LoadDivGraph("image/RadarIcon.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage, false);
@@ -69,6 +72,7 @@ void PlayerSystemInit(void)
 	actTime = 0;
 	playerDamagePos = player1.pos;
 	radarSearch = 0;
+	SearchTime = 0;
 }
 
 void PlayerGameDraw(void)
@@ -108,6 +112,9 @@ void PlayerGameDraw(void)
 			break;
 		case ITEM_CALL:
 			DrawGraph(32 + 34 * Item, 32, stockCallImage, true);
+			break;
+		case ITEM_RADAR:
+			DrawGraph(32 + 34 * Item, 32, stockSearchImage, true);
 			break;
 		default:
 			break;
@@ -152,6 +159,7 @@ void PlayerGameDraw(void)
 	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
 	DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
 	DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
+	DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -362,6 +370,13 @@ void PlayerControl(void)
 			player1.moveDir = DIR_DOWN;
 			itemFlag = false;
 		}
+		if (keyUpTrigger[KEY_ID_P1LEFT])
+		{
+			player1.item = ITEM_RADAR;
+			player1.itemStock = 1;
+			player1.moveDir = DIR_DOWN;
+			itemFlag = false;
+		}
 	}
 
 	// 現在の向きを記録
@@ -476,7 +491,9 @@ void PlayerControl(void)
 						player1.score++;
 						//player1.itemStock--;
 					}
+					break;
 				case ITEM_RADAR:
+					SearchTime = 60;
 					TreasureSearch(player1.pos);
 					break;
 				default:

@@ -4,7 +4,7 @@
 #define SCREEN_SIZE_X	800	// 画面サイズ横
 #define SCREEN_SIZE_Y	608	// 画面サイズ縦
 #define ACC_G			10	// 重力加速度	
-#define FRAME_TIME		0.3f	// 1フレームの時間
+#define FRAME_TIME		0.2f	// 1フレームの時間
 
 // 向き管理用
 enum DIR {
