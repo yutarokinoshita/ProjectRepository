@@ -79,8 +79,22 @@ void ItemControl(void)
 {
 	if (dig.Flag)
 	{
-		if (SoilCheckHit(dig.pos,dig.sizeOffset.x,false))
+		if (bomb.pos.x<dig.pos.x + dig.sizeOffset.x
+			&& bomb.pos.x>dig.pos.x - dig.sizeOffset.x
+			&& bomb.pos.y<dig.pos.y + dig.sizeOffset.y
+			&& bomb.pos.y>dig.pos.y - dig.sizeOffset.y
+			&& dig.Flag)
 		{
+			bomb.moveDir = dig.moveDir;
+			bomb.life -= BOMB_COUNT * 2 / 3;
+			bomb.distance = 32;
+		}
+		else
+		{
+			if (SoilCheckHit(dig.pos, dig.sizeOffset.x, false))
+			{
+
+			}
 		}
 	}
 
@@ -124,16 +138,16 @@ void ItemControl(void)
 	if (bomb.Flag)
 	{
 		bomb.life--;
-		if (bomb.pos.x<dig.pos.x + dig.sizeOffset.x
-			&& bomb.pos.x>dig.pos.x - dig.sizeOffset.x
-			&& bomb.pos.y<dig.pos.y + dig.sizeOffset.y
-			&& bomb.pos.y>dig.pos.y - dig.sizeOffset.y
-			&& dig.Flag)
-		{
-			bomb.moveDir = dig.moveDir;
-			bomb.life -= BOMB_COUNT * 2 / 3;
-			bomb.distance = 32;
-		}
+		//if (bomb.pos.x<dig.pos.x + dig.sizeOffset.x
+		//	&& bomb.pos.x>dig.pos.x - dig.sizeOffset.x
+		//	&& bomb.pos.y<dig.pos.y + dig.sizeOffset.y
+		//	&& bomb.pos.y>dig.pos.y - dig.sizeOffset.y
+		//	&& dig.Flag)
+		//{
+		//	bomb.moveDir = dig.moveDir;
+		//	bomb.life -= BOMB_COUNT * 2 / 3;
+		//	bomb.distance = 32;
+		//}
 		if (bomb.distance > 0 && bomb.life > 0)
 		{
 			switch (bomb.moveDir)

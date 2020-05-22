@@ -7,4 +7,4 @@ void TreasureEffectInit(void);
 void TreasureEffectDraw(void);
 void effectControl(void);
 //void TreasureMove(int slot);	// 得点アイテム取得時モーション
-void ItemEffect(XY Ipos);	// アイテムの上にエフェクトを表示する
+void ItemEffect(XY Ipos,int Inum,bool Iflag);	// アイテムの上にエフェクトを表示する

@@ -29,6 +29,8 @@ int stockBombImage;		// 所持中の爆弾の画像格納用
 int stockCallImage;		// 所持中の通信機の画像格納用
 int selectImage[2];		// アイテム選択画面の画像格納用
 int damageImage[4];		// ダメージ時のプレイヤー画像格納用
+XY	playerDamagePos;		// プレイヤーがダメージを受けた地点の座標
+int playerDamageDistance;	// プレイヤーがダメージを受けた時の残り移動距離
 
 void PlayerSystemInit(void)
 {
@@ -40,8 +42,7 @@ void PlayerSystemInit(void)
 	stockCallImage = LoadGraph("image/CallIcon.png");
 	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
 	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
-	player1.pos.x = 336;//112;
-	player1.pos.y = 336;//112;
+	player1.pos = { 112,112 };
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
 	player1.sizeOffset.x = player1.size.x / 2;
@@ -49,12 +50,14 @@ void PlayerSystemInit(void)
 	player1.moveDir = DIR_DOWN;
 	player1.oldmoveDir = player1.moveDir;
 	player1.moveSpeed = PLAYER_DEF_SPEED;
+	player1.distance = 0;
 	player1.Flag = false;
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
-	player1.item = ITEM_BOMB;
+	player1.item = ITEM_DRILL;
 	player1.itemStock = 3;
+	player1.velocity = { 0,0 };
 	turnFlag = false;
 	dashFlag = false;
 	digFlag = false;
@@ -62,6 +65,7 @@ void PlayerSystemInit(void)
 	runFlag = false;
 	itemFlag = false;
 	actTime = 0;
+	playerDamagePos = player1.pos;
 }
 
 void PlayerGameDraw(void)
@@ -169,7 +173,46 @@ void PlayerControl(void)
 
 	XY PlayerPosCopy = player1.pos;
 
-	if (!moveFlag)
+	if (player1.Flag)
+	{
+		// 速度の変更
+		player1.velocity.y -= ACC_G * FRAME_TIME;
+		// 移動距離の追加
+		player1.pos.y -= player1.velocity.y * FRAME_TIME;
+		if (playerDamagePos.y < player1.pos.y)
+		{
+			player1.pos = playerDamagePos;
+			if (moveFlag)
+			{
+				switch (player1.moveDir)
+				{
+				case DIR_DOWN:
+					player1.pos.y += 2;
+					break;
+				case DIR_RIGHT:
+					player1.pos.x += 2;
+					break;
+				case DIR_UP:
+					player1.pos.y -= 2;
+					break;
+				case DIR_LEFT:
+					player1.pos.y -= 2;
+					break;
+				default:
+					break;
+				}
+			}
+			player1.Flag = false;
+		}
+	}
+	else
+	{
+		playerDamagePos = player1.pos;
+		playerDamageDistance = player1.distance;
+	}
+
+	// プレイヤーが移動方向を向いていない場合は方向転換を行い向いている場合は移動を行う
+	if (!moveFlag && !player1.Flag)
 	{
 		if (keyDownTrigger[KEY_ID_P1DOWN])
 		{
@@ -242,7 +285,8 @@ void PlayerControl(void)
 		}
 	}
 
-	if (moveFlag && player1.distance > 0)
+	// プレイヤーの移動処理
+	if (moveFlag && player1.distance > 0 && !player1.Flag)
 	{
 		//player1.distance = PLAYER_DISTANCE;
 		switch (player1.moveDir)
@@ -283,7 +327,7 @@ void PlayerControl(void)
 	}
 
 	// 一定座標でアイテムボタンを押した場合
-	if (player1.pos.y < 144 && player1.distance == 0 && keyDownTrigger[KEY_ID_PLAYER_ITEM])
+	if (player1.pos.y < 144 && player1.distance == 0 && keyDownTrigger[KEY_ID_PLAYER_ITEM] && !player1.Flag)
 	{
 		itemFlag = true;
 	}
@@ -396,14 +440,14 @@ void PlayerControl(void)
 	}
 
 	// 穴掘りアクション
-	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag)
+	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag && !player1.Flag)
 	{
 		CliateDig(player1.pos, player1.moveDir);
 		actTime = 10;
 	}
 
 	// アイテム使用
-	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag && !itemFlag)
+	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag && !itemFlag && !player1.Flag)
 	{
 		if (player1.itemStock > 0)
 		{
@@ -435,9 +479,12 @@ void PlayerControl(void)
 	}
 
 	// 得点アイテム取得時の処理
-	if(TreasureGet(player1.pos, player1.slot))
+	if (!player1.Flag)
 	{
-		player1.slot++;
+		if (TreasureGet(player1.pos, player1.slot))
+		{
+			player1.slot++;
+		}
 	}
 
 	// 得点アイテムの回収処理
@@ -448,10 +495,11 @@ void PlayerControl(void)
 		player1.slot = 0;
 	}
 	// テスト用
-	//if (keyDownTrigger[KEY_ID_SPACE])
-	//{
-	//	player1.Flag = true;
-	//}
+	if (keyDownTrigger[KEY_ID_SPACE])
+	{
+		player1.Flag = true;
+		player1.velocity.y = INIT_VELOCITY;
+	}
 	if (CheckHitKey(KEY_INPUT_C))
 	{
 		player1.Flag = false;
@@ -482,7 +530,8 @@ bool PlayerHitCheck(XY pos, int size)
 		&& player1.pos.x + player1.sizeOffset.x > pos.x - size
 		&& player1.pos.y - player1.sizeOffset.y <pos.y + size
 		&& player1.pos.y + player1.sizeOffset.y > pos.y - size
-		&& !player1.Flag)
+		&& !player1.Flag
+		&& !itemFlag)
 	{
 		if (player1.slot > 0)
 		{
@@ -490,6 +539,7 @@ bool PlayerHitCheck(XY pos, int size)
 			
 		}
 		player1.Flag = true;
+		player1.velocity.y = INIT_VELOCITY;
 		return true;
 	}
 	return false;

@@ -6,7 +6,7 @@
 
 CHARACTER treasure[TREASURE_MAX];
 int treasureImage;
-bool treasureFlag;
+//bool treasureFlag;
 int treasureReset;		// アイテムが残っているかの把握用
 
 // アイテム初期化処理
@@ -23,7 +23,6 @@ void TreasureInit(void)
 		treasure[x].sizeOffset.y = TREASURE_SIZE_Y / 2;
 		treasure[x].Flag = false;
 		treasure[x].moveSpeed = 0;
-		treasureFlag = false;
 		treasureReset = 0;
 	}
 }
@@ -76,10 +75,10 @@ void TreasureSearch(void)
 {
 	for (int x = 0;x < TREASURE_MAX;x++)
 	{
-		if (!treasure[x].Flag)
-		{
-			ItemEffect(treasure[x].pos);
-			break;
-		}
+		//if (!treasure[x].Flag)
+		//{
+		ItemEffect(treasure[x].pos,x,treasure[x].Flag);
+			//break;
+		//}
 	}
 }

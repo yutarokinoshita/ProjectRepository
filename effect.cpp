@@ -40,13 +40,14 @@ void effectControl(void)
 }
 
 // アイテムの上にエフェクトを表示する
-void ItemEffect(XY Ipos)
+void ItemEffect(XY Ipos,int Inum,bool Iflag)
 {
-	for (int ef = 0;ef < TREASURE_MAX;ef++)
-	{
-		effect[ef].pos = Ipos;
-		break;
-	}
+	//for (int ef = 0;ef < TREASURE_MAX;ef++)
+	//{
+		effect[Inum].pos = Ipos;
+		effect[Inum].Flag = Iflag;
+	//	break;
+	//}
 }
 
 // 仮の処理　必要なければ消去可
