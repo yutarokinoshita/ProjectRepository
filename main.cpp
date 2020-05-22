@@ -10,7 +10,7 @@
 #include "playerAction.h"
 #include "treasure.h"
 #include "soil.h"
-//#include "effect.h"
+#include "effect.h"
 
 // ïœêî
 int gameCounter;
@@ -40,7 +40,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	ItemSystemInit();
 	TreasureInit();
 	soilSystemInit();
-	//TreasureEffectInit();
+	TreasureEffectInit();
 
 	// πﬁ∞—Ÿ∞Ãﬂ
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
@@ -65,13 +65,13 @@ void InitScene(void)
 
 void GameDraw(void)
 {
-	DrawFormatString(0, 0,GetColor(255, 255, 255), "GameCounter = %d", gameCounter);
+	//DrawFormatString(0, 0,GetColor(255, 255, 255), "GameCounter = %d", gameCounter);
 
 
 	StageDrawInit();
 	soilDrawInit();
 	TreasureDraw();
-	//TreasureEffectDraw();
+	TreasureEffectDraw();
 	ItemDrawInit();
 	PlayerGameDraw();
 	DrawFormatString(500, 0, GetColor(255, 255, 255), "%d,%d", mapPos.x,mapPos.y);

@@ -26,6 +26,12 @@ struct XY{
 	int y;
 };
 
+// 構造体(float)
+struct XY_F {
+	float x;
+	float y;
+};
+
 // キャラクタ構造体
 struct CHARACTER {
 	DIR moveDir;		// キャラクタの向き
@@ -40,9 +46,10 @@ struct CHARACTER {
 	int AnimCnt;		// キャラクタのアニメーション
 	int slot;			// キャラクタの得点アイテム保持数
 	int score;			// キャラクタのスコア
-	XY effectMoveSpeed;	// キャラクタの特殊な移動
 	ITEM item;			// キャラクタの所持アイテム
 	int itemStock;		// キャラクタのアイテム所持数
+
+	XY_F velocity;		// キャラクタの速度
 };
 
 extern XY mapPos;			// マップ座標

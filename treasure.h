@@ -8,3 +8,4 @@ void TreasureInit(void);
 void TreasureDraw(void);
 bool TreasureGet(XY pPos, int slot);
 void OllTreasure(int slot);
+void TreasureSearch(void);	// レーダー用の処理

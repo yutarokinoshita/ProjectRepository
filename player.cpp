@@ -10,7 +10,8 @@
 
 #define PLAYER_DEF_SPEED	2	// プレイヤーの初期速度
 #define PLAYER_DASH_SPEED	4	// プレイヤーの走行中速度
-#define SLOT_MAX 3				// アイテム最大所持数
+#define SLOT_MAX			3	// アイテム最大所持数
+#define INIT_VELOCITY		40.0f	// リアクション跳躍の初速度
 
 CHARACTER player1;		//プレイヤー１の構造体
 int playerImage[16];	// プレイヤーの画像格納用
@@ -455,6 +456,8 @@ void PlayerControl(void)
 	{
 		player1.Flag = false;
 	}
+
+	TreasureSearch();
 
 	//if (player1.Flag)
 	//{

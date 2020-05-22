@@ -70,3 +70,16 @@ void OllTreasure(int slot)
 {
 	treasureReset += slot;
 }
+
+// レーダー用の処理
+void TreasureSearch(void)
+{
+	for (int x = 0;x < TREASURE_MAX;x++)
+	{
+		if (!treasure[x].Flag)
+		{
+			ItemEffect(treasure[x].pos);
+			break;
+		}
+	}
+}

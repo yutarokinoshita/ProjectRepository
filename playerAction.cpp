@@ -105,7 +105,7 @@ void ItemControl(void)
 		default:
 			break;
 		}
-		if (SoilCheckHit(drill.pos,drill.sizeOffset.x,false))
+		if (SoilCheckHit(drill.pos,drill.sizeOffset.x,false)||PlayerHitCheck(drill.pos, drill.sizeOffset.x))
 		{
 			drill.life--;
 		}
@@ -169,6 +169,7 @@ void ItemControl(void)
 			}
 		}
 	}
+	
 	dig.Flag = false;
 }
 
