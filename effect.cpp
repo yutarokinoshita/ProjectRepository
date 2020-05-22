@@ -18,7 +18,7 @@ void TreasureEffectInit(void)
 		effect[ef].size.y = EFFECT_SIZE_Y;
 		effect[ef].sizeOffset.x = EFFECT_SIZE_X / 2;
 		effect[ef].sizeOffset.y = EFFECT_SIZE_Y / 2;
-		effect[ef].Flag = false;
+		effect[ef].Flag = true;
 		effect[ef].AnimCnt = 0;
 	}
 }

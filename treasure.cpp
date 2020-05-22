@@ -70,15 +70,80 @@ void OllTreasure(int slot)
 	treasureReset += slot;
 }
 
-// レーダー用の処理
-void TreasureSearch(void)
+// アイテムレーダー用の処理
+void TreasureSearch(XY pPos)
 {
+	int TreX;
+	int TreY;
+	int TreXY;
 	for (int x = 0;x < TREASURE_MAX;x++)
 	{
-		//if (!treasure[x].Flag)
-		//{
-		ItemEffect(treasure[x].pos,x,treasure[x].Flag);
-			//break;
-		//}
+		if (pPos.x > treasure[x].pos.x)
+		{
+			TreX = (pPos.x - treasure[x].pos.x) / 32;
+		}
+		else
+		{
+			TreX = (treasure[x].pos.x - pPos.x) / 32;
+		}
+		if (pPos.y > treasure[x].pos.y)
+		{
+			TreY = (pPos.y - treasure[x].pos.y) / 32;
+		}
+		else
+		{
+			TreY = (treasure[x].pos.y - pPos.y) / 32;
+		}
+		TreXY = TreX + TreY;
+		if (TreXY <= 6)
+		{
+			ItemEffect(treasure[x].pos, x, treasure[x].Flag);
+		}
 	}
+}
+
+// プレイヤー周辺の探索処理
+int TreasureDistance(XY pPos)
+{
+	int TreX;
+	int TreY;
+	int TreXY;
+	int TreMin = 4;
+
+	for (int x = 0;x < TREASURE_MAX;x++)
+	{
+		if (!treasure[x].Flag)
+		{
+			if (pPos.x > treasure[x].pos.x)
+			{
+				TreX = (pPos.x - treasure[x].pos.x) / 32;
+			}
+			else
+			{
+				TreX = (treasure[x].pos.x - pPos.x) / 32;
+			}
+			if (pPos.y > treasure[x].pos.y)
+			{
+				TreY = (pPos.y - treasure[x].pos.y) / 32;
+			}
+			else
+			{
+				TreY = (treasure[x].pos.y - pPos.y) / 32;
+			}
+			TreXY = TreX + TreY;
+			if (TreXY < TreMin)
+			{
+				TreMin = TreXY;
+				if (TreMin <= 0)
+				{
+					TreMin = 1;
+				}
+			}
+		}
+		else
+		{
+			TreXY=4;
+		}
+	}
+	return TreMin;
 }

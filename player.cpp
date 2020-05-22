@@ -29,8 +29,9 @@ int stockBombImage;		// 所持中の爆弾の画像格納用
 int stockCallImage;		// 所持中の通信機の画像格納用
 int selectImage[2];		// アイテム選択画面の画像格納用
 int damageImage[4];		// ダメージ時のプレイヤー画像格納用
-XY	playerDamagePos;		// プレイヤーがダメージを受けた地点の座標
-int playerDamageDistance;	// プレイヤーがダメージを受けた時の残り移動距離
+int radarImage[4];		// レーダー画像格納用
+XY	playerDamagePos;	// プレイヤーがダメージを受けた地点の座標
+int radarSearch;		// アイテムまでの距離
 
 void PlayerSystemInit(void)
 {
@@ -42,6 +43,7 @@ void PlayerSystemInit(void)
 	stockCallImage = LoadGraph("image/CallIcon.png");
 	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
 	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
+	LoadDivGraph("image/RadarIcon.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage, false);
 	player1.pos = { 112,112 };
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
@@ -55,7 +57,7 @@ void PlayerSystemInit(void)
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
-	player1.item = ITEM_DRILL;
+	player1.item = ITEM_RADAR;
 	player1.itemStock = 3;
 	player1.velocity = { 0,0 };
 	turnFlag = false;
@@ -66,6 +68,7 @@ void PlayerSystemInit(void)
 	itemFlag = false;
 	actTime = 0;
 	playerDamagePos = player1.pos;
+	radarSearch = 0;
 }
 
 void PlayerGameDraw(void)
@@ -139,6 +142,8 @@ void PlayerGameDraw(void)
 			}
 		}
 	}
+
+	DrawGraph(144, 32, radarImage[radarSearch], true);
 	DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
 	DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
 	DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
@@ -146,6 +151,7 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 80, GetColor(255, 0, 0), "SCORE:%d", player1.score);
 	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
 	DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
+	DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -182,6 +188,7 @@ void PlayerControl(void)
 		if (playerDamagePos.y < player1.pos.y)
 		{
 			player1.pos = playerDamagePos;
+			// 移動中にダメージを受けた際に微妙にずれる座標を調整
 			if (moveFlag)
 			{
 				switch (player1.moveDir)
@@ -208,7 +215,6 @@ void PlayerControl(void)
 	else
 	{
 		playerDamagePos = player1.pos;
-		playerDamageDistance = player1.distance;
 	}
 
 	// プレイヤーが移動方向を向いていない場合は方向転換を行い向いている場合は移動を行う
@@ -470,6 +476,8 @@ void PlayerControl(void)
 						player1.score++;
 						//player1.itemStock--;
 					}
+				case ITEM_RADAR:
+					TreasureSearch(player1.pos);
 					break;
 				default:
 					break;
@@ -494,6 +502,20 @@ void PlayerControl(void)
 		OllTreasure(player1.slot);
 		player1.slot = 0;
 	}
+
+	//	 レーダー処理
+	if ((player1.pos.x - 16) % 32 == 0 && (player1.pos.y - 16) % 32 == 0 && !player1.Flag)
+	{
+		if (TreasureDistance(player1.pos) < 4)
+		{
+			radarSearch = TreasureDistance(player1.pos);
+		}
+		else
+		{
+			radarSearch = 0;
+		}
+	}
+
 	// テスト用
 	if (keyDownTrigger[KEY_ID_SPACE])
 	{
@@ -505,7 +527,6 @@ void PlayerControl(void)
 		player1.Flag = false;
 	}
 
-	TreasureSearch();
 
 	//if (player1.Flag)
 	//{
