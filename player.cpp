@@ -17,7 +17,6 @@ CHARACTER player1;		//プレイヤー１の構造体
 int playerImage[16];	// プレイヤーの画像格納用
 int playerAct[4];		// プレイヤーのアクションの画像格納用
 bool turnFlag;			// 振り向き制御用
-bool dashFlag;			// ダッシュを始めるまで
 bool digFlag;			// 採掘可能か否か
 bool moveFlag;			// 移動可能か否か
 bool runFlag;			// 移動中か否か
@@ -32,21 +31,22 @@ int selectImage[2];		// アイテム選択画面の画像格納用
 int damageImage[4];		// ダメージ時のプレイヤー画像格納用
 int radarImage[4];		// レーダー画像格納用
 XY	playerDamagePos;	// プレイヤーがダメージを受けた地点の座標
+int DamageSpeed;		// ダメージを受けた際の移動速度
 int radarSearch;		// アイテムまでの距離
 int SearchTime;			// レーダーアイテムの使用時間
 
 void PlayerSystemInit(void)
 {
-	LoadDivGraph("image/moleOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
-	LoadDivGraph("image/digAction.png", 4, 1, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerAct, false);
+	LoadDivGraph("image/ratOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
+	LoadDivGraph("image/ratdigAction.png", 4, 1, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerAct, false);
 	treasureGetImage = LoadGraph("image/potato.png");
 	stockDrillImage = LoadGraph("image/DrillIcon.png");
 	stockBombImage = LoadGraph("image/BombIcon.png");
 	stockCallImage = LoadGraph("image/CallIcon.png");
 	stockSearchImage = LoadGraph("image/SearchIcon.png");
-	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
-	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
-	LoadDivGraph("image/RadarIcon.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage, false);
+	LoadDivGraph("image/ItemSelect2.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
+	LoadDivGraph("image/ratDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
+	LoadDivGraph("image/RadarIcon2.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage, false);
 	player1.pos = { 112,112 };
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
@@ -60,11 +60,11 @@ void PlayerSystemInit(void)
 	player1.AnimCnt = 0;
 	player1.slot = 0;
 	player1.score = 0;
-	player1.item = ITEM_RADAR;
+	player1.item = ITEM_DRILL;
 	player1.itemStock = 3;
 	player1.velocity = { 0,0 };
+	DamageSpeed = 0;
 	turnFlag = false;
-	dashFlag = false;
 	digFlag = false;
 	moveFlag = false;
 	runFlag = false;
@@ -160,6 +160,8 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
 	DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
 	DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime);
+	DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player1.moveSpeed);
+	DrawFormatString(0, 202, GetColor(0, 255, 0), "DSpeed:%d", DamageSpeed);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -187,6 +189,7 @@ void PlayerControl(void)
 
 	XY PlayerPosCopy = player1.pos;
 
+	// ダメージリアクション
 	if (player1.Flag)
 	{
 		// 速度の変更
@@ -199,23 +202,35 @@ void PlayerControl(void)
 			// 移動中にダメージを受けた際に微妙にずれる座標を調整
 			if (moveFlag)
 			{
+				//if (player1.moveDir == DIR_DOWN || player1.moveDir == DIR_RIGHT)
+				//{
+				//	player1.pos.x += (player1.pos.x + player1.sizeOffset.x) % 32;
+				//	player1.pos.y += (player1.pos.y + player1.sizeOffset.y) % 32;
+				//}
+				//if (player1.moveDir == DIR_UP || player1.moveDir == DIR_LEFT)
+				//{
+				//	player1.pos.x -= (player1.pos.x + player1.sizeOffset.x) % 32;
+				//	player1.pos.y -= (player1.pos.y + player1.sizeOffset.y) % 32;
+				//}
 				switch (player1.moveDir)
 				{
 				case DIR_DOWN:
-					player1.pos.y += 2;
+					player1.pos.y += player1.distance + DamageSpeed;
 					break;
 				case DIR_RIGHT:
-					player1.pos.x += 2;
+					player1.pos.x += player1.distance + DamageSpeed;
 					break;
 				case DIR_UP:
-					player1.pos.y -= 2;
+					player1.pos.y -= player1.distance + DamageSpeed;
 					break;
 				case DIR_LEFT:
-					player1.pos.y -= 2;
+					player1.pos.x -= player1.distance + DamageSpeed;
 					break;
 				default:
 					break;
 				}
+				player1.distance = 0;
+				moveFlag = false;
 			}
 			player1.Flag = false;
 		}
@@ -300,6 +315,7 @@ void PlayerControl(void)
 	}
 
 	// プレイヤーの移動処理
+
 	if (moveFlag && player1.distance > 0 && !player1.Flag)
 	{
 		//player1.distance = PLAYER_DISTANCE;
@@ -539,14 +555,19 @@ void PlayerControl(void)
 		TreasureSearch(player1.pos, SearchTime);
 	}
 	// テスト用
-	if (keyDownTrigger[KEY_ID_SPACE])
+	if (keyDownTrigger[KEY_ID_SPACE] && !player1.Flag)
 	{
 		player1.Flag = true;
 		player1.velocity.y = INIT_VELOCITY;
+		DamageSpeed = player1.moveSpeed;
 	}
 	if (CheckHitKey(KEY_INPUT_C))
 	{
 		player1.Flag = false;
+	}
+	if (CheckHitKey(KEY_INPUT_B))
+	{
+		player1.moveSpeed = 0;
 	}
 
 
@@ -583,6 +604,7 @@ bool PlayerHitCheck(XY pos, int size)
 		}
 		player1.Flag = true;
 		player1.velocity.y = INIT_VELOCITY;
+		DamageSpeed = player1.moveSpeed;
 		return true;
 	}
 	return false;
