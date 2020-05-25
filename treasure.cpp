@@ -71,22 +71,23 @@ void OllTreasure(int slot)
 }
 
 // アイテムレーダー用の処理
-void TreasureSearch(XY pPos)
+void TreasureSearch(XY pPos,int Time)
 {
 	int TreX;
 	int TreY;
 	int TreXY;
+
 	for (int x = 0;x < TREASURE_MAX;x++)
 	{
 		if (pPos.x > treasure[x].pos.x)
 		{
-			TreX = (pPos.x - treasure[x].pos.x) / 32;
+				TreX = (pPos.x - treasure[x].pos.x) / 32;
 		}
 		else
 		{
 			TreX = (treasure[x].pos.x - pPos.x) / 32;
 		}
-		if (pPos.y > treasure[x].pos.y)
+			if (pPos.y > treasure[x].pos.y)
 		{
 			TreY = (pPos.y - treasure[x].pos.y) / 32;
 		}
@@ -98,6 +99,10 @@ void TreasureSearch(XY pPos)
 		if (TreXY <= 6)
 		{
 			ItemEffect(treasure[x].pos, x, treasure[x].Flag);
+		}
+		if (Time <= 0)
+		{
+			ItemEffect(treasure[x].pos, x, true);
 		}
 	}
 }

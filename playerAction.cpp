@@ -295,6 +295,8 @@ bool CheckItemStock(ITEM Item)
 	case ITEM_CALL:
 		return true;
 		break;
+	case ITEM_RADAR:
+		return true;
 	case ITEM_MAX:
 		break;
 	default:

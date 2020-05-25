@@ -494,7 +494,7 @@ void PlayerControl(void)
 					break;
 				case ITEM_RADAR:
 					SearchTime = 60;
-					TreasureSearch(player1.pos);
+					//TreasureSearch(player1.pos,60);
 					break;
 				default:
 					break;
@@ -533,6 +533,11 @@ void PlayerControl(void)
 		}
 	}
 
+	if (SearchTime >= 0)
+	{
+		SearchTime--;
+		TreasureSearch(player1.pos, SearchTime);
+	}
 	// テスト用
 	if (keyDownTrigger[KEY_ID_SPACE])
 	{
