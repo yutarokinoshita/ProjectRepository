@@ -6,7 +6,6 @@
 #define SELECT_SIZE_Y 96		// アイテム補充画面縦サイズ
 
 #define PLAYER_DISTANCE 32		// 一度の入力で移動する距離
-#define DASH_START	16			// ダッシュを始めるまでの時間
 
 void PlayerSystemInit(void);
 

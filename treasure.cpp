@@ -15,7 +15,7 @@ void TreasureInit(void)
 	treasureImage = LoadGraph("image/potato.png");
 	for (int x = 0;x < TREASURE_MAX;x++)
 	{	
-		treasure[x].pos.x = 16 + TREASURE_SIZE_X * GetRand(25);
+		treasure[x].pos.x = 16 + TREASURE_SIZE_X * GetRand(24);
 		treasure[x].pos.y = 144 + TREASURE_SIZE_Y * GetRand(13);
 		treasure[x].size.x = TREASURE_SIZE_X;
 		treasure[x].size.y = TREASURE_SIZE_Y;
@@ -46,10 +46,11 @@ bool TreasureGet(XY pPos,int slot)
 	{
 		if (!treasure[x].Flag)//if (!treasureFlag)
 		{
-			if (treasure[x].pos.x - treasure[x].sizeOffset.x < pPos.x
-				&& treasure[x].pos.x + treasure[x].sizeOffset.x > pPos.x
-				&& treasure[x].pos.y - treasure[x].sizeOffset.y  < pPos.y
-				&& treasure[x].pos.y + treasure[x].sizeOffset.y  > pPos.y)
+			//if (treasure[x].pos.x - treasure[x].sizeOffset.x < pPos.x
+			//	&& treasure[x].pos.x + treasure[x].sizeOffset.x > pPos.x
+			//	&& treasure[x].pos.y - treasure[x].sizeOffset.y  < pPos.y
+			//	&& treasure[x].pos.y + treasure[x].sizeOffset.y  > pPos.y)
+			if (treasure[x].pos.x == pPos.x && treasure[x].pos.y == pPos.y)
 			{
 				if (slot <= 2)
 				{
@@ -151,4 +152,38 @@ int TreasureDistance(XY pPos)
 		}
 	}
 	return TreMin;
+}
+
+// CPU用得点アイテムの縦位置を探る処理
+bool TreasureYsearch(XY Pos)
+{
+	for (int x = 0;x < TREASURE_MAX;x++)
+	{
+		if (!treasure[x].Flag)
+		{
+			if (Pos.y == treasure[x].pos.y)
+			{
+				if ((Pos.x - treasure[x].pos.x) / 32 <= 6 && (Pos.x - treasure[x].pos.x) / 32 >= -6)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+// 得点アイテムの横位置を探り移動する
+int TreasureXsearch(XY Pos)
+{
+	int treX;
+	for (int x = 0;x < TREASURE_MAX;x++)
+	{
+		if (!treasure[x].Flag && treasure[x].pos.y == Pos.y)
+		{
+			treX = Pos.x - treasure[x].pos.x;
+			return treX;
+		}
+	}
+	return 0;
 }

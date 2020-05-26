@@ -29,12 +29,12 @@ void keyCheck(void)
 
 	// 現在のキー情報を取得する
 	keyNew[KEY_ID_SPACE] = CheckHitKey(KEY_INPUT_SPACE);
-	keyNew[KEY_ID_P1DOWN] = CheckHitKey(KEY_INPUT_S);
-	keyNew[KEY_ID_P1RIGHT] = CheckHitKey(KEY_INPUT_D);
-	keyNew[KEY_ID_P1UP] = CheckHitKey(KEY_INPUT_W);
-	keyNew[KEY_ID_P1LEFT] = CheckHitKey(KEY_INPUT_A);
-	keyNew[KEY_ID_PLAYER_ACTION] = CheckHitKey(KEY_INPUT_Z);
-	keyNew[KEY_ID_PLAYER_ITEM] = CheckHitKey(KEY_INPUT_LCONTROL);
+	keyNew[KEY_ID_P1DOWN] = CheckHitKey(KEY_INPUT_DOWN);
+	keyNew[KEY_ID_P1RIGHT] = CheckHitKey(KEY_INPUT_RIGHT);
+	keyNew[KEY_ID_P1UP] = CheckHitKey(KEY_INPUT_UP);
+	keyNew[KEY_ID_P1LEFT] = CheckHitKey(KEY_INPUT_LEFT);
+	keyNew[KEY_ID_P1_ACTION] = CheckHitKey(KEY_INPUT_Z);
+	keyNew[KEY_ID_P1_ITEM] = CheckHitKey(KEY_INPUT_LCONTROL);
 	
 	// トリガー情報の取得
 	for (int keyID = 0;keyID < KEY_ID_MAX;keyID++)

@@ -6,6 +6,7 @@
 #include "main.h"
 #include "map.h"
 #include "player.h"
+#include "player2.h"
 #include "keycheck.h"
 #include "playerAction.h"
 #include "treasure.h"
@@ -36,6 +37,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	gameCounter = 0;
 	StageInit();
 	PlayerSystemInit();
+	PlayerSystemInit2();
 	keyInit();
 	ItemSystemInit();
 	TreasureInit();
@@ -69,27 +71,29 @@ void GameDraw(void)
 
 
 	StageDrawInit();
-	TreasureDraw();
 	soilDrawInit();
+	TreasureDraw();
 	TreasureEffectDraw();
 	ItemDrawInit();
 	PlayerGameDraw();
+	PlayerGameDraw2();
 	DrawFormatString(500, 0, GetColor(255, 255, 255), "%d,%d", mapPos.x,mapPos.y);
 }
 void GameMain(void)
 {
 	GameDraw();
 	PlayerControl();
+	PlayerControl2();
 	ItemControl();
 	//effectControl();
 
 	// デバッグ用　後で消してよし
-	if (CheckHitKey(KEY_INPUT_UP))
-	{
-		mapPos.y++;
-	}
-	if (CheckHitKey(KEY_INPUT_DOWN))
-	{
-		mapPos.y--;
-	}
+	//if (CheckHitKey(KEY_INPUT_UP))
+	//{
+	//	mapPos.y++;
+	//}
+	//if (CheckHitKey(KEY_INPUT_DOWN))
+	//{
+	//	mapPos.y--;
+	//}
 }

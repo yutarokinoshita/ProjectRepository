@@ -2,6 +2,7 @@
 #include "main.h"
 #include "map.h"
 #include "player.h"
+#include "player2.h"
 #include "playerAction.h"
 #include "soil.h"
 
@@ -119,7 +120,7 @@ void ItemControl(void)
 		default:
 			break;
 		}
-		if (SoilCheckHit(drill.pos,drill.sizeOffset.x,false)||PlayerHitCheck(drill.pos, drill.sizeOffset.x))
+		if (SoilCheckHit(drill.pos, drill.sizeOffset.x, false) || PlayerHitCheck(drill.pos, drill.sizeOffset.x) || PlayerHitCheck2(drill.pos, drill.sizeOffset.x))
 		{
 			drill.life--;
 		}
@@ -178,6 +179,7 @@ void ItemControl(void)
 			{
 				SoilCheckHit(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X,true);
 				PlayerHitCheck(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
+				PlayerHitCheck2(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
 				bomb.distance = 0;
 				bomb.Flag = false;
 			}

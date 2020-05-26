@@ -157,3 +157,22 @@ bool SoilIsPass(XY pPos)
 	}
 	return false;
 }
+
+// プレイヤー２地形通過判定
+bool SoilIsPass2(XY pPos)
+{
+	for (int x = 0;x < MAP_SIZE_X;x++)
+	{
+		for (int y = 0;y < MAP_SIZE_Y;y++)
+		{
+			if (pPos.y==soil[x][y].pos.y+soil[x][y].sizeOffset.y&& pPos.x == soil[x][y].pos.x + soil[x][y].sizeOffset.x)
+			{
+				if (soil[x][y].life == 0)
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}

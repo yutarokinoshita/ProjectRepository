@@ -37,16 +37,16 @@ int SearchTime;			// レーダーアイテムの使用時間
 
 void PlayerSystemInit(void)
 {
-	LoadDivGraph("image/ratOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
-	LoadDivGraph("image/ratdigAction.png", 4, 1, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerAct, false);
+	LoadDivGraph("image/moleOll.png", 16, 4, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerImage, false);
+	LoadDivGraph("image/digAction.png", 4, 1, 4, PLAYER_SIZE_X, PLAYER_SIZE_Y, playerAct, false);
 	treasureGetImage = LoadGraph("image/potato.png");
 	stockDrillImage = LoadGraph("image/DrillIcon.png");
 	stockBombImage = LoadGraph("image/BombIcon.png");
 	stockCallImage = LoadGraph("image/CallIcon.png");
 	stockSearchImage = LoadGraph("image/SearchIcon.png");
-	LoadDivGraph("image/ItemSelect2.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
-	LoadDivGraph("image/ratDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
-	LoadDivGraph("image/RadarIcon2.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage, false);
+	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
+	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
+	LoadDivGraph("image/RadarIcon.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage, false);
 	player1.pos = { 112,112 };
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
@@ -161,7 +161,7 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
 	DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime);
 	DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player1.moveSpeed);
-	DrawFormatString(0, 202, GetColor(0, 255, 0), "DSpeed:%d", DamageSpeed);
+	//DrawFormatString(0, 202, GetColor(0, 255, 0), "DSpeed:%d", DamageSpeed);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
 		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -357,7 +357,7 @@ void PlayerControl(void)
 	}
 
 	// 一定座標でアイテムボタンを押した場合
-	if (player1.pos.y < 144 && player1.distance == 0 && keyDownTrigger[KEY_ID_PLAYER_ITEM] && !player1.Flag)
+	if (player1.pos.y < 144 && player1.distance == 0 && keyDownTrigger[KEY_ID_P1_ITEM] && !player1.Flag)
 	{
 		itemFlag = true;
 	}
@@ -477,14 +477,14 @@ void PlayerControl(void)
 	}
 
 	// 穴掘りアクション
-	if (keyDownTrigger[KEY_ID_PLAYER_ACTION] && digFlag && !player1.Flag)
+	if (keyDownTrigger[KEY_ID_P1_ACTION] && digFlag && !player1.Flag)
 	{
 		CliateDig(player1.pos, player1.moveDir);
 		actTime = 10;
 	}
 
 	// アイテム使用
-	if (keyDownTrigger[KEY_ID_PLAYER_ITEM] && digFlag && !itemFlag && !player1.Flag)
+	if (keyDownTrigger[KEY_ID_P1_ITEM] && digFlag && !itemFlag && !player1.Flag)
 	{
 		if (player1.itemStock > 0)
 		{
