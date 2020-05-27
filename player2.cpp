@@ -11,10 +11,12 @@
 #define PLAYER_DEF_SPEED	4		// プレイヤー2の初期速度
 #define PLAYER_DASH_SPEED	4		// プレイヤー2の走行中速度
 #define SLOT_MAX			3		// プレイヤー2のアイテム最大所持数
-#define INIT_VELOCITY		40.0f	// プレイヤー2のリアクション跳躍の初速度
+#define INIT_VELOCITY		30.0f	// プレイヤー2のリアクション跳躍の初速度
+#define ACT_SPEED			30		// プレイヤー2の採掘速度
 
-CHARACTER player2;		//プレイヤー１の構造体
-int player2Image[16];	// プレイヤーの画像格納用
+CHARACTER player2;		//プレイヤー２の構造体
+int player2Image[16];	// プレイヤー２の画像格納用
+int player2Act[4];		// プレイヤー２のアクションの画像格納用
 bool turnFlag2;			// 振り向き制御用
 bool digFlag2;			// 採掘可能か否か
 bool moveFlag2;			// 移動可能か否か
@@ -30,6 +32,7 @@ void PlayerSystemInit2(void)
 {
 	LoadDivGraph("image/ratOll.png", 16, 4, 4, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, player2Image, false);
 	treasureGetImage2 = LoadGraph("image/potato.png");
+	LoadDivGraph("image/ratdigAction.png", 4, 1, 4, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, player2Act, false);
 	LoadDivGraph("image/ratDamage.png", 4, 4, 1, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, damage2Image, false);
 	player2.pos = { 272,112 };
 	player2.size.x = PLAYER_SIZE_2_X;
@@ -44,8 +47,8 @@ void PlayerSystemInit2(void)
 	player2.AnimCnt = 0;
 	player2.slot = 0;
 	player2.score = 0;
-	player2.item = ITEM_DRILL;
-	player2.itemStock = 3;
+	player2.item = ITEM_WARM;
+	player2.itemStock = WARM_MAX;
 	player2.velocity = { 0,0 };
 	turnFlag2 = false;
 	digFlag2 = false;
@@ -71,11 +74,17 @@ if (player2.Flag)
 		// ダメージ時に表示する処理
 		DrawGraph(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y, damage2Image[(player2.AnimCnt / 5) % 4], true);
 	}
+else
+{
+	if (actTime2 > 0)
+	{
+		DrawGraph(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y, player2Act[player2.moveDir], true);
+	}
 	else
 	{
 		DrawGraph(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y, player2Image[player2.moveDir * 4 + (player2.AnimCnt / 20) % 4], true);
 	}
-
+}
 	//DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player2.pos.x, player2.pos.y);
 	//DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player2.moveDir);
 	//DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player2.distance);
@@ -127,16 +136,16 @@ void PlayerControl2(void)
 			// 移動中にダメージを受けた際に微妙にずれる座標を調整
 			if (moveFlag2)
 			{
-				//if (player1.moveDir == DIR_DOWN || player1.moveDir == DIR_RIGHT)
-				//{
-				//	player1.pos.x += (player1.pos.x + player1.sizeOffset.x) % 32;
-				//	player1.pos.y += (player1.pos.y + player1.sizeOffset.y) % 32;
-				//}
-				//if (player1.moveDir == DIR_UP || player1.moveDir == DIR_LEFT)
-				//{
-				//	player1.pos.x -= (player1.pos.x + player1.sizeOffset.x) % 32;
-				//	player1.pos.y -= (player1.pos.y + player1.sizeOffset.y) % 32;
-				//}
+				if (player2.moveDir == DIR_DOWN || player2.moveDir == DIR_RIGHT)
+				{
+					player2.pos.x += (player2.pos.x + player2.sizeOffset.x) % 32;
+					player2.pos.y += (player2.pos.y + player2.sizeOffset.y) % 32;
+				}
+				if (player2.moveDir == DIR_UP || player2.moveDir == DIR_LEFT)
+				{
+					player2.pos.x -= (player2.pos.x + player2.sizeOffset.x) % 32;
+					player2.pos.y -= (player2.pos.y + player2.sizeOffset.y) % 32;
+				}
 				player2.distance = 0;
 				moveFlag2 = false;
 			}
@@ -149,12 +158,21 @@ void PlayerControl2(void)
 	}
 
 	// アイテムのある方向に進み続け、３つ所持したら上に戻る
-	if (player2.AnimCnt % 8 == 0)
+	//if (player2.distance <= 0 && actTime2 <= 0)
+	if ((player2.pos.x+16)%32 == 0 && (player2.pos.y + 16) % 32 == 0 && actTime2 <= 0)
 	{
-		if (player2.slot >= SLOT_MAX)
+		if (player2.slot == SLOT_MAX)
 		{
 			player2.moveDir = DIR_UP;
-			player2.pos.y -= player2.moveSpeed;
+			PlayerPosCopy.y -= PLAYER_DISTANCE_2;
+			if (SoilIsPass(PlayerPosCopy))
+			{
+				player2.distance += PLAYER_DISTANCE_2;
+			}
+			else
+			{
+				actTime2 = ACT_SPEED;
+			}
 		}
 		else
 		{
@@ -166,7 +184,12 @@ void PlayerControl2(void)
 					PlayerPosCopy.x -= PLAYER_DISTANCE_2;
 					if (SoilIsPass(PlayerPosCopy))
 					{
-						player2.pos.x -= player2.moveSpeed;
+						player2.distance += PLAYER_DISTANCE_2;
+						//player2.pos.x -= player2.moveSpeed;
+					}
+					else
+					{
+						actTime2 = ACT_SPEED;
 					}
 				}
 				if (TreasureXsearch(player2.pos) < 0)
@@ -175,7 +198,12 @@ void PlayerControl2(void)
 					PlayerPosCopy.x += PLAYER_DISTANCE_2;
 					if (SoilIsPass(PlayerPosCopy))
 					{
-						player2.pos.x += player2.moveSpeed;
+						player2.distance += PLAYER_DISTANCE_2;
+						//player2.pos.x += player2.moveSpeed;
+					}
+					else
+					{
+						actTime2 = ACT_SPEED;
 					}
 				}
 			}
@@ -185,7 +213,12 @@ void PlayerControl2(void)
 				PlayerPosCopy.y += PLAYER_DISTANCE_2;
 				if (SoilIsPass(PlayerPosCopy))
 				{
-					player2.pos.y += player2.moveSpeed;
+					player2.distance += PLAYER_DISTANCE_2;
+					//player2.pos.y += player2.moveSpeed;
+				}
+				else
+				{
+					actTime2 = ACT_SPEED;
 				}
 			}
 		}
@@ -193,49 +226,48 @@ void PlayerControl2(void)
 	DrawFormatString(0, 234, GetColor(0, 255, 0), "p2CopyX:%d,p2CopyY:%d", PlayerPosCopy.x, PlayerPosCopy.y);
 
 	// プレイヤーの移動処理
-
-	//if (moveFlag2 && player2.distance > 0 && !player2.Flag)
-	//{
-	//	//player1.distance = PLAYER_DISTANCE;
-	//	switch (player2.moveDir)
-	//	{
-	//	case DIR_DOWN:
-	//		digFlag2 = false;
-	//		player2.distance -= player2.moveSpeed;
-	//		player2.pos.y += player2.moveSpeed;
-	//		if (player2.pos.y - mapPos.y > SCREEN_SIZE_Y - (CHIP_SIZE_Y * 5 - player2.sizeOffset.y)
-	//			&& player2.pos.y <= CHIP_SIZE_Y * (MAP_SIZE_Y - 5) + player2.sizeOffset.y)
-	//		{
-	//			mapPos.y += player2.moveSpeed;
-	//		}
-	//		break;
-	//	case DIR_RIGHT:
-	//		digFlag2 = false;
-	//		player2.distance -= player2.moveSpeed;
-	//		player2.pos.x += player2.moveSpeed;
-	//		break;
-	//	case DIR_UP:
-	//		digFlag2 = false;
-	//		player2.distance -= player2.moveSpeed;
-	//		player2.pos.y -= player2.moveSpeed;
-	//		if (player2.pos.y - mapPos.y < CHIP_SIZE_Y * 5 - player2.sizeOffset.y && mapPos.y>0)
-	//		{
-	//			mapPos.y -= player2.moveSpeed;
-	//		}
-	//		break;
-	//	case DIR_LEFT:
-	//		digFlag2 = false;
-	//		player2.distance -= player2.moveSpeed;
-	//		player2.pos.x -= player2.moveSpeed;
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//	runFlag2 = true;
-	//}
-
+	//if (player2.distance > 0 && !player2.Flag && player2.AnimCnt % 8 == 0 && actTime2 <= 0)
+	if (!(player2.pos.x + 16) % 32 == 0 && !(player2.pos.y + 16) % 32 == 0 && !player2.Flag && player2.AnimCnt % 8 == 0 && actTime2 <= 0)
+	{
+		//player1.distance = PLAYER_DISTANCE;
+		switch (player2.moveDir)
+		{
+		case DIR_DOWN:
+			digFlag2 = false;
+			player2.distance -= player2.moveSpeed;
+			player2.pos.y += player2.moveSpeed;
+			break;
+		case DIR_RIGHT:
+			digFlag2 = false;
+			player2.distance -= player2.moveSpeed;
+			player2.pos.x += player2.moveSpeed;
+			break;
+		case DIR_UP:
+			digFlag2 = false;
+			player2.distance -= player2.moveSpeed;
+			player2.pos.y -= player2.moveSpeed;
+			break;
+		case DIR_LEFT:
+			digFlag2 = false;
+			player2.distance -= player2.moveSpeed;
+			player2.pos.x -= player2.moveSpeed;
+			break;
+		default:
+			break;
+		}
+		runFlag2 = true;
+	}
+	// 穴掘りアクション
+	if (actTime2==ACT_SPEED)
+	{
+		CliateDig(player2.pos, player2.moveDir);
+	}
+	if (actTime2 > 0)
+	{
+		actTime2--;
+	}
 	// 現在の向きを記録
-	player2.oldmoveDir = player2.moveDir;
+	//player2.oldmoveDir = player2.moveDir;
 
 	// 得点アイテム取得時の処理
 	if (!player2.Flag)
@@ -252,6 +284,15 @@ void PlayerControl2(void)
 		player2.score += player2.slot;
 		OllTreasure(player2.slot);
 		player2.slot = 0;
+	}
+
+	// アイテム使用
+	if (player2.AnimCnt % 300 == 0)
+	{
+		if (player2.itemStock > 0)
+		{
+			CliateWarm(player2.pos);
+		}
 	}
 
 	// テスト用
@@ -285,7 +326,7 @@ bool PlayerHitCheck2(XY pos, int size)
 		&& !player2.Flag
 		&& !itemFlag2)
 	{
-		if (player2.slot > 0)
+		if (player2.slot > 0 && !player2.Flag)
 		{
 			player2.slot--;
 

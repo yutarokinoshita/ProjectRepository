@@ -5,11 +5,15 @@
 #define DRILL_MOVE	256	// ドリルの飛距離
 #define DRILL_LIFE	6	// ドリルの耐久値
 #define BOMB_COUNT	90	// 爆弾の起爆までの時間
+#define WARM_MAX	6	// ワームの総数
 
 void ItemSystemInit(void);
 void ItemDrawInit(void);
 void ItemControl(void);
+bool WarmControl(XY Pos,int Size);	// ワームの追尾及び奪取処理
 void CliateDig(XY Pos,DIR Dir);		// 採掘アクション発生
 void CliateDrill(XY Pos, DIR Dir);	// ドリル発生
 void CliateBomb(XY Pos, DIR Dir);	// 爆弾発生
+void CliateWarm(XY Pos);			// ワーム生成
+
 bool CheckItemStock(ITEM Item);		// アイテム使用確認

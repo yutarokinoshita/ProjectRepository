@@ -11,7 +11,7 @@
 #define PLAYER_DEF_SPEED	2	// プレイヤーの初期速度
 #define PLAYER_DASH_SPEED	4	// プレイヤーの走行中速度
 #define SLOT_MAX			3	// アイテム最大所持数
-#define INIT_VELOCITY		40.0f	// リアクション跳躍の初速度
+#define INIT_VELOCITY		30.0f	// リアクション跳躍の初速度
 
 CHARACTER player1;		//プレイヤー１の構造体
 int playerImage[16];	// プレイヤーの画像格納用
@@ -554,6 +554,11 @@ void PlayerControl(void)
 		SearchTime--;
 		TreasureSearch(player1.pos, SearchTime);
 	}
+
+	if (WarmControl(player1.pos,player1.sizeOffset.x) && player1.slot > 0)
+	{
+		player1.slot--;
+	}
 	// テスト用
 	if (keyDownTrigger[KEY_ID_SPACE] && !player1.Flag)
 	{
@@ -597,7 +602,7 @@ bool PlayerHitCheck(XY pos, int size)
 		&& !player1.Flag
 		&& !itemFlag)
 	{
-		if (player1.slot > 0)
+		if (player1.slot > 0 && player1.Flag)
 		{
 			player1.slot--;
 			

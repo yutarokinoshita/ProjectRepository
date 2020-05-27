@@ -20,6 +20,7 @@ enum ITEM {
 	ITEM_BOMB,
 	ITEM_CALL,
 	ITEM_RADAR,
+	ITEM_WARM,
 	ITEM_MAX
 };
 
