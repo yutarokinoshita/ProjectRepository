@@ -19,7 +19,6 @@ CHARACTER player2;		//プレイヤー２の構造体
 int player2Image[16];	// プレイヤー２の画像格納用
 int player2Act[4];		// プレイヤー２のアクションの画像格納用
 bool turnFlag2;			// 振り向き制御用
-bool digFlag2;			// 採掘可能か否か
 bool moveFlag2;			// 移動可能か否か
 bool runFlag2;			// 移動中か否か
 bool itemFlag2;			// アイテムを取得するためのフラグ 
@@ -29,6 +28,7 @@ int damage2Image[4];	// ダメージ時のプレイヤー画像格納用
 XY	player2DamagePos;	// プレイヤーがダメージを受けた地点の座標
 bool p2Xreturn;			// プレイヤー２を引き返させる(X軸)
 bool p2Yreturn;			// プレイヤー２を引き返させる(Y軸)
+int p2XreturnPos;		// プレイヤーを一定距離引き返させる
 
 void PlayerSystemInit2(void)
 {
@@ -57,7 +57,6 @@ void PlayerGameInit2(void)
 	player2.itemStock = WARM_MAX;
 	player2.velocity = { 0,0 };
 	turnFlag2 = false;
-	digFlag2 = false;
 	moveFlag2 = false;
 	runFlag2 = false;
 	itemFlag2 = false;
@@ -65,6 +64,7 @@ void PlayerGameInit2(void)
 	player2DamagePos = player2.pos;
 	p2Xreturn = false;
 	p2Yreturn = false;
+	p2XreturnPos = 0;
 }
 
 void PlayerGameDraw2(void)
@@ -104,6 +104,7 @@ else
 	//DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player2.moveSpeed);
 	DrawFormatString(0, 218, GetColor(0, 255, 0), "p2Search:%d", (TreasureXsearch(player2.pos)));
 	DrawFormatString(0, 234, GetColor(0, 255, 255), "p2Yreturn:%d", p2Yreturn);
+	DrawFormatString(0, 250, GetColor(0, 255, 255), "p2XrePos:%d", p2XreturnPos);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y,
 		player2.pos.x + player2.sizeOffset.x, -mapPos.y + player2.pos.y + player2.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -111,7 +112,7 @@ else
 
 void PlayerControl2(void)
 {
-	digFlag2 = true;
+	//digFlag2 = true;
 	////if (player1.pos.y < 112)
 	////{
 	////	player1.pos.y = 112;
@@ -168,29 +169,46 @@ void PlayerControl2(void)
 	// 現在の場所が最下層である場合横に進み上へ上がっていく
 	if (player2.pos.y >= CHIP_SIZE_Y * MAP_SIZE_Y - 16)
 	{
-		//if (player2.pos.x >= SCREEN_SIZE_X / 2)
-		//{
-
-		//}
-		p2Yreturn = true;
-	}
-
-	// アイテムのある方向に進み続け、３つ所持したら上に戻る
-	//if (player2.distance <= 0 && actTime2 <= 0)
-	if ((player2.pos.x+16)%32 == 0 && (player2.pos.y + 16) % 32 == 0 && actTime2 <= 0)
-	{
-		if (player2.slot == SLOT_MAX)
+		if (!p2Xreturn)
 		{
-			player2.moveDir = DIR_UP;
-			PlayerPosCopy.y -= PLAYER_DISTANCE_2;
-			if (SoilIsPass(PlayerPosCopy))
+			// 向き指定
+			if (player2.pos.x >= SCREEN_SIZE_X / 2)
 			{
-				player2.distance += PLAYER_DISTANCE_2;
+				player2.moveDir = DIR_LEFT;
 			}
 			else
 			{
-				actTime2 = ACT_SPEED;
+				player2.moveDir = DIR_RIGHT;
 			}
+		// 距離指定
+		p2XreturnPos = PLAYER_DISTANCE_2*2;
+		p2Xreturn = true;
+		}
+
+		if (p2XreturnPos <= 0)
+		{
+			p2Yreturn = true;
+		}
+	}
+
+
+	//if (player2.distance <= 0 && actTime2 <= 0)
+	// 移動方向決定処理
+	if ((player2.pos.x+16)%32 == 0 && (player2.pos.y + 16) % 32 == 0 && actTime2 <= 0)
+	{
+		// アイテムを３つ所持したらスタート地点に戻る
+		if (player2.slot == SLOT_MAX)
+		{
+			player2.moveDir = DIR_UP;
+			//PlayerPosCopy.y -= PLAYER_DISTANCE_2;
+			//if (SoilIsPass(PlayerPosCopy))
+			//{
+			//	player2.distance += PLAYER_DISTANCE_2;
+			//}
+			//else
+			//{
+			//	actTime2 = ACT_SPEED;
+			//}
 		}
 		else
 		{
@@ -200,25 +218,50 @@ void PlayerControl2(void)
 				if (TreasureXsearch(player2.pos) > 0)
 				{
 					player2.moveDir = DIR_LEFT;
-					PlayerPosCopy.x -= PLAYER_DISTANCE_2;
-					if (SoilIsPass(PlayerPosCopy))
-					{
-						player2.distance += PLAYER_DISTANCE_2;
-						//player2.pos.x -= player2.moveSpeed;
-					}
-					else
-					{
-						actTime2 = ACT_SPEED;
-					}
+					//PlayerPosCopy.x -= PLAYER_DISTANCE_2;
+					//if (SoilIsPass(PlayerPosCopy))
+					//{
+					//	player2.distance += PLAYER_DISTANCE_2;
+					//	//player2.pos.x -= player2.moveSpeed;
+					//}
+					//else
+					//{
+					//	actTime2 = ACT_SPEED;
+					//}
 				}
 				if (TreasureXsearch(player2.pos) < 0)
 				{
 					player2.moveDir = DIR_RIGHT;
-					PlayerPosCopy.x += PLAYER_DISTANCE_2;
+					//PlayerPosCopy.x += PLAYER_DISTANCE_2;
+					//if (SoilIsPass(PlayerPosCopy))
+					//{
+					//	player2.distance += PLAYER_DISTANCE_2;
+					//	//player2.pos.x += player2.moveSpeed;
+					//}
+					//else
+					//{
+					//	actTime2 = ACT_SPEED;
+					//}
+				}
+			}
+			else
+			{
+				if (p2XreturnPos <= 0)
+				{
+					if (p2Yreturn)
+					{
+						player2.moveDir = DIR_UP;
+						//PlayerPosCopy.y -= PLAYER_DISTANCE_2;
+					}
+					else
+					{
+						player2.moveDir = DIR_DOWN;
+						//PlayerPosCopy.y += PLAYER_DISTANCE_2;
+					}
 					if (SoilIsPass(PlayerPosCopy))
 					{
 						player2.distance += PLAYER_DISTANCE_2;
-						//player2.pos.x += player2.moveSpeed;
+						//player2.pos.y += player2.moveSpeed;
 					}
 					else
 					{
@@ -226,28 +269,56 @@ void PlayerControl2(void)
 					}
 				}
 			}
+		}
+		// 現在の向きに土がある場合撤去する
+		switch (player2.moveDir)
+		{
+		case DIR_DOWN:
+			PlayerPosCopy.y += PLAYER_DISTANCE_2;
+			if (SoilIsPass(PlayerPosCopy))
+			{
+				player2.distance += PLAYER_DISTANCE_2;
+			}
 			else
 			{
-				if (p2Yreturn)
-				{
-					player2.moveDir = DIR_UP;
-					PlayerPosCopy.y -= PLAYER_DISTANCE_2;
-				}
-				else
-				{
-					player2.moveDir = DIR_DOWN;
-					PlayerPosCopy.y += PLAYER_DISTANCE_2;
-				}
-				if (SoilIsPass(PlayerPosCopy))
-				{
-					player2.distance += PLAYER_DISTANCE_2;
-					//player2.pos.y += player2.moveSpeed;
-				}
-				else
-				{
-					actTime2 = ACT_SPEED;
-				}
+				actTime2 = ACT_SPEED;
 			}
+			break;
+		case DIR_RIGHT:
+			PlayerPosCopy.x += PLAYER_DISTANCE_2;
+			if (SoilIsPass(PlayerPosCopy))
+			{
+				player2.distance += PLAYER_DISTANCE_2;
+			}
+			else
+			{
+				actTime2 = ACT_SPEED;
+			}
+			break;
+		case DIR_UP:
+			PlayerPosCopy.y -= PLAYER_DISTANCE_2;
+			if (SoilIsPass(PlayerPosCopy))
+			{
+				player2.distance += PLAYER_DISTANCE_2;
+			}
+			else
+			{
+				actTime2 = ACT_SPEED;
+			}
+			break;
+		case DIR_LEFT:
+			PlayerPosCopy.x -= PLAYER_DISTANCE_2;
+			if (SoilIsPass(PlayerPosCopy))
+			{
+				player2.distance += PLAYER_DISTANCE_2;
+			}
+			else
+			{
+				actTime2 = ACT_SPEED;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 	DrawFormatString(0, 234, GetColor(0, 255, 0), "p2CopyX:%d,p2CopyY:%d", PlayerPosCopy.x, PlayerPosCopy.y);
@@ -259,24 +330,26 @@ void PlayerControl2(void)
 		switch (player2.moveDir)
 		{
 		case DIR_DOWN:
-			digFlag2 = false;
-			//player2.distance -= player2.moveSpeed;
 			player2.pos.y += player2.moveSpeed;
 			break;
 		case DIR_RIGHT:
-			digFlag2 = false;
 			//player2.distance -= player2.moveSpeed;
 			player2.pos.x += player2.moveSpeed;
+			if (p2XreturnPos > 0)
+			{
+				p2XreturnPos--;
+			}
 			break;
 		case DIR_UP:
-			digFlag2 = false;
 			//player2.distance -= player2.moveSpeed;
 			player2.pos.y -= player2.moveSpeed;
 			break;
 		case DIR_LEFT:
-			digFlag2 = false;
-			//player2.distance -= player2.moveSpeed;
 			player2.pos.x -= player2.moveSpeed;
+			if (p2XreturnPos > 0)
+			{
+				p2XreturnPos--;
+			}
 			break;
 		default:
 			break;
@@ -310,11 +383,12 @@ void PlayerControl2(void)
 		player2.score += player2.slot;
 		OllTreasure(player2.slot);
 		player2.slot = 0;
+		p2Xreturn = false;
 		p2Yreturn = false;
 	}
 
 	// アイテム使用
-	if (player2.AnimCnt % 300 == 0)
+	if (player2.AnimCnt % 180 == 0 && player2.AnimCnt > 0)
 	{
 		if (player2.itemStock > 0)
 		{

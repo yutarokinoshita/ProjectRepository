@@ -32,15 +32,15 @@ void SoilGameInit(void)
 			{
 				soil[x][y].life = 0;
 			}
-			if (y >= 4 && y <= 8)
+			if (y >= 4 && y <= 13)
 			{
 				soil[x][y].life = 1;
 			}
-			if (8 < y && y <= 13)
+			if (13 < y && y <= 20)
 			{
 				soil[x][y].life = 2;
 			}
-			if (13 < y)
+			if (20 < y)
 			{
 				soil[x][y].life = 3;
 			}
@@ -61,11 +61,11 @@ void SoilDrawInit(void)
 
 			if (soil[x][y].life >= 1)
 			{
-				if (y <= 8)
+				if (y <= 13)
 				{
 					DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[0], true);
 				}
-				if (8 < y && y <= 13)
+				if (13 < y && y <= 20)
 				{
 					if (soil[x][y].life == 2)
 					{
@@ -76,7 +76,7 @@ void SoilDrawInit(void)
 						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[2], true);
 					}
 				}
-				if (13 < y)
+				if (20 < y)
 				{
 					if (soil[x][y].life == 3)
 					{
@@ -91,10 +91,10 @@ void SoilDrawInit(void)
 						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[5], true);
 					}
 				}
-				if (y == 18)
-				{
-					DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[6], true);
-				}
+				//if (y == 18)
+				//{
+				//	DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[6], true);
+				//}
 				// デバッグ用当たり枠
 				//DrawBox(soil[x][y].pos.x , soil[x][y].pos.y ,
 				//	soil[x][y].pos.x + soil[x][y].size.x, soil[x][y].pos.y + soil[x][y].size.y, GetColor(0, 0, 255), false);

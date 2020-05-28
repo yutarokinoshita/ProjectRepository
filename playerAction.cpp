@@ -6,7 +6,9 @@
 #include "playerAction.h"
 #include "soil.h"
 
-CHARACTER dig;
+#define PLAYER_MAX	2	// プレイヤー総数
+
+CHARACTER dig;// [PLAYER_MAX] ;
 CHARACTER drill;
 CHARACTER bomb;
 CHARACTER warm[WARM_MAX];
@@ -25,6 +27,8 @@ void ItemSystemInit(void)
 
 void ItemGameInit(void)
 {
+	//for(int p=0;p<PLAYER_MAX;p++)
+	//{
 	dig.pos.x = 0;
 	dig.pos.y = 0;
 	dig.size.x = ITEM_SIZE_X;
@@ -400,8 +404,8 @@ void CliateWarm(XY Pos)
 	{
 		if (!warm[w].Flag)
 		{
-			warm[w].pos = Pos;
 			warm[w].Flag = true;
+			warm[w].pos = Pos;
 			warm[w].AnimCnt = 0;
 			break;
 		}
@@ -434,6 +438,36 @@ bool CheckItemStock(ITEM Item)
 		break;
 	default:
 		break;
+	}
+	return false;
+}
+
+// ワームの当たり判定
+bool WarmHitCheck(void)
+{
+	for (int w = 0;w < WARM_MAX;w++)
+	{
+		if (warm[w].Flag)
+		{
+			if (warm[w].pos.x - warm[w].sizeOffset.x <dig.pos.x + dig.size.x
+				&& warm[w].pos.x + warm[w].sizeOffset.x > dig.pos.x - dig.size.x
+				&& warm[w].pos.y - warm[w].sizeOffset.y < dig.pos.y + dig.size.y
+				&& warm[w].pos.y + warm[w].sizeOffset.y > dig.pos.y - dig.size.y
+				)//&& dig.Flag)
+			{
+				warm[w].Flag = false;
+				return true;
+			}
+			if (warm[w].pos.x - warm[w].sizeOffset.x <drill.pos.x + drill.size.x
+				&& warm[w].pos.x + warm[w].sizeOffset.x > drill.pos.x - drill.size.x
+				&& warm[w].pos.y - warm[w].sizeOffset.y < drill.pos.y + drill.size.y
+				&& warm[w].pos.y + warm[w].sizeOffset.y > drill.pos.y - drill.size.y
+				&& drill.Flag)
+			{
+				warm[w].Flag = false;
+				return false;
+			}
+		}
 	}
 	return false;
 }
