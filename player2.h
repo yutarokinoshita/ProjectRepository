@@ -8,11 +8,11 @@
 #define PLAYER_DISTANCE_2 32	// 一度の入力でプレイヤー２が移動する距離
 
 void PlayerSystemInit2(void);
-
+void PlayerGameInit2(void);
 void PlayerGameDraw2(void);
 void PlayerControl2(void);
 
 void PlayerGameDraw2(void);
 
-
-bool PlayerHitCheck2(XY pos, int size);	// プレイヤーの当たり判定
+bool PlayerHitCheck2(XY pos, int size);	// プレイヤー２の当たり判定
+void Player2ItemPoint();				// アイテム：ワーム命中時得点入手

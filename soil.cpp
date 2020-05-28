@@ -6,10 +6,13 @@
 int soilImage[7];
 CHARACTER soil[MAP_SIZE_X][MAP_SIZE_Y];
 
-void soilSystemInit(void)
+void SoilSystemInit(void)
 {
 	LoadDivGraph("image/soil.png", 7, 7, 1, CHIP_SIZE_X, CHIP_SIZE_Y, soilImage, false);
+}
 
+void SoilGameInit(void)
+{
 	for (int x = 0;x < MAP_SIZE_X;x++)
 	{
 		for (int y = 0;y < MAP_SIZE_Y;y++)
@@ -49,7 +52,7 @@ void soilSystemInit(void)
 	}
 }
 
-void soilDrawInit(void)
+void SoilDrawInit(void)
 {
 	for (int x = 0;x < MAP_SIZE_X;x++)
 	{

@@ -6,6 +6,15 @@
 #define ACC_G			10	// 重力加速度	
 #define FRAME_TIME		0.2f	// 1フレームの時間
 
+// シーン管理用
+enum SCENE_ID
+{
+	SCENE_ID_INIT,
+	SCENE_ID_TITLE,
+	SCENE_ID_GAME,
+	SCENE_ID_GAMEOVER,
+	SCENE_ID_MAX
+};
 // 向き管理用
 enum DIR {
 	DIR_UP,
@@ -57,3 +66,16 @@ struct CHARACTER {
 };
 
 extern XY mapPos;			// マップ座標
+
+bool SystemInit(void);		// 初期化処理
+// 初期化シーン
+void InitScene(void);
+// タイトルシーン
+void TitleScene(void);
+void TitleDraw(void);
+// ゲームシーン
+void GameScene(void);
+void GameDraw(void);
+// ゲームオーバーシーン
+void GameOverScene(void);
+void GameOverDraw(void);

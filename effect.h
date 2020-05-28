@@ -4,6 +4,7 @@
 #define EFFECT_SIZE_Y 32	// エフェクト縦サイズ
 
 void TreasureEffectInit(void);
+void TreasureEffectGameInit(void);
 void TreasureEffectDraw(void);
 void effectControl(void);
 //void TreasureMove(int slot);	// 得点アイテム取得時モーション

@@ -8,5 +8,6 @@
 #define CLOUD_SIZE_X 100
 #define CLOUD_SIZE_Y 64
 
-void StageInit(void);
+void StageSystemInit(void);
+void StageGameInit(void);
 void StageDrawInit(void);

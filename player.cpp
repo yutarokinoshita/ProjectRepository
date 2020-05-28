@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "main.h"
 #include "player.h"
+#include "player2.h"
 #include "map.h"
 #include "keycheck.h"
 #include "playerAction.h"
@@ -47,6 +48,10 @@ void PlayerSystemInit(void)
 	LoadDivGraph("image/ItemSelect.png", 2, 2, 1, SELECT_SIZE_X, SELECT_SIZE_Y, selectImage, false);
 	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, damageImage, false);
 	LoadDivGraph("image/RadarIcon.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage, false);
+}
+
+void PlayerGameInit(void)
+{
 	player1.pos = { 112,112 };
 	player1.size.x = PLAYER_SIZE_X;
 	player1.size.y = PLAYER_SIZE_Y;
@@ -529,7 +534,7 @@ void PlayerControl(void)
 	}
 
 	// 得点アイテムの回収処理
-	if (player1.pos.y <= 112)
+	if (player1.pos.y <= 112 && !player1.Flag)
 	{
 		player1.score += player1.slot;
 		OllTreasure(player1.slot);
@@ -555,10 +560,13 @@ void PlayerControl(void)
 		TreasureSearch(player1.pos, SearchTime);
 	}
 
-	if (WarmControl(player1.pos,player1.sizeOffset.x) && player1.slot > 0)
+	// ワームが当たった時の処理
+	if (WarmControl(player1.pos, player1.sizeOffset.x) && player1.slot > 0 && !player1.Flag)
 	{
 		player1.slot--;
+		Player2ItemPoint();
 	}
+
 	// テスト用
 	if (keyDownTrigger[KEY_ID_SPACE] && !player1.Flag)
 	{
@@ -602,7 +610,7 @@ bool PlayerHitCheck(XY pos, int size)
 		&& !player1.Flag
 		&& !itemFlag)
 	{
-		if (player1.slot > 0 && player1.Flag)
+		if (player1.slot > 0 && !player1.Flag)
 		{
 			player1.slot--;
 			

@@ -10,17 +10,23 @@ XY cloud[CLOUD_MAX];
 //CHARACTER soil[MAP_SIZE_X][MAP_SIZE_Y];
 XY mapPos;
 
-void StageInit(void)
+void StageSystemInit(void)
 {
 	mapImage = LoadGraph("image/backmap.png");
 	cloudImage = LoadGraph("image/cloud.png");
 	gloundImage = LoadGraph("image/gloundTile.png");
+
+}
+
+void StageGameInit(void)
+{
 	for (int clo = 0;clo < CLOUD_MAX;clo++)
 	{
 		cloud[clo].x = 0 + CLOUD_SIZE_X * clo;
 		cloud[clo].y = 32;
 	}
 }
+
 void StageDrawInit(void)
 {
 	DrawGraph(0, -mapPos.y, mapImage, true);

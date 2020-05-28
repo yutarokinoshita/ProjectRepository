@@ -8,11 +8,10 @@
 #define PLAYER_DISTANCE 32		// 一度の入力で移動する距離
 
 void PlayerSystemInit(void);
-
+void PlayerGameInit(void);
 void PlayerGameDraw(void);
 void PlayerControl(void);
 
 void PlayerGameDraw(void);
-
 
 bool PlayerHitCheck(XY pos, int size);	// プレイヤーの当たり判定

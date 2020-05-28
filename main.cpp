@@ -14,14 +14,54 @@
 #include "effect.h"
 
 // 変数
-int gameCounter;
+SCENE_ID sceneID;
 
 // プロトタイプ宣言
-void GameMain(void);
-void GameDraw(void);
 
 // WinMain関数
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
+{
+	if (!SystemInit())
+	{
+		return 0;
+	}
+
+	// ｹﾞｰﾑﾙｰﾌﾟ
+	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	{
+		keyCheck();
+		ClsDrawScreen();
+		// メイン処理
+		switch (sceneID)
+		{
+		case SCENE_ID_INIT:
+			InitScene();
+			sceneID = SCENE_ID_TITLE;
+			break;
+		case SCENE_ID_TITLE:
+			TitleScene();
+			break;
+		case SCENE_ID_GAME:
+			GameScene();
+			break;
+		case SCENE_ID_GAMEOVER:
+			GameOverScene();
+			break;
+		case SCENE_ID_MAX:
+			break;
+		default:
+			break;
+		}
+
+
+
+		ScreenFlip();
+	}
+	DxLib_End();	// DXﾗｲﾌﾞﾗﾘの終了処理
+	return 0;	// このﾌﾟﾛｸﾞﾗﾑの終了
+}
+
+bool SystemInit(void)
 {
 	//----------システム処理
 	SetWindowText("採掘畑");
@@ -30,39 +70,66 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	ChangeWindowMode(true);
 	if (DxLib_Init() == -1)return -1;
 	SetDrawScreen(DX_SCREEN_BACK);
-
+	// キーの追加
+	keyInit();
 	// グラフィックの登録
-
-	// 変数初期化
-	gameCounter = 0;
-	StageInit();
+	// ステージ情報初期化
+	StageSystemInit();
+	// プレイヤー情報初期化
 	PlayerSystemInit();
 	PlayerSystemInit2();
-	keyInit();
+	// アイテム情報初期化
 	ItemSystemInit();
-	TreasureInit();
-	soilSystemInit();
+	// 得点アイテム情報初期化
+	TreasureSystemInit();
+	// 地面商法初期化
+	SoilSystemInit();
+	// エフェクト情報初期化
 	TreasureEffectInit();
+	// 変数初期化
+	sceneID = SCENE_ID_INIT;
 
-	// ｹﾞｰﾑﾙｰﾌﾟ
-	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
-	{
-		ClsDrawScreen();
-
-		// メイン処理
-		keyCheck();
-		GameMain();
-		gameCounter++;
-
-		ScreenFlip();
-	}
-	DxLib_End();	// DXﾗｲﾌﾞﾗﾘの終了処理
-	return 0;	// このﾌﾟﾛｸﾞﾗﾑの終了
+	return true;
 }
 
 void InitScene(void)
 {
+	StageGameInit();
+	PlayerGameInit();
+	PlayerGameInit2();
+	ItemGameInit();
+	TreasureGameInit();
+	SoilGameInit();
+	TreasureEffectGameInit();
+}
 
+void TitleScene(void)
+{
+	if (keyDownTrigger[KEY_ID_SPACE])
+	{
+		sceneID = SCENE_ID_GAME;
+	}
+	TitleDraw();
+}
+
+void TitleDraw(void)
+{
+	DrawBox(100, 100, SCREEN_SIZE_X - 100, SCREEN_SIZE_Y - 100, GetColor(255, 255, 255), true);
+}
+
+
+void GameScene(void)
+{
+	if (keyDownTrigger[KEY_ID_SPACE])
+	{
+		sceneID = SCENE_ID_GAMEOVER;
+	}
+	//GameDraw();
+	PlayerControl();
+	PlayerControl2();
+	ItemControl();
+	//effectControl();
+	GameDraw();
 }
 
 void GameDraw(void)
@@ -71,7 +138,7 @@ void GameDraw(void)
 
 
 	StageDrawInit();
-	soilDrawInit();
+	SoilDrawInit();
 	TreasureDraw();
 	TreasureEffectDraw();
 	ItemDrawInit();
@@ -79,21 +146,18 @@ void GameDraw(void)
 	PlayerGameDraw2();
 	DrawFormatString(500, 0, GetColor(255, 255, 255), "%d,%d", mapPos.x,mapPos.y);
 }
-void GameMain(void)
-{
-	GameDraw();
-	PlayerControl();
-	PlayerControl2();
-	ItemControl();
-	//effectControl();
 
-	// デバッグ用　後で消してよし
-	//if (CheckHitKey(KEY_INPUT_UP))
-	//{
-	//	mapPos.y++;
-	//}
-	//if (CheckHitKey(KEY_INPUT_DOWN))
-	//{
-	//	mapPos.y--;
-	//}
+void GameOverScene(void)
+{
+	if (keyDownTrigger[KEY_ID_SPACE])
+	{
+		InitScene();
+		sceneID = SCENE_ID_TITLE;
+	}
+	GameOverDraw();
+}
+
+void GameOverDraw(void)
+{
+	DrawBox(100, 100, SCREEN_SIZE_X - 100, SCREEN_SIZE_Y - 100, GetColor(0, 255, 255), true);
 }

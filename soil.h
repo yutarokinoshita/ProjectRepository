@@ -1,7 +1,8 @@
 //#pragma once
 
-void soilSystemInit(void);
-void soilDrawInit(void);
+void SoilSystemInit(void);
+void SoilGameInit(void);
+void SoilDrawInit(void);
 
 
 bool SoilCheckHit(XY dPos,int size,bool Bomb);		// ínå`çUåÇîªíË

@@ -10,11 +10,15 @@ int treasureImage;
 int treasureReset;		// アイテムが残っているかの把握用
 
 // アイテム初期化処理
-void TreasureInit(void)
+void TreasureSystemInit(void)
 {
 	treasureImage = LoadGraph("image/potato.png");
+}
+
+void TreasureGameInit(void)
+{
 	for (int x = 0;x < TREASURE_MAX;x++)
-	{	
+	{
 		treasure[x].pos.x = 16 + TREASURE_SIZE_X * GetRand(24);
 		treasure[x].pos.y = 144 + TREASURE_SIZE_Y * GetRand(13);
 		treasure[x].size.x = TREASURE_SIZE_X;

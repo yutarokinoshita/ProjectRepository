@@ -8,6 +8,7 @@
 #define WARM_MAX	6	// ƒ[ƒ€‚Ì‘”
 
 void ItemSystemInit(void);
+void ItemGameInit(void);
 void ItemDrawInit(void);
 void ItemControl(void);
 bool WarmControl(XY Pos,int Size);	// ƒ[ƒ€‚Ì’Ç”ö‹y‚Ñ’Dæˆ—

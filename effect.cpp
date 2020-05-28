@@ -10,6 +10,10 @@ int effectImage[3];
 void TreasureEffectInit(void)
 {
 	LoadDivGraph("image/effect.png", 3, 3, 1, EFFECT_SIZE_X, EFFECT_SIZE_Y, effectImage, false);
+}
+
+void TreasureEffectGameInit(void)
+{
 	for (int ef = 0;ef < TREASURE_MAX;ef++)
 	{
 		effect[ef].pos.x = 0;

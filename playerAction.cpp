@@ -21,6 +21,10 @@ void ItemSystemInit(void)
 	{
 		LoadDivGraph("image/warm.png", 8, 2, 4, ITEM_SIZE_X, ITEM_SIZE_Y, warmImage, false);
 	}
+}
+
+void ItemGameInit(void)
+{
 	dig.pos.x = 0;
 	dig.pos.y = 0;
 	dig.size.x = ITEM_SIZE_X;
@@ -56,7 +60,7 @@ void ItemSystemInit(void)
 	bomb.Flag = false;
 	for (int w = 0;w < WARM_MAX;w++)
 	{
-		warm[w].pos.x = SCREEN_SIZE_X/2;
+		warm[w].pos.x = SCREEN_SIZE_X / 2;
 		warm[w].pos.y = 48;
 		warm[w].size.x = ITEM_SIZE_X;
 		warm[w].size.y = ITEM_SIZE_Y;

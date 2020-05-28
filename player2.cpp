@@ -1,5 +1,6 @@
 #include "DxLib.h"
 #include "main.h"
+#include "player.h"
 #include "player2.h"
 #include "map.h"
 #include "keycheck.h"
@@ -34,6 +35,10 @@ void PlayerSystemInit2(void)
 	treasureGetImage2 = LoadGraph("image/potato.png");
 	LoadDivGraph("image/ratdigAction.png", 4, 1, 4, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, player2Act, false);
 	LoadDivGraph("image/ratDamage.png", 4, 4, 1, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, damage2Image, false);
+}
+
+void PlayerGameInit2(void)
+{
 	player2.pos = { 272,112 };
 	player2.size.x = PLAYER_SIZE_2_X;
 	player2.size.y = PLAYER_SIZE_2_Y;
@@ -279,7 +284,7 @@ void PlayerControl2(void)
 	}
 
 	// 得点アイテムの回収処理
-	if (player2.pos.y <= 112)
+	if (player2.pos.y <= 112 && !player2.Flag)
 	{
 		player2.score += player2.slot;
 		OllTreasure(player2.slot);
@@ -336,4 +341,13 @@ bool PlayerHitCheck2(XY pos, int size)
 		return true;
 	}
 	return false;
+}
+
+// アイテム：ワーム命中時得点入手
+void Player2ItemPoint()
+{
+	if (player2.slot < SLOT_MAX)
+	{
+		player2.slot++;
+	}
 }
