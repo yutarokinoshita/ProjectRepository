@@ -15,6 +15,7 @@
 
 // 変数
 SCENE_ID sceneID;
+int StartTime;		// ゲーム開始までの時間
 
 // プロトタイプ宣言
 
@@ -101,6 +102,7 @@ void InitScene(void)
 	TreasureGameInit();
 	SoilGameInit();
 	TreasureEffectGameInit();
+	StartTime = 2400;
 }
 
 void TitleScene(void)
@@ -120,10 +122,11 @@ void TitleDraw(void)
 
 void GameScene(void)
 {
-	if (keyDownTrigger[KEY_ID_SPACE])
+	if (keyDownTrigger[KEY_ID_SPACE] || StartTime <= 0)
 	{
 		sceneID = SCENE_ID_GAMEOVER;
 	}
+	StartTime--;
 	//GameDraw();
 	PlayerControl();
 	PlayerControl2();
