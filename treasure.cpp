@@ -19,8 +19,8 @@ void TreasureGameInit(void)
 {
 	for (int x = 0;x < TREASURE_MAX;x++)
 	{
-		treasure[x].pos.x = 16 + TREASURE_SIZE_X * GetRand(24);
-		treasure[x].pos.y = 144 + TREASURE_SIZE_Y * GetRand(13);
+		treasure[x].pos.x = 0;//16 + TREASURE_SIZE_X * GetRand(24);
+		treasure[x].pos.y = 0;//144 + TREASURE_SIZE_Y * GetRand(13);
 		treasure[x].size.x = TREASURE_SIZE_X;
 		treasure[x].size.y = TREASURE_SIZE_Y;
 		treasure[x].sizeOffset.x = TREASURE_SIZE_X / 2;
@@ -167,7 +167,7 @@ bool TreasureYsearch(XY Pos)
 		{
 			if (Pos.y == treasure[x].pos.y)
 			{
-				if ((Pos.x - treasure[x].pos.x) / 32 <= 6 && (Pos.x - treasure[x].pos.x) / 32 >= -6)
+				if ((Pos.x - treasure[x].pos.x) / 32 <= 5 && (Pos.x - treasure[x].pos.x) / 32 >= -5)
 				{
 					return true;
 				}

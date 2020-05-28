@@ -102,7 +102,7 @@ void InitScene(void)
 	TreasureGameInit();
 	SoilGameInit();
 	TreasureEffectGameInit();
-	StartTime = 2400;
+	StartTime = 240000;
 }
 
 void TitleScene(void)

@@ -27,7 +27,8 @@ int treasureGetImage2;	// 現在のアイテム取得数表示用
 int actTime2;			// アクションを行う時間
 int damage2Image[4];	// ダメージ時のプレイヤー画像格納用
 XY	player2DamagePos;	// プレイヤーがダメージを受けた地点の座標
-int p2Xreturn;			// プレイヤー２をスタート地点の真下に戻す
+bool p2Xreturn;			// プレイヤー２を引き返させる(X軸)
+bool p2Yreturn;			// プレイヤー２を引き返させる(Y軸)
 
 void PlayerSystemInit2(void)
 {
@@ -62,7 +63,8 @@ void PlayerGameInit2(void)
 	itemFlag2 = false;
 	actTime2 = 0;
 	player2DamagePos = player2.pos;
-	p2Xreturn = 272;
+	p2Xreturn = false;
+	p2Yreturn = false;
 }
 
 void PlayerGameDraw2(void)
@@ -101,6 +103,7 @@ else
 	//DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime2);
 	//DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player2.moveSpeed);
 	DrawFormatString(0, 218, GetColor(0, 255, 0), "p2Search:%d", (TreasureXsearch(player2.pos)));
+	DrawFormatString(0, 234, GetColor(0, 255, 255), "p2Yreturn:%d", p2Yreturn);
 	// デバッグ用のプレイヤーの当たり枠
 	DrawBox(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y,
 		player2.pos.x + player2.sizeOffset.x, -mapPos.y + player2.pos.y + player2.sizeOffset.y, GetColor(255, 255, 255), false);
@@ -162,6 +165,16 @@ void PlayerControl2(void)
 		player2DamagePos = player2.pos;
 	}
 
+	// 現在の場所が最下層である場合横に進み上へ上がっていく
+	if (player2.pos.y >= CHIP_SIZE_Y * MAP_SIZE_Y - 16)
+	{
+		//if (player2.pos.x >= SCREEN_SIZE_X / 2)
+		//{
+
+		//}
+		p2Yreturn = true;
+	}
+
 	// アイテムのある方向に進み続け、３つ所持したら上に戻る
 	//if (player2.distance <= 0 && actTime2 <= 0)
 	if ((player2.pos.x+16)%32 == 0 && (player2.pos.y + 16) % 32 == 0 && actTime2 <= 0)
@@ -181,6 +194,7 @@ void PlayerControl2(void)
 		}
 		else
 		{
+			// 自分と同じY軸かつ近い場所にアイテムがある場合
 			if (TreasureYsearch(player2.pos))
 			{
 				if (TreasureXsearch(player2.pos) > 0)
@@ -214,8 +228,16 @@ void PlayerControl2(void)
 			}
 			else
 			{
-				player2.moveDir = DIR_DOWN;
-				PlayerPosCopy.y += PLAYER_DISTANCE_2;
+				if (p2Yreturn)
+				{
+					player2.moveDir = DIR_UP;
+					PlayerPosCopy.y -= PLAYER_DISTANCE_2;
+				}
+				else
+				{
+					player2.moveDir = DIR_DOWN;
+					PlayerPosCopy.y += PLAYER_DISTANCE_2;
+				}
 				if (SoilIsPass(PlayerPosCopy))
 				{
 					player2.distance += PLAYER_DISTANCE_2;
@@ -234,27 +256,26 @@ void PlayerControl2(void)
 	//if (player2.distance > 0 && !player2.Flag && player2.AnimCnt % 8 == 0 && actTime2 <= 0)
 	if (!(player2.pos.x + 16) % 32 == 0 && !(player2.pos.y + 16) % 32 == 0 && !player2.Flag && player2.AnimCnt % 8 == 0 && actTime2 <= 0)
 	{
-		//player1.distance = PLAYER_DISTANCE;
 		switch (player2.moveDir)
 		{
 		case DIR_DOWN:
 			digFlag2 = false;
-			player2.distance -= player2.moveSpeed;
+			//player2.distance -= player2.moveSpeed;
 			player2.pos.y += player2.moveSpeed;
 			break;
 		case DIR_RIGHT:
 			digFlag2 = false;
-			player2.distance -= player2.moveSpeed;
+			//player2.distance -= player2.moveSpeed;
 			player2.pos.x += player2.moveSpeed;
 			break;
 		case DIR_UP:
 			digFlag2 = false;
-			player2.distance -= player2.moveSpeed;
+			//player2.distance -= player2.moveSpeed;
 			player2.pos.y -= player2.moveSpeed;
 			break;
 		case DIR_LEFT:
 			digFlag2 = false;
-			player2.distance -= player2.moveSpeed;
+			//player2.distance -= player2.moveSpeed;
 			player2.pos.x -= player2.moveSpeed;
 			break;
 		default:
@@ -289,6 +310,7 @@ void PlayerControl2(void)
 		player2.score += player2.slot;
 		OllTreasure(player2.slot);
 		player2.slot = 0;
+		p2Yreturn = false;
 	}
 
 	// アイテム使用
