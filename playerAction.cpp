@@ -110,7 +110,6 @@ void ItemDrawInit(void)
 	}
 	DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
 	DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
-	DrawFormatString(0, 300, GetColor(255, 255, 0), "warm.Cnt:%d", warm[1].AnimCnt);
 }
 
 void ItemControl(void)

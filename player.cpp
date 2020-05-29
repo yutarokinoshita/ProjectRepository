@@ -17,7 +17,6 @@
 CHARACTER player1;		//プレイヤー１の構造体
 int playerImage[16];	// プレイヤーの画像格納用
 int playerAct[4];		// プレイヤーのアクションの画像格納用
-bool turnFlag;			// 振り向き制御用
 bool digFlag;			// 採掘可能か否か
 bool moveFlag;			// 移動可能か否か
 bool runFlag;			// 移動中か否か
@@ -35,6 +34,7 @@ XY	playerDamagePos;	// プレイヤーがダメージを受けた地点の座標
 int DamageSpeed;		// ダメージを受けた際の移動速度
 int radarSearch;		// アイテムまでの距離
 int SearchTime;			// レーダーアイテムの使用時間
+bool callScoreFlag;			// 通信機使用時
 
 void PlayerSystemInit(void)
 {
@@ -64,13 +64,11 @@ void PlayerGameInit(void)
 	player1.Flag = false;
 	player1.AnimCnt = 0;
 	player1.slot = 0;
-	player1.score = 0;
 	player1.item = ITEM_DRILL;
 	player1.itemStock = 3;
 	player1.type = P_1;
 	player1.velocity = { 0,0 };
 	DamageSpeed = 0;
-	turnFlag = false;
 	digFlag = false;
 	moveFlag = false;
 	runFlag = false;
@@ -79,6 +77,7 @@ void PlayerGameInit(void)
 	playerDamagePos = player1.pos;
 	radarSearch = 0;
 	SearchTime = 0;
+	callScoreFlag = false;
 }
 
 void PlayerGameDraw(void)
@@ -161,7 +160,6 @@ void PlayerGameDraw(void)
 	DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
 	DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
 	DrawFormatString(0, 64, GetColor(255, 0, 0), "SLOT:%d", player1.slot);
-	DrawFormatString(0, 80, GetColor(255, 0, 0), "SCORE:%d", player1.score);
 	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
 	DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
 	DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
@@ -519,14 +517,12 @@ void PlayerControl(void)
 				case ITEM_CALL:
 					if (player1.slot > 0)
 					{
-						player1.slot--;
-						player1.score++;
+						callScoreFlag = true;
 						//player1.itemStock--;
 					}
 					break;
 				case ITEM_RADAR:
 					SearchTime = 60;
-					//TreasureSearch(player1.pos,60);
 					break;
 				default:
 					break;
@@ -542,14 +538,6 @@ void PlayerControl(void)
 		{
 			player1.slot++;
 		}
-	}
-
-	// 得点アイテムの回収処理
-	if (player1.pos.y <= 112 && !player1.Flag)
-	{
-		player1.score += player1.slot;
-		OllTreasure(player1.slot);
-		player1.slot = 0;
 	}
 
 	//	 レーダー処理
@@ -632,4 +620,24 @@ bool PlayerHitCheck(XY pos, int size)
 		return true;
 	}
 	return false;
+}
+
+// プレイヤーの得点
+int PlayerScere(void)
+{
+	int Point = 0;
+	// 得点アイテムの回収処理
+	if (player1.pos.y <= 112 && !player1.Flag)
+	{
+		Point += player1.slot;
+		OllTreasure(player1.slot);
+		player1.slot = 0;
+	}
+	if (callScoreFlag)
+	{
+		player1.slot--;
+		Point++;
+		callScoreFlag = false;
+	}
+	return Point;
 }

@@ -15,3 +15,4 @@ void PlayerControl(void);
 void PlayerGameDraw(void);
 
 bool PlayerHitCheck(XY pos, int size);	// プレイヤーの当たり判定
+int PlayerScere(void);					// プレイヤーの得点

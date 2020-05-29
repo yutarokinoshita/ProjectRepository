@@ -22,8 +22,10 @@ bool turnFlag2;			// 振り向き制御用
 bool moveFlag2;			// 移動可能か否か
 int treasureGetImage2;	// 現在のアイテム取得数表示用
 int actTime2;			// アクションを行う時間
+int stockWarmImage;		// 所持中のワームの画像格納用
 int damage2Image[4];	// ダメージ時のプレイヤー画像格納用
 int radarImage2[4];		// レーダー画像格納用
+int radarSearch2;		// アイテムまでの距離(レーダー用)
 XY	player2DamagePos;	// プレイヤーがダメージを受けた地点の座標
 bool p2Xreturn;			// プレイヤー２を引き返させる(X軸)
 bool p2Yreturn;			// プレイヤー２を引き返させる(Y軸)
@@ -34,9 +36,10 @@ void PlayerSystemInit2(void)
 {
 	LoadDivGraph("image/ratOll.png", 16, 4, 4, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, player2Image, false);
 	treasureGetImage2 = LoadGraph("image/potato.png");
+	stockWarmImage = LoadGraph("image/warmIcon.png");
 	LoadDivGraph("image/ratdigAction.png", 4, 1, 4, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, player2Act, false);
 	LoadDivGraph("image/ratDamage.png", 4, 4, 1, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, damage2Image, false);
-	LoadDivGraph("image/RadarIcon.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage2, false);
+	LoadDivGraph("image/RadarIcon2.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage2, false);
 }
 
 void PlayerGameInit2(void)
@@ -53,7 +56,6 @@ void PlayerGameInit2(void)
 	player2.Flag = false;
 	player2.AnimCnt = 0;
 	player2.slot = 0;
-	player2.score = 0;
 	player2.item = ITEM_WARM;
 	player2.itemStock = WARM_MAX;
 	player2.type = P_2;
@@ -61,6 +63,7 @@ void PlayerGameInit2(void)
 	turnFlag2 = false;
 	moveFlag2 = false;
 	actTime2 = 0;
+	radarSearch2 = 0;
 	player2DamagePos = player2.pos;
 	p2Xreturn = false;
 	p2Yreturn = false;
@@ -73,11 +76,18 @@ void PlayerGameDraw2(void)
 	player2.AnimCnt++;
 	actTime2--;
 
+	// 得点アイコン
 	for (int tre = 0;tre < player2.slot;tre++)
 	{
 		DrawGraph(SCREEN_SIZE_X - 32 * 2 - 32 * tre, 0, treasureGetImage2, true);
 	}
-if (player2.Flag)
+	// アイテムアイコン
+	for (int Item = 0;Item < player2.itemStock;Item++)
+	{
+		DrawGraph(SCREEN_SIZE_X - ITEM_SIZE_X * 2 - 34 * (Item / 2), 32, stockWarmImage, true);
+	}
+
+	if (player2.Flag)
 	{
 		// ダメージ時に表示する処理
 		DrawGraph(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y, damage2Image[(player2.AnimCnt / 5) % 4], true);
@@ -93,6 +103,7 @@ else
 		DrawGraph(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y, player2Image[player2.moveDir * 4 + (player2.AnimCnt / 20) % 4], true);
 	}
 }
+	DrawGraph(SCREEN_SIZE_X -ITEM_SIZE_X -144, 32, radarImage2[radarSearch2], true);
 	//DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player2.pos.x, player2.pos.y);
 	//DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player2.moveDir);
 	//DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player2.distance);
@@ -377,17 +388,20 @@ void PlayerControl2(void)
 		}
 	}
 
-	// 得点アイテムの回収処理
-	if (player2.pos.y <= 112 && !player2.Flag)
+	//	 レーダー処理
+	if ((player2.pos.x - 16) % 32 == 0 && (player2.pos.y - 16) % 32 == 0 && !player2.Flag)
 	{
-		player2.score += player2.slot;
-		OllTreasure(player2.slot);
-		player2.slot = 0;
-		p2Xreturn = false;
-		p2Yreturn = false;
+		if (TreasureDistance(player2.pos) < 4)
+		{
+			radarSearch2 = TreasureDistance(player2.pos);
+		}
+		else
+		{
+			radarSearch2 = 0;
+		}
 	}
 
-	// アイテム使用可能にする処理
+	// アイテムを使用可能にする処理
 	if (player2.AnimCnt % 180 == 0 && player2.AnimCnt > 0)
 	{
 		if (player2.itemStock > 0)
@@ -400,6 +414,7 @@ void PlayerControl2(void)
 	if (warmFlag&& (player2.pos.x + 16) % 32 == 0 && (player2.pos.y + 16) % 32 == 0)
 	{
 		CliateWarm(player2.pos);
+		player2.itemStock--;
 		warmFlag = false;
 	}
 
@@ -452,4 +467,22 @@ void Player2ItemPoint()
 	{
 		player2.slot++;
 	}
+}
+
+// プレイヤー２の得点
+int PlayerScere2(void)
+{
+	int Point = 0;
+	// 得点アイテムの回収処理
+	if (player2.pos.y <= 112 && !player2.Flag)
+	{
+		Point += player2.slot;
+		OllTreasure(player2.slot);
+		player2.slot = 0;
+		player2.itemStock = WARM_MAX;
+		p2Xreturn = false;
+		p2Yreturn = false;
+	}
+
+	return Point;
 }

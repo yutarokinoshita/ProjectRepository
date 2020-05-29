@@ -16,3 +16,4 @@ void PlayerGameDraw2(void);
 
 bool PlayerHitCheck2(XY pos, int size);	// プレイヤー２の当たり判定
 void Player2ItemPoint();				// アイテム：ワーム命中時得点入手
+int PlayerScere2(void);					// プレイヤー２の得点
