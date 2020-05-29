@@ -8,7 +8,7 @@
 
 #define PLAYER_MAX	2	// プレイヤー総数
 
-CHARACTER dig;// [PLAYER_MAX] ;
+CHARACTER dig[PLAYER_MAX];
 CHARACTER drill;
 CHARACTER bomb;
 CHARACTER warm[WARM_MAX];
@@ -27,16 +27,18 @@ void ItemSystemInit(void)
 
 void ItemGameInit(void)
 {
-	//for(int p=0;p<PLAYER_MAX;p++)
-	//{
-	dig.pos.x = 0;
-	dig.pos.y = 0;
-	dig.size.x = ITEM_SIZE_X;
-	dig.size.y = ITEM_SIZE_Y;
-	dig.sizeOffset.x = ITEM_SIZE_X / 2;
-	dig.sizeOffset.y = ITEM_SIZE_Y / 2;
-	dig.moveDir = DIR_DOWN;
-	dig.Flag = false;
+	for (int p = 0;p < PLAYER_MAX;p++)
+	{
+		dig[p].pos.x = 0;
+		dig[p].pos.y = 0;
+		dig[p].size.x = ITEM_SIZE_X;
+		dig[p].size.y = ITEM_SIZE_Y;
+		dig[p].sizeOffset.x = ITEM_SIZE_X / 2;
+		dig[p].sizeOffset.y = ITEM_SIZE_Y / 2;
+		dig[p].moveDir = DIR_DOWN;
+		dig[p].Flag = false;
+		dig[p].life = 0;
+	}
 
 	drill.pos.x = 0;
 	drill.pos.y = 0;
@@ -113,28 +115,35 @@ void ItemDrawInit(void)
 
 void ItemControl(void)
 {
-	if (dig.Flag)
+	for (int p = 0;p < PLAYER_MAX;p++)
 	{
-		if (bomb.pos.x<dig.pos.x + dig.sizeOffset.x
-			&& bomb.pos.x>dig.pos.x - dig.sizeOffset.x
-			&& bomb.pos.y<dig.pos.y + dig.sizeOffset.y
-			&& bomb.pos.y>dig.pos.y - dig.sizeOffset.y
-			&& dig.Flag)
+		if (dig[p].Flag)
 		{
-			bomb.moveDir = dig.moveDir;
-			bomb.life -= BOMB_COUNT * 2 / 3;
-			bomb.distance = 32;
-		}
-		else
-		{
-			if (SoilCheckHit(dig.pos, dig.sizeOffset.x, false))
+			dig[p].life--;
+			if (bomb.pos.x<dig[p].pos.x + dig[p].sizeOffset.x
+				&& bomb.pos.x>dig[p].pos.x - dig[p].sizeOffset.x
+				&& bomb.pos.y<dig[p].pos.y + dig[p].sizeOffset.y
+				&& bomb.pos.y>dig[p].pos.y - dig[p].sizeOffset.y
+				&& dig[p].Flag)
 			{
-				dig.Flag = false;
+				bomb.moveDir = dig[p].moveDir;
+				bomb.life -= BOMB_COUNT * 2 / 3;
+				bomb.distance = 32;
+			}
+			else
+			{
+				if (SoilCheckHit(dig[p].pos, dig[p].sizeOffset.x, false))
+				{
+					dig[p].Flag = false;
+				}
+			}
+			if (dig[p].life <= 0)
+			{
+				dig[p].Flag = false;
 			}
 		}
-	}
-	dig.Flag = false;
 
+	}
 
 	if (drill.Flag)
 	{
@@ -307,31 +316,32 @@ bool WarmControl(XY Pos, int Size)
 	}
 	return false;
 }
-void CliateDig(XY Pos,DIR Dir)
+void CliateDig(XY Pos,DIR Dir,TYPE Type,int Life)
 {
-	dig.moveDir = Dir;
-	switch (dig.moveDir)
+	dig[Type].moveDir = Dir;
+	dig[Type].life = Life;
+	switch (dig[Type].moveDir)
 	{
 	case DIR_DOWN:
-		dig.pos.x = Pos.x;
-		dig.pos.y = Pos.y + ITEM_SIZE_Y;
+		dig[Type].pos.x = Pos.x;
+		dig[Type].pos.y = Pos.y + ITEM_SIZE_Y;
 		break;
 	case DIR_RIGHT:
-		dig.pos.x = Pos.x + ITEM_SIZE_X;
-		dig.pos.y = Pos.y;
+		dig[Type].pos.x = Pos.x + ITEM_SIZE_X;
+		dig[Type].pos.y = Pos.y;
 		break;
 	case DIR_UP:
-		dig.pos.x = Pos.x ;
-		dig.pos.y = Pos.y - ITEM_SIZE_Y;
+		dig[Type].pos.x = Pos.x ;
+		dig[Type].pos.y = Pos.y - ITEM_SIZE_Y;
 		break;
 	case DIR_LEFT:
-		dig.pos.x = Pos.x - ITEM_SIZE_X;
-		dig.pos.y = Pos.y;
+		dig[Type].pos.x = Pos.x - ITEM_SIZE_X;
+		dig[Type].pos.y = Pos.y;
 		break;
 	default:
 		break;
 	}
-	dig.Flag = true;
+	dig[Type].Flag = true;
 }
 
 // ドリルの生成
@@ -449,11 +459,11 @@ bool WarmHitCheck(void)
 	{
 		if (warm[w].Flag)
 		{
-			if (warm[w].pos.x - warm[w].sizeOffset.x <dig.pos.x + dig.size.x
-				&& warm[w].pos.x + warm[w].sizeOffset.x > dig.pos.x - dig.size.x
-				&& warm[w].pos.y - warm[w].sizeOffset.y < dig.pos.y + dig.size.y
-				&& warm[w].pos.y + warm[w].sizeOffset.y > dig.pos.y - dig.size.y
-				)//&& dig.Flag)
+			if (warm[w].pos.x - warm[w].sizeOffset.x <dig[0].pos.x// + dig[0].size.x
+				&& warm[w].pos.x + warm[w].sizeOffset.x > dig[0].pos.x// - dig[0].size.x
+				&& warm[w].pos.y - warm[w].sizeOffset.y < dig[0].pos.y// + dig[0].size.y
+				&& warm[w].pos.y + warm[w].sizeOffset.y > dig[0].pos.y// - dig[0].size.y
+				&& dig[0].Flag)
 			{
 				warm[w].Flag = false;
 				return true;

@@ -16,6 +16,7 @@
 // 変数
 SCENE_ID sceneID;
 int StartTime;		// ゲーム開始までの時間
+int bonus;			// ボーナス得点
 
 // プロトタイプ宣言
 
@@ -103,6 +104,7 @@ void InitScene(void)
 	SoilGameInit();
 	TreasureEffectGameInit();
 	StartTime = 240000;
+	bonus = 0;
 }
 
 void TitleScene(void)
@@ -132,6 +134,10 @@ void GameScene(void)
 	PlayerControl2();
 	ItemControl();
 	//effectControl();
+	if (WarmHitCheck())
+	{
+		bonus++;
+	}
 	GameDraw();
 }
 
@@ -141,8 +147,8 @@ void GameDraw(void)
 
 
 	StageDrawInit();
-	SoilDrawInit();
 	TreasureDraw();
+	SoilDrawInit();
 	TreasureEffectDraw();
 	ItemDrawInit();
 	PlayerGameDraw();

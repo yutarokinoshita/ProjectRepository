@@ -15,6 +15,14 @@ enum SCENE_ID
 	SCENE_ID_GAMEOVER,
 	SCENE_ID_MAX
 };
+
+// プレイヤーの種類
+enum TYPE {
+	P_1,
+	P_2,
+	P_MAX
+};
+
 // 向き管理用
 enum DIR {
 	DIR_UP,
@@ -61,6 +69,7 @@ struct CHARACTER {
 	int score;			// キャラクタのスコア
 	ITEM item;			// キャラクタの所持アイテム
 	int itemStock;		// キャラクタのアイテム所持数
+	TYPE type;		// キャラクタの種類
 
 	XY_F velocity;		// キャラクタの速度
 };

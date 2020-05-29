@@ -55,6 +55,7 @@ void PlayerGameInit2(void)
 	player2.score = 0;
 	player2.item = ITEM_WARM;
 	player2.itemStock = WARM_MAX;
+	player2.type = P_2;
 	player2.velocity = { 0,0 };
 	turnFlag2 = false;
 	moveFlag2 = false;
@@ -359,7 +360,7 @@ void PlayerControl2(void)
 	// ŒŠŒ@‚èƒAƒNƒVƒ‡ƒ“
 	if (actTime2==ACT_SPEED)
 	{
-		CliateDig(player2.pos, player2.moveDir);
+		CliateDig(player2.pos, player2.moveDir,player2.type,actTime2);
 	}
 	if (actTime2 > 0)
 	{

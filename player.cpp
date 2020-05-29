@@ -67,6 +67,7 @@ void PlayerGameInit(void)
 	player1.score = 0;
 	player1.item = ITEM_DRILL;
 	player1.itemStock = 3;
+	player1.type = P_1;
 	player1.velocity = { 0,0 };
 	DamageSpeed = 0;
 	turnFlag = false;
@@ -221,12 +222,21 @@ void PlayerControl(void)
 				{
 				case DIR_DOWN:
 					player1.pos.y += player1.distance + DamageSpeed;
+					if (player1.pos.y - mapPos.y > SCREEN_SIZE_Y - (CHIP_SIZE_Y * 5 - player1.sizeOffset.y)
+						&& player1.pos.y <= CHIP_SIZE_Y * (MAP_SIZE_Y - 5) + player1.sizeOffset.y)
+					{
+						mapPos.y += player1.distance + DamageSpeed;
+					}
 					break;
 				case DIR_RIGHT:
 					player1.pos.x += player1.distance + DamageSpeed;
 					break;
 				case DIR_UP:
 					player1.pos.y -= player1.distance + DamageSpeed;
+					if (player1.pos.y - mapPos.y < CHIP_SIZE_Y * 5 - player1.sizeOffset.y && mapPos.y>0)
+					{
+						mapPos.y -= player1.distance + DamageSpeed;
+					}
 					break;
 				case DIR_LEFT:
 					player1.pos.x -= player1.distance + DamageSpeed;
@@ -484,8 +494,9 @@ void PlayerControl(void)
 	// 穴掘りアクション
 	if (keyDownTrigger[KEY_ID_P1_ACTION] && digFlag && !player1.Flag)
 	{
-		CliateDig(player1.pos, player1.moveDir);
 		actTime = 10;
+		CliateDig(player1.pos, player1.moveDir,player1.type,actTime);
+
 	}
 
 	// アイテム使用

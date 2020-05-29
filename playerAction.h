@@ -11,12 +11,12 @@ void ItemSystemInit(void);
 void ItemGameInit(void);
 void ItemDrawInit(void);
 void ItemControl(void);
-bool WarmControl(XY Pos,int Size);	// ワームの追尾及び奪取処理
-void CliateDig(XY Pos,DIR Dir);		// 採掘アクション発生
-void CliateDrill(XY Pos, DIR Dir);	// ドリル発生
-void CliateBomb(XY Pos, DIR Dir);	// 爆弾発生
-void CliateWarm(XY Pos);			// ワーム生成
+bool WarmControl(XY Pos,int Size);					// ワームの追尾及び奪取処理
+void CliateDig(XY Pos,DIR Dir,TYPE Type,int Life);	// 採掘アクション発生
+void CliateDrill(XY Pos, DIR Dir);					// ドリル発生
+void CliateBomb(XY Pos, DIR Dir);					// 爆弾発生
+void CliateWarm(XY Pos);							// ワーム生成
 
-bool CheckItemStock(ITEM Item);		// アイテム使用確認
+bool CheckItemStock(ITEM Item);						// アイテム使用確認
 
-bool WarmHitCheck(void);			// ワーム当たり判定
+bool WarmHitCheck(void);							// ワーム当たり判定
