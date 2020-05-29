@@ -20,15 +20,15 @@ int player2Image[16];	// プレイヤー２の画像格納用
 int player2Act[4];		// プレイヤー２のアクションの画像格納用
 bool turnFlag2;			// 振り向き制御用
 bool moveFlag2;			// 移動可能か否か
-bool runFlag2;			// 移動中か否か
-bool itemFlag2;			// アイテムを取得するためのフラグ 
 int treasureGetImage2;	// 現在のアイテム取得数表示用
 int actTime2;			// アクションを行う時間
 int damage2Image[4];	// ダメージ時のプレイヤー画像格納用
+int radarImage2[4];		// レーダー画像格納用
 XY	player2DamagePos;	// プレイヤーがダメージを受けた地点の座標
 bool p2Xreturn;			// プレイヤー２を引き返させる(X軸)
 bool p2Yreturn;			// プレイヤー２を引き返させる(Y軸)
 int p2XreturnPos;		// プレイヤーを一定距離引き返させる
+bool warmFlag;			// ワームを使用するためのフラグ
 
 void PlayerSystemInit2(void)
 {
@@ -36,6 +36,7 @@ void PlayerSystemInit2(void)
 	treasureGetImage2 = LoadGraph("image/potato.png");
 	LoadDivGraph("image/ratdigAction.png", 4, 1, 4, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, player2Act, false);
 	LoadDivGraph("image/ratDamage.png", 4, 4, 1, PLAYER_SIZE_2_X, PLAYER_SIZE_2_Y, damage2Image, false);
+	LoadDivGraph("image/RadarIcon.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, radarImage2, false);
 }
 
 void PlayerGameInit2(void)
@@ -59,13 +60,12 @@ void PlayerGameInit2(void)
 	player2.velocity = { 0,0 };
 	turnFlag2 = false;
 	moveFlag2 = false;
-	runFlag2 = false;
-	itemFlag2 = false;
 	actTime2 = 0;
 	player2DamagePos = player2.pos;
 	p2Xreturn = false;
 	p2Yreturn = false;
 	p2XreturnPos = 0;
+	warmFlag = false;
 }
 
 void PlayerGameDraw2(void)
@@ -75,7 +75,7 @@ void PlayerGameDraw2(void)
 
 	for (int tre = 0;tre < player2.slot;tre++)
 	{
-		DrawGraph(SCREEN_SIZE_X - 32 - 32 * tre, 0, treasureGetImage2, true);
+		DrawGraph(SCREEN_SIZE_X - 32 * 2 - 32 * tre, 0, treasureGetImage2, true);
 	}
 if (player2.Flag)
 	{
@@ -355,7 +355,6 @@ void PlayerControl2(void)
 		default:
 			break;
 		}
-		runFlag2 = true;
 	}
 	// 穴掘りアクション
 	if (actTime2==ACT_SPEED)
@@ -388,13 +387,20 @@ void PlayerControl2(void)
 		p2Yreturn = false;
 	}
 
-	// アイテム使用
+	// アイテム使用可能にする処理
 	if (player2.AnimCnt % 180 == 0 && player2.AnimCnt > 0)
 	{
 		if (player2.itemStock > 0)
 		{
-			CliateWarm(player2.pos);
+			warmFlag = true;
 		}
+	}
+
+	// アイテム使用処理
+	if (warmFlag&& (player2.pos.x + 16) % 32 == 0 && (player2.pos.y + 16) % 32 == 0)
+	{
+		CliateWarm(player2.pos);
+		warmFlag = false;
 	}
 
 	// テスト用
@@ -413,7 +419,7 @@ void PlayerControl2(void)
 	}
 }
 
-// プレイヤーの当たり判定
+// プレイヤー2の当たり判定
 bool PlayerHitCheck2(XY pos, int size)
 {
 	//if (player1.pos.x - player1.sizeOffset.x<pos.x + size
@@ -425,8 +431,7 @@ bool PlayerHitCheck2(XY pos, int size)
 		&& player2.pos.x + player2.sizeOffset.x > pos.x - size
 		&& player2.pos.y - player2.sizeOffset.y <pos.y + size
 		&& player2.pos.y + player2.sizeOffset.y > pos.y - size
-		&& !player2.Flag
-		&& !itemFlag2)
+		&& !player2.Flag)
 	{
 		if (player2.slot > 0 && !player2.Flag)
 		{

@@ -121,7 +121,10 @@ bool SoilCheckHit(XY dPos,int size,bool Bomb)
 				{
 					if (Bomb)
 					{
-						soil[x][y].life = 0;
+						if (soil[x][y].life >= 0)
+						{
+							soil[x][y].life = 0;
+						}
 					}
 					else
 					{

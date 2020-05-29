@@ -4,7 +4,7 @@
 #define ITEM_SIZE_Y 32
 #define DRILL_MOVE	256	// ドリルの飛距離
 #define DRILL_LIFE	6	// ドリルの耐久値
-#define BOMB_COUNT	90	// 爆弾の起爆までの時間
+#define BOMB_COUNT	60	// 爆弾の起爆までの時間
 #define WARM_MAX	6	// ワームの総数
 
 void ItemSystemInit(void);

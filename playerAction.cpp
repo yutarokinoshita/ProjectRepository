@@ -93,7 +93,7 @@ void ItemDrawInit(void)
 	}
 	if (bomb.Flag)
 	{
-		DrawGraph(bomb.pos.x - bomb.sizeOffset.x, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y, bombImage[bomb.life / 15 % 6], true);
+		DrawGraph(bomb.pos.x - bomb.sizeOffset.x, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y, bombImage[bomb.life / 10 % 6], true);
 	}
 	else
 	{
@@ -127,8 +127,9 @@ void ItemControl(void)
 				&& dig[p].Flag)
 			{
 				bomb.moveDir = dig[p].moveDir;
-				bomb.life -= BOMB_COUNT * 2 / 3;
+				//bomb.life -= BOMB_COUNT * 2 / 3;
 				bomb.distance = 32;
+				dig[p].Flag = false;
 			}
 			else
 			{
@@ -199,20 +200,20 @@ void ItemControl(void)
 			switch (bomb.moveDir)
 			{
 			case DIR_UP:
-				bomb.distance -= bomb.moveSpeed;
 				bomb.pos.y -= bomb.moveSpeed;
+				bomb.distance -= bomb.moveSpeed;
 				break;
 			case DIR_RIGHT:
-				bomb.distance -= bomb.moveSpeed;
 				bomb.pos.x += bomb.moveSpeed;
+				bomb.distance -= bomb.moveSpeed;
 				break;
 			case DIR_DOWN:
-				bomb.distance -= bomb.moveSpeed;
 				bomb.pos.y += bomb.moveSpeed;
+				bomb.distance -= bomb.moveSpeed;
 				break;
 			case DIR_LEFT:
-				bomb.distance -= bomb.moveSpeed;
 				bomb.pos.x -= bomb.moveSpeed;
+				bomb.distance -= bomb.moveSpeed;
 				break;
 			default:
 				break;
@@ -403,6 +404,7 @@ void CliateBomb(XY Pos, DIR Dir)
 	default:
 		break;
 	}
+	bomb.distance = 0;
 	bomb.life = BOMB_COUNT;
 	bomb.Flag = true;
 }
