@@ -44,7 +44,7 @@ void PlayerSystemInit2(void)
 
 void PlayerGameInit2(void)
 {
-	player2.pos = { 272,112 };
+	player2.pos = { 688,112 };
 	player2.size.x = PLAYER_SIZE_2_X;
 	player2.size.y = PLAYER_SIZE_2_Y;
 	player2.sizeOffset.x = player2.size.x / 2;
@@ -212,15 +212,7 @@ void PlayerControl2(void)
 		if (player2.slot == SLOT_MAX)
 		{
 			player2.moveDir = DIR_UP;
-			//PlayerPosCopy.y -= PLAYER_DISTANCE_2;
-			//if (SoilIsPass(PlayerPosCopy))
-			//{
-			//	player2.distance += PLAYER_DISTANCE_2;
-			//}
-			//else
-			//{
-			//	actTime2 = ACT_SPEED;
-			//}
+			//p2Yreturn = true;
 		}
 		else
 		{
@@ -258,8 +250,8 @@ void PlayerControl2(void)
 			}
 			else
 			{
-				if (p2XreturnPos <= 0)
-				{
+				//if (p2XreturnPos <= 0)
+				//{
 					if (p2Yreturn)
 					{
 						player2.moveDir = DIR_UP;
@@ -279,7 +271,7 @@ void PlayerControl2(void)
 					{
 						actTime2 = ACT_SPEED;
 					}
-				}
+				//}
 			}
 		}
 		// Œ»Ý‚ÌŒü‚«‚É“y‚ª‚ ‚éê‡“P‹Ž‚·‚é

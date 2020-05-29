@@ -165,7 +165,8 @@ void ItemControl(void)
 		default:
 			break;
 		}
-		if (SoilCheckHit(drill.pos, drill.sizeOffset.x, false) || PlayerHitCheck(drill.pos, drill.sizeOffset.x) || PlayerHitCheck2(drill.pos, drill.sizeOffset.x))
+		if (SoilCheckHit(drill.pos, drill.sizeOffset.x, false) ||WarmHitCheck(drill.pos, drill.sizeOffset.x) 
+			|| PlayerHitCheck(drill.pos, drill.sizeOffset.x) || PlayerHitCheck2(drill.pos, drill.sizeOffset.x))
 		{
 			drill.life--;
 		}
@@ -174,8 +175,8 @@ void ItemControl(void)
 			|| -mapPos.y + drill.pos.y > SCREEN_SIZE_Y + drill.sizeOffset.y
 			|| drill.pos.x < 0
 			|| -mapPos.y + drill.pos.y < 0
-			)//|| drill.distance <= 0
-			//|| drill.life <= 0)
+			|| drill.distance <= 0
+			|| drill.life <= 0)
 		{
 			drill.Flag = false;
 		}
@@ -225,6 +226,7 @@ void ItemControl(void)
 				SoilCheckHit(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X,true);
 				PlayerHitCheck(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
 				PlayerHitCheck2(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
+				WarmHitCheck(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
 				bomb.distance = 0;
 				bomb.Flag = false;
 			}
@@ -454,7 +456,25 @@ bool CheckItemStock(ITEM Item)
 }
 
 // ƒ[ƒ€‚Ì“–‚½‚è”»’è
-bool WarmHitCheck(void)
+bool WarmHitCheck(XY pos, int size)
+{
+	for (int w = 0;w < WARM_MAX;w++)
+	{
+		if (warm[w].pos.x - warm[w].sizeOffset.x <pos.x + size
+			&& warm[w].pos.x + warm[w].sizeOffset.x > pos.x - size
+			&& warm[w].pos.y - warm[w].sizeOffset.y <pos.y + size
+			&& warm[w].pos.y + warm[w].sizeOffset.y > pos.y - size
+			&& warm[w].Flag)
+		{
+			warm[w].Flag = false;
+			return true;
+		}
+	}
+		return false;
+}
+
+// ƒ[ƒ€‚ğ“Á’è‚ÌUŒ‚‚Å“|‚µ‚½ê‡
+bool WarmHitPoint(void)
 {
 	for (int w = 0;w < WARM_MAX;w++)
 	{
@@ -468,16 +488,16 @@ bool WarmHitCheck(void)
 			{
 				warm[w].Flag = false;
 				return true;
-			}
+			}/*
 			if (warm[w].pos.x - warm[w].sizeOffset.x <drill.pos.x + drill.size.x
 				&& warm[w].pos.x + warm[w].sizeOffset.x > drill.pos.x - drill.size.x
 				&& warm[w].pos.y - warm[w].sizeOffset.y < drill.pos.y + drill.size.y
 				&& warm[w].pos.y + warm[w].sizeOffset.y > drill.pos.y - drill.size.y
 				&& drill.Flag)
 			{
-				warm[w].Flag = false;
+				
 				return false;
-			}
+			}*/
 		}
 	}
 	return false;

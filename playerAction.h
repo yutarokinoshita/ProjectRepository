@@ -19,4 +19,6 @@ void CliateWarm(XY Pos);							// ワーム生成
 
 bool CheckItemStock(ITEM Item);						// アイテム使用確認
 
-bool WarmHitCheck(void);							// ワーム当たり判定
+
+bool WarmHitCheck(XY pos, int size);				// ワームの当たり判定
+bool WarmHitPoint(void);							// ワーム当たり判定

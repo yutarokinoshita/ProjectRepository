@@ -1,5 +1,8 @@
 //#pragma once
 
+#define STRATA_1	17	// ‚P‘w‚Ü‚Å
+#define STRATA_2	25	// ‚Q‘w‚Ü‚Å
+
 void SoilSystemInit(void);
 void SoilGameInit(void);
 void SoilDrawInit(void);

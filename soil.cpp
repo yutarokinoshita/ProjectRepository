@@ -32,15 +32,15 @@ void SoilGameInit(void)
 			{
 				soil[x][y].life = 0;
 			}
-			if (y >= 4 && y <= 13)
+			if (y >= 4 && y <= STRATA_1)
 			{
 				soil[x][y].life = 1;
 			}
-			if (13 < y && y <= 20)
+			if (STRATA_1 < y && y <= STRATA_2)
 			{
 				soil[x][y].life = 2;
 			}
-			if (20 < y)
+			if (STRATA_2 < y)
 			{
 				soil[x][y].life = 3;
 			}
@@ -61,11 +61,11 @@ void SoilDrawInit(void)
 
 			if (soil[x][y].life >= 1)
 			{
-				if (y <= 13)
+				if (y <= STRATA_1)
 				{
 					DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[0], true);
 				}
-				if (13 < y && y <= 20)
+				if (STRATA_1 < y && y <= STRATA_2)
 				{
 					if (soil[x][y].life == 2)
 					{
@@ -76,7 +76,7 @@ void SoilDrawInit(void)
 						DrawGraph(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, soilImage[2], true);
 					}
 				}
-				if (20 < y)
+				if (STRATA_2 < y)
 				{
 					if (soil[x][y].life == 3)
 					{
@@ -98,7 +98,7 @@ void SoilDrawInit(void)
 				// デバッグ用当たり枠
 				//DrawBox(soil[x][y].pos.x , soil[x][y].pos.y ,
 				//	soil[x][y].pos.x + soil[x][y].size.x, soil[x][y].pos.y + soil[x][y].size.y, GetColor(0, 0, 255), false);
-				DrawFormatString(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, GetColor(255, 255, 255), "%d", soil[x][y].life);
+				DrawFormatString(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, GetColor(255, 255, 255), "%d", y);
 			}
 		}
 	}

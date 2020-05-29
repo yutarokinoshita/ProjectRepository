@@ -147,7 +147,7 @@ void GameScene(void)
 		PlayerControl2();
 		ItemControl();
 		//effectControl();
-		if (WarmHitCheck())
+		if (WarmHitPoint())
 		{
 			bonus++;
 		}
@@ -164,8 +164,9 @@ void GameDraw(void)
 
 
 	StageDrawInit();
-	TreasureDraw();
 	SoilDrawInit();
+	TreasureDraw();
+
 	TreasureEffectDraw();
 	ItemDrawInit();
 	PlayerGameDraw();
@@ -195,7 +196,7 @@ void GameOverScene(void)
 void GameOverDraw(void)
 {
 	DrawBox(100, 100, SCREEN_SIZE_X - 100, SCREEN_SIZE_Y - 100, GetColor(0, 255, 255), true);
-
+	SetDrawBright(100, 100, 100);
 	DrawFormatString(0, 316, GetColor(255, 255, 0), "p1Point:%d", p1Point);
 	DrawFormatString(0, 332, GetColor(255, 255, 0), "p2Point:%d", p2Point);
 }
