@@ -17,6 +17,7 @@
 SCENE_ID sceneID;
 int StartTime;		// ゲーム開始までの時間
 int GameTime;		// ゲーム終了までの時間
+int EndTime;		// ゲーム終了時の時間
 int p1Point;		// プレイヤー１の得点
 int p2Point;		// プレイヤー２の得点
 int bonus;			// ボーナス得点
@@ -107,7 +108,8 @@ void InitScene(void)
 	SoilGameInit();
 	TreasureEffectGameInit();
 	StartTime = 240;
-	GameTime = 24000;
+	GameTime = 600;
+	EndTime = 240;
 	bonus = 0;
 	p1Point = 0;
 	p2Point = 0;
@@ -125,12 +127,14 @@ void TitleScene(void)
 void TitleDraw(void)
 {
 	DrawBox(100, 100, SCREEN_SIZE_X - 100, SCREEN_SIZE_Y - 100, GetColor(255, 255, 255), true);
+	StageDrawInit();
+	SoilDrawInit();
 }
 
 
 void GameScene(void)
 {
-	if (keyDownTrigger[KEY_ID_SPACE] || GameTime <= 0)
+	if (keyDownTrigger[KEY_ID_SPACE] || EndTime <= 0)
 	{
 		sceneID = SCENE_ID_GAMEOVER;
 	}
@@ -141,18 +145,25 @@ void GameScene(void)
 	}
 	else
 	{
-		GameTime--;
-		//GameDraw();
-		PlayerControl();
-		PlayerControl2();
-		ItemControl();
-		//effectControl();
-		if (WarmHitPoint())
+		if (GameTime >= 0)
 		{
-			bonus++;
+			GameTime--;
+			//GameDraw();
+			PlayerControl();
+			PlayerControl2();
+			ItemControl();
+			//effectControl();
+			if (WarmHitPoint())
+			{
+				bonus++;
+			}
+			p1Point += PlayerScere();
+			p2Point += PlayerScere2();
 		}
-		p1Point += PlayerScere();
-		p2Point += PlayerScere2();
+		else
+		{
+			EndTime--;
+		}
 	}
 		GameDraw();
 
@@ -164,9 +175,8 @@ void GameDraw(void)
 
 
 	StageDrawInit();
-	SoilDrawInit();
 	TreasureDraw();
-
+	SoilDrawInit();
 	TreasureEffectDraw();
 	ItemDrawInit();
 	PlayerGameDraw();
@@ -176,6 +186,10 @@ void GameDraw(void)
 	DrawFormatString(0, 316, GetColor(255, 255, 0), "p1Point:%d", p1Point);
 	DrawFormatString(0, 332, GetColor(255, 255, 0), "p2Point:%d", p2Point);
 	DrawFormatString(0, 348, GetColor(255, 255, 0), "start:%d", StartTime/60);
+	if (GameTime <= 0)
+	{
+		DrawFormatString(SCREEN_SIZE_X / 2, SCREEN_SIZE_Y / 2, GetColor(255, 255, 255), "タイムアップ！");
+	}
 }
 
 void GameOverScene(void)
@@ -196,7 +210,7 @@ void GameOverScene(void)
 void GameOverDraw(void)
 {
 	DrawBox(100, 100, SCREEN_SIZE_X - 100, SCREEN_SIZE_Y - 100, GetColor(0, 255, 255), true);
-	SetDrawBright(100, 100, 100);
+	//SetDrawBright(100, 100, 100);
 	DrawFormatString(0, 316, GetColor(255, 255, 0), "p1Point:%d", p1Point);
 	DrawFormatString(0, 332, GetColor(255, 255, 0), "p2Point:%d", p2Point);
 }

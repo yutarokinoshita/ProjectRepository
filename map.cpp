@@ -5,7 +5,8 @@
 int mapImage;							// ”wŒi‰æ‘œ
 int cloudImage;							// ‰_‰æ‘œ
 int gloundImage;						// ’n–Ê‚Ì‰æ‘œ
-XY cloud[CLOUD_MAX];
+XY cloud[CLOUD_MAX];					// ‰_À•W
+int cloudMoveCnt;						// ‰_‚ÌˆÚ“®
 //int soilImage[7];		
 //CHARACTER soil[MAP_SIZE_X][MAP_SIZE_Y];
 XY mapPos;
@@ -25,15 +26,20 @@ void StageGameInit(void)
 		cloud[clo].x = 0 + CLOUD_SIZE_X * clo;
 		cloud[clo].y = 32;
 	}
+	cloudMoveCnt = 0;
 }
 
 void StageDrawInit(void)
 {
+	cloudMoveCnt++;
 	DrawGraph(0, -mapPos.y, mapImage, true);
 	for (int clo = 0;clo < CLOUD_MAX;clo++)
 	{
 		DrawGraph(cloud[clo].x, -mapPos.y + cloud[clo].y, cloudImage, true);
-		cloud[clo].x--;
+		if (cloudMoveCnt % 8 == 0)
+		{
+			cloud[clo].x--;
+		}
 		if (cloud[clo].x <= -CLOUD_SIZE_X)
 		{
 			cloud[clo].x = SCREEN_SIZE_X;

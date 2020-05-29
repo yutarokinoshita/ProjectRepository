@@ -5,7 +5,9 @@
 
 CHARACTER effect[TREASURE_MAX];
 int effectImage[3];
-//int MoveCnt;		// 移動時間
+bool fadeIn;		// フェードイン
+bool fadeOut;		// フェードアウト
+int fadeCnt;		// フェード用
 
 void TreasureEffectInit(void)
 {
@@ -14,6 +16,11 @@ void TreasureEffectInit(void)
 
 void TreasureEffectGameInit(void)
 {
+	// フェード初期化
+	fadeIn = true;
+	fadeOut = false;
+	fadeCnt = 0;
+
 	for (int ef = 0;ef < TREASURE_MAX;ef++)
 	{
 		effect[ef].pos.x = 0;
@@ -26,6 +33,17 @@ void TreasureEffectGameInit(void)
 		effect[ef].AnimCnt = 0;
 	}
 }
+
+bool FadeInSceen(int fadeStep)
+{
+	if (fadeCnt <= 255)
+	{
+		SetDrawBright(fadeCnt, fadeCnt, fadeCnt);
+		fadeCnt += fadeStep;
+		return true;
+	}
+}
+
 
 void TreasureEffectDraw(void)
 {
@@ -53,19 +71,3 @@ void ItemEffect(XY Ipos,int Inum,bool Iflag)
 	//	break;
 	//}
 }
-
-// 仮の処理　必要なければ消去可
-// 得点アイテム取得時モーション
-//void TreasureMove(int slot)
-//{
-//	for (int ef = 0;ef < TREASURE_MAX;ef++)
-//	{
-//		if (!treasureEffect[ef].Flag)
-//		{
-//			treasureEffect[ef].pos.x = 32 + 32 * slot;
-//			treasureEffect[ef].pos.y = 32;
-//			treasureEffect[ef].Flag = true;
-//			break;
-//		}
-//	}
-//}

@@ -211,8 +211,14 @@ void PlayerControl2(void)
 		// アイテムを３つ所持したらスタート地点に戻る
 		if (player2.slot == SLOT_MAX)
 		{
+			//player2.moveDir = DIR_UP;
+			p2Yreturn = true;
+		}
+
+		if (p2Yreturn)
+		{
 			player2.moveDir = DIR_UP;
-			//p2Yreturn = true;
+			//PlayerPosCopy.y -= PLAYER_DISTANCE_2;
 		}
 		else
 		{
@@ -250,14 +256,8 @@ void PlayerControl2(void)
 			}
 			else
 			{
-				//if (p2XreturnPos <= 0)
-				//{
-					if (p2Yreturn)
-					{
-						player2.moveDir = DIR_UP;
-						//PlayerPosCopy.y -= PLAYER_DISTANCE_2;
-					}
-					else
+				if (p2XreturnPos <= 0)
+				{
 					{
 						player2.moveDir = DIR_DOWN;
 						//PlayerPosCopy.y += PLAYER_DISTANCE_2;
@@ -271,7 +271,7 @@ void PlayerControl2(void)
 					{
 						actTime2 = ACT_SPEED;
 					}
-				//}
+				}
 			}
 		}
 		// 現在の向きに土がある場合撤去する

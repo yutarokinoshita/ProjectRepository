@@ -98,7 +98,7 @@ void SoilDrawInit(void)
 				// デバッグ用当たり枠
 				//DrawBox(soil[x][y].pos.x , soil[x][y].pos.y ,
 				//	soil[x][y].pos.x + soil[x][y].size.x, soil[x][y].pos.y + soil[x][y].size.y, GetColor(0, 0, 255), false);
-				DrawFormatString(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, GetColor(255, 255, 255), "%d", y);
+				//DrawFormatString(soil[x][y].pos.x, -mapPos.y + soil[x][y].pos.y, GetColor(255, 255, 255), "%d", y);
 			}
 		}
 	}
