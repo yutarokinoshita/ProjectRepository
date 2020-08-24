@@ -16,10 +16,6 @@ void TreasureEffectInit(void)
 
 void TreasureEffectGameInit(void)
 {
-	// フェード初期化
-	fadeIn = true;
-	fadeOut = false;
-	fadeCnt = 0;
 
 	for (int ef = 0;ef < TREASURE_MAX;ef++)
 	{
@@ -34,14 +30,38 @@ void TreasureEffectGameInit(void)
 	}
 }
 
-bool FadeInSceen(int fadeStep)
+void FadeInit(void)
 {
+	// フェード初期化
+	fadeIn = true;
+	fadeOut = false;
+	fadeCnt = 0;
+}
+
+// フェードイン処理
+int FadeInScreen(int fadeStep)
+{
+	//if (fadeCnt >= 255)
+	//{
+	//	fadeCnt = 0;
+	//}
 	if (fadeCnt <= 255)
 	{
 		SetDrawBright(fadeCnt, fadeCnt, fadeCnt);
 		fadeCnt += fadeStep;
-		return true;
 	}
+	return fadeCnt;
+}
+
+// フェードアウト処理
+int FadeOutScreen(int fadeStep)
+{
+	if (fadeCnt <= 255)
+	{
+		SetDrawBright(255 - fadeCnt, 255 - fadeCnt, 255 - fadeCnt);
+		fadeCnt += fadeStep;
+	}
+	return fadeCnt;
 }
 
 

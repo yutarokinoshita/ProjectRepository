@@ -114,12 +114,12 @@ else
 	//DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch2);
 	//DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime2);
 	//DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player2.moveSpeed);
-	DrawFormatString(0, 218, GetColor(0, 255, 0), "p2Search:%d", (TreasureXsearch(player2.pos)));
-	DrawFormatString(0, 234, GetColor(0, 255, 255), "p2Yreturn:%d", p2Yreturn);
-	DrawFormatString(0, 250, GetColor(0, 255, 255), "p2XrePos:%d", p2XreturnPos);
+	//DrawFormatString(0, 218, GetColor(0, 255, 0), "p2Search:%d", (TreasureXsearch(player2.pos)));
+	//DrawFormatString(0, 234, GetColor(0, 255, 255), "p2Yreturn:%d", p2Yreturn);
+	//DrawFormatString(0, 250, GetColor(0, 255, 255), "p2XrePos:%d", p2XreturnPos);
 	// デバッグ用のプレイヤーの当たり枠
-	DrawBox(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y,
-		player2.pos.x + player2.sizeOffset.x, -mapPos.y + player2.pos.y + player2.sizeOffset.y, GetColor(255, 255, 255), false);
+	//DrawBox(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y,
+	//	player2.pos.x + player2.sizeOffset.x, -mapPos.y + player2.pos.y + player2.sizeOffset.y, GetColor(255, 255, 255), false);
 }
 
 void PlayerControl2(void)

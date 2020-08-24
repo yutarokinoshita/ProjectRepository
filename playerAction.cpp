@@ -97,8 +97,8 @@ void ItemDrawInit(void)
 	}
 	else
 	{
-		DrawBox(bomb.pos.x - bomb.sizeOffset.x - ITEM_SIZE_X, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y - ITEM_SIZE_Y,
-			bomb.pos.x + bomb.sizeOffset.x + ITEM_SIZE_X, -mapPos.y + bomb.pos.y + bomb.sizeOffset.y + ITEM_SIZE_Y, GetColor(0, 0, 255), false);
+		//DrawBox(bomb.pos.x - bomb.sizeOffset.x - ITEM_SIZE_X, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y - ITEM_SIZE_Y,
+		//	bomb.pos.x + bomb.sizeOffset.x + ITEM_SIZE_X, -mapPos.y + bomb.pos.y + bomb.sizeOffset.y + ITEM_SIZE_Y, GetColor(0, 0, 255), false);
 	}
 	for (int w = 0;w < WARM_MAX;w++)
 	{
@@ -108,8 +108,8 @@ void ItemDrawInit(void)
 			DrawGraph(warm[w].pos.x - warm[w].sizeOffset.x, -mapPos.y + warm[w].pos.y - warm[w].sizeOffset.y, warmImage[warm[w].moveDir * 2 + (warm[w].AnimCnt / 6) % 2], true);
 		}
 	}
-	DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
-	DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
+	//DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
+	//DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
 }
 
 void ItemControl(void)
@@ -480,10 +480,16 @@ bool WarmHitPoint(void)
 	{
 		if (warm[w].Flag)
 		{
-			if (warm[w].pos.x - warm[w].sizeOffset.x <dig[0].pos.x// + dig[0].size.x
-				&& warm[w].pos.x + warm[w].sizeOffset.x > dig[0].pos.x// - dig[0].size.x
-				&& warm[w].pos.y - warm[w].sizeOffset.y < dig[0].pos.y// + dig[0].size.y
-				&& warm[w].pos.y + warm[w].sizeOffset.y > dig[0].pos.y// - dig[0].size.y
+			// ワーム対採掘アクション
+			//if (warm[w].pos.x - warm[w].sizeOffset.x <dig[0].pos.x// + dig[0].size.x
+			//	&& warm[w].pos.x + warm[w].sizeOffset.x > dig[0].pos.x// - dig[0].size.x
+			//	&& warm[w].pos.y - warm[w].sizeOffset.y < dig[0].pos.y// + dig[0].size.y
+			//	&& warm[w].pos.y + warm[w].sizeOffset.y > dig[0].pos.y// - dig[0].size.y
+			//	&& dig[0].Flag)
+			if (warm[w].pos.x - warm[w].sizeOffset.x <dig[0].pos.x + dig[0].size.x/2
+				&& warm[w].pos.x + warm[w].sizeOffset.x > dig[0].pos.x - dig[0].size.x/2
+				&& warm[w].pos.y - warm[w].sizeOffset.y < dig[0].pos.y + dig[0].size.y/2
+				&& warm[w].pos.y + warm[w].sizeOffset.y > dig[0].pos.y - dig[0].size.y/2
 				&& dig[0].Flag)
 			{
 				warm[w].Flag = false;

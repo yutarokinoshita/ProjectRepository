@@ -156,19 +156,19 @@ void PlayerGameDraw(void)
 	}
 
 	DrawGraph(144, 32, radarImage[radarSearch], true);
-	DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
-	DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
-	DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
-	DrawFormatString(0, 64, GetColor(255, 0, 0), "SLOT:%d", player1.slot);
-	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
-	DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
-	DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
-	DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime);
-	DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player1.moveSpeed);
-	//DrawFormatString(0, 202, GetColor(0, 255, 0), "DSpeed:%d", DamageSpeed);
-	// デバッグ用のプレイヤーの当たり枠
-	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
-		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
+	//DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
+	//DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
+	//DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
+	//DrawFormatString(0, 64, GetColor(255, 0, 0), "SLOT:%d", player1.slot);
+	//DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
+	//DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
+	//DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
+	//DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime);
+	//DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player1.moveSpeed);
+	////DrawFormatString(0, 202, GetColor(0, 255, 0), "DSpeed:%d", DamageSpeed);
+	//// デバッグ用のプレイヤーの当たり枠
+	//DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
+	//	player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
 }
 
 void PlayerControl(void)
@@ -202,6 +202,7 @@ void PlayerControl(void)
 		player1.pos.y -= player1.velocity.y * FRAME_TIME;
 		if (playerDamagePos.y < player1.pos.y)
 		{
+			// ダメージを受けた場所を記録
 			player1.pos = playerDamagePos;
 			// 移動中にダメージを受けた際に微妙にずれる座標を調整
 			if (moveFlag)
@@ -368,7 +369,27 @@ void PlayerControl(void)
 		}
 		runFlag = true;
 	}
-
+	// 一定座標以上にいる場合アイテムを補充する
+	if (player1.pos.y < 144 && player1.distance == 0 && !player1.Flag)
+	{
+		switch (player1.item)
+		{
+		case ITEM_DRILL:
+			player1.itemStock = 3;
+			break;
+		case ITEM_BOMB:
+			player1.itemStock = 2;
+			break;
+		case ITEM_CALL:
+			player1.itemStock = 1;
+			break;
+		case ITEM_RADAR:
+			player1.itemStock = 1;
+			break;
+		default:
+			break;
+		}
+	}
 	// 一定座標でアイテムボタンを押した場合
 	if (player1.pos.y < 144 && player1.distance == 0 && keyDownTrigger[KEY_ID_P1_ITEM] && !player1.Flag)
 	{

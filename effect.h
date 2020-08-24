@@ -5,6 +5,9 @@
 
 void TreasureEffectInit(void);
 void TreasureEffectGameInit(void);
+void FadeInit(void);
+int FadeInScreen(int fadeCnt);
+int FadeOutScreen(int fadeStep);
 void TreasureEffectDraw(void);
 void effectControl(void);
 //void TreasureMove(int slot);	// 得点アイテム取得時モーション
