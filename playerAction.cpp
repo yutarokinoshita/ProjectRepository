@@ -1,10 +1,11 @@
-#include "DxLib.h"
+#include <DxLib.h>
 #include "main.h"
 #include "map.h"
 #include "player.h"
 #include "player2.h"
 #include "playerAction.h"
 #include "soil.h"
+#include "effect.h"
 
 #define PLAYER_MAX	2	// プレイヤー総数
 
@@ -15,6 +16,7 @@ CHARACTER warm[WARM_MAX];
 int drillImage[8];	// ドリルの画像格納用
 int bombImage[6];	// 爆弾の画像格納用
 int warmImage[8];	// ワームの画像格納用
+int DigImage[4];	// 採掘エフェクト画像格納用
 void ItemSystemInit(void)
 {
 	LoadDivGraph("image/drill.png", 8, 2, 4, ITEM_SIZE_X, ITEM_SIZE_Y, drillImage,false);
@@ -23,6 +25,8 @@ void ItemSystemInit(void)
 	{
 		LoadDivGraph("image/warm.png", 8, 2, 4, ITEM_SIZE_X, ITEM_SIZE_Y, warmImage, false);
 	}
+	LoadDivGraph("image/DigOll2.png", 8, 2, 4, ITEM_SIZE_X, ITEM_SIZE_Y, DigImage, false);
+
 }
 
 void ItemGameInit(void)
@@ -81,7 +85,7 @@ void ItemGameInit(void)
 
 void ItemDrawInit(void)
 {
-	drill.AnimCnt++;
+	//drill.AnimCnt++;
 
 	//if (dig.Flag)
 	//{
@@ -97,28 +101,37 @@ void ItemDrawInit(void)
 	}
 	else
 	{
-		DrawBox(bomb.pos.x - bomb.sizeOffset.x - ITEM_SIZE_X, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y - ITEM_SIZE_Y,
-			bomb.pos.x + bomb.sizeOffset.x + ITEM_SIZE_X, -mapPos.y + bomb.pos.y + bomb.sizeOffset.y + ITEM_SIZE_Y, GetColor(0, 0, 255), false);
+		//DrawBox(bomb.pos.x - bomb.sizeOffset.x - ITEM_SIZE_X, -mapPos.y + bomb.pos.y - bomb.sizeOffset.y - ITEM_SIZE_Y,
+		//	bomb.pos.x + bomb.sizeOffset.x + ITEM_SIZE_X, -mapPos.y + bomb.pos.y + bomb.sizeOffset.y + ITEM_SIZE_Y, GetColor(0, 0, 255), false);
 	}
 	for (int w = 0;w < WARM_MAX;w++)
 	{
 		if (warm[w].Flag)
 		{
-			warm[w].AnimCnt++;
+			//warm[w].AnimCnt++;
 			DrawGraph(warm[w].pos.x - warm[w].sizeOffset.x, -mapPos.y + warm[w].pos.y - warm[w].sizeOffset.y, warmImage[warm[w].moveDir * 2 + (warm[w].AnimCnt / 6) % 2], true);
 		}
 	}
-	DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
-	DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
+	//DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
+	//DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
+	for (int p = 0; p < PLAYER_MAX; p++)
+	{
+		if (dig[p].life>0)
+		{
+			DrawGraph(dig[p].pos.x - dig[p].sizeOffset.x, -mapPos.y + dig[p].pos.y - dig[p].sizeOffset.y, DigImage[dig[p].moveDir * 2 + (dig[p].life/5)%2], true);
+		}
+	}
 }
 
 void ItemControl(void)
 {
+	drill.AnimCnt++;
+
 	for (int p = 0;p < PLAYER_MAX;p++)
 	{
+			dig[p].life--;
 		if (dig[p].Flag)
 		{
-			dig[p].life--;
 			if (bomb.pos.x<dig[p].pos.x + dig[p].sizeOffset.x
 				&& bomb.pos.x>dig[p].pos.x - dig[p].sizeOffset.x
 				&& bomb.pos.y<dig[p].pos.y + dig[p].sizeOffset.y
@@ -219,6 +232,7 @@ void ItemControl(void)
 				break;
 			}
 		}
+		// 爆弾のライフが0になったら爆破する
 		if (bomb.life <= 0)
 		{
 			for (int hit = 0;hit <= 9;hit++)
@@ -227,29 +241,33 @@ void ItemControl(void)
 				PlayerHitCheck(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
 				PlayerHitCheck2(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
 				WarmHitCheck(bomb.pos, bomb.sizeOffset.x + ITEM_SIZE_X);
-				bomb.distance = 0;
-				bomb.Flag = false;
 			}
+			BlastEffect(bomb.pos);
+			bomb.distance = 0;
+			bomb.Flag = false;
 		}
 	}
-	
+	WarmControl();
 }
 
 // ワームの追尾及び奪取
-bool WarmControl(XY Pos, int Size)
+void WarmControl()
 {
+
 	int X = 0;
 	int Y = 0;
+	XY pPos = PlayerGetPos();
 	for (int w = 0;w < WARM_MAX;w++)
 	{
 		if (warm[w].Flag)
 		{
+			warm[w].AnimCnt++;
 			if (warm[w].AnimCnt % 2 == 0)
 			{
 				// 横から追尾するタイプ
 				if (w % 2 == 0)
 				{
-					X = Pos.x - warm[w].pos.x;
+					X = pPos.x - warm[w].pos.x;
 					if (X > 0)
 					{
 						warm[w].moveDir = DIR_RIGHT;
@@ -262,7 +280,7 @@ bool WarmControl(XY Pos, int Size)
 					}
 					if (X == 0)
 					{
-						Y = Pos.y - warm[w].pos.y;
+						Y = pPos.y - warm[w].pos.y;
 						if (Y > 0)
 						{
 							warm[w].moveDir = DIR_DOWN;
@@ -278,7 +296,7 @@ bool WarmControl(XY Pos, int Size)
 				// 縦から追尾するタイプ
 				if (w % 2 == 1)
 				{
-					Y = Pos.y - warm[w].pos.y;
+					Y = pPos.y - warm[w].pos.y;
 					if (Y > 0)
 					{
 						warm[w].moveDir = DIR_DOWN;
@@ -291,7 +309,7 @@ bool WarmControl(XY Pos, int Size)
 					}
 					if (Y == 0)
 					{
-						X = Pos.x - warm[w].pos.x;
+						X = pPos.x - warm[w].pos.x;
 						if (X > 0)
 						{
 							warm[w].moveDir = DIR_RIGHT;
@@ -305,19 +323,28 @@ bool WarmControl(XY Pos, int Size)
 					}
 				}
 			}
-			if (warm[w].pos.x - warm[w].sizeOffset.x <Pos.x + Size
-				&& warm[w].pos.x + warm[w].sizeOffset.x > Pos.x - Size
-				&& warm[w].pos.y - warm[w].sizeOffset.y <Pos.y + Size
-				&& warm[w].pos.y + warm[w].sizeOffset.y > Pos.y - Size)
-			{
-				warm[w].Flag = false;
-				return true;
-			}
 		}
+	}
+}
 
+bool WarmHitControl()
+{
+	XY pPos = PlayerGetPos();
+	for (int w = 0; w < WARM_MAX; w++)
+	{
+		if (warm[w].pos.x - warm[w].sizeOffset.x <pPos.x + 32 / 2
+			&& warm[w].pos.x + warm[w].sizeOffset.x > pPos.x - 32 / 2
+			&& warm[w].pos.y - warm[w].sizeOffset.y <pPos.y + 32 / 2
+			&& warm[w].pos.y + warm[w].sizeOffset.y > pPos.y - 32 / 2
+			&& warm[w].Flag)
+		{
+			warm[w].Flag = false;
+			return true;
+		}
 	}
 	return false;
 }
+
 void CliateDig(XY Pos,DIR Dir,TYPE Type,int Life)
 {
 	dig[Type].moveDir = Dir;
@@ -480,10 +507,16 @@ bool WarmHitPoint(void)
 	{
 		if (warm[w].Flag)
 		{
-			if (warm[w].pos.x - warm[w].sizeOffset.x <dig[0].pos.x// + dig[0].size.x
-				&& warm[w].pos.x + warm[w].sizeOffset.x > dig[0].pos.x// - dig[0].size.x
-				&& warm[w].pos.y - warm[w].sizeOffset.y < dig[0].pos.y// + dig[0].size.y
-				&& warm[w].pos.y + warm[w].sizeOffset.y > dig[0].pos.y// - dig[0].size.y
+			// ワーム対採掘アクション
+			//if (warm[w].pos.x - warm[w].sizeOffset.x <dig[0].pos.x// + dig[0].size.x
+			//	&& warm[w].pos.x + warm[w].sizeOffset.x > dig[0].pos.x// - dig[0].size.x
+			//	&& warm[w].pos.y - warm[w].sizeOffset.y < dig[0].pos.y// + dig[0].size.y
+			//	&& warm[w].pos.y + warm[w].sizeOffset.y > dig[0].pos.y// - dig[0].size.y
+			//	&& dig[0].Flag)
+			if (warm[w].pos.x - warm[w].sizeOffset.x <dig[0].pos.x + dig[0].size.x/2
+				&& warm[w].pos.x + warm[w].sizeOffset.x > dig[0].pos.x - dig[0].size.x/2
+				&& warm[w].pos.y - warm[w].sizeOffset.y < dig[0].pos.y + dig[0].size.y/2
+				&& warm[w].pos.y + warm[w].sizeOffset.y > dig[0].pos.y - dig[0].size.y/2
 				&& dig[0].Flag)
 			{
 				warm[w].Flag = false;

@@ -1,4 +1,4 @@
-#include "DxLib.h"
+#include <DxLib.h>
 #include "main.h"
 #include "treasure.h"
 #include "map.h"

@@ -87,3 +87,8 @@ void GameDraw(void);
 // ゲームオーバーシーン
 void GameOverScene(void);
 void GameOverDraw(void);
+// セーブロード
+void HiScoreSave(void);
+void HiScoreLoad(void);
+// 停止処理
+void GameStop(void);

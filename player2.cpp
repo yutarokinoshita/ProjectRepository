@@ -73,19 +73,8 @@ void PlayerGameInit2(void)
 
 void PlayerGameDraw2(void)
 {
-	player2.AnimCnt++;
-	actTime2--;
-
-	// 得点アイコン
-	for (int tre = 0;tre < player2.slot;tre++)
-	{
-		DrawGraph(SCREEN_SIZE_X - 32 * 2 - 32 * tre, 0, treasureGetImage2, true);
-	}
-	// アイテムアイコン
-	for (int Item = 0;Item < player2.itemStock;Item++)
-	{
-		DrawGraph(SCREEN_SIZE_X - ITEM_SIZE_X * 2 - 34 * (Item / 2), 32, stockWarmImage, true);
-	}
+	//player2.AnimCnt++;
+	//actTime2--;
 
 	if (player2.Flag)
 	{
@@ -104,6 +93,18 @@ else
 	}
 }
 	DrawGraph(SCREEN_SIZE_X -ITEM_SIZE_X -144, 32, radarImage2[radarSearch2], true);
+
+	// 得点アイコン
+	for (int tre = 0; tre < player2.slot; tre++)
+	{
+		DrawGraph(SCREEN_SIZE_X - 32 * 2 - 32 * tre, 0, treasureGetImage2, true);
+	}
+	// アイテムアイコン
+	for (int Item = 0; Item < player2.itemStock; Item++)
+	{
+		DrawGraph(SCREEN_SIZE_X - ITEM_SIZE_X * 2 - 34 * (Item / 2), 32, stockWarmImage, true);
+	}
+
 	//DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player2.pos.x, player2.pos.y);
 	//DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player2.moveDir);
 	//DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player2.distance);
@@ -114,16 +115,18 @@ else
 	//DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch2);
 	//DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime2);
 	//DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player2.moveSpeed);
-	DrawFormatString(0, 218, GetColor(0, 255, 0), "p2Search:%d", (TreasureXsearch(player2.pos)));
-	DrawFormatString(0, 234, GetColor(0, 255, 255), "p2Yreturn:%d", p2Yreturn);
-	DrawFormatString(0, 250, GetColor(0, 255, 255), "p2XrePos:%d", p2XreturnPos);
+	//DrawFormatString(0, 218, GetColor(0, 255, 0), "p2Search:%d", (TreasureXsearch(player2.pos)));
+	//DrawFormatString(0, 234, GetColor(0, 255, 255), "p2Yreturn:%d", p2Yreturn);
+	//DrawFormatString(0, 250, GetColor(0, 255, 255), "p2XrePos:%d", p2XreturnPos);
 	// デバッグ用のプレイヤーの当たり枠
-	DrawBox(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y,
-		player2.pos.x + player2.sizeOffset.x, -mapPos.y + player2.pos.y + player2.sizeOffset.y, GetColor(255, 255, 255), false);
+	//DrawBox(player2.pos.x - player2.sizeOffset.x, -mapPos.y + player2.pos.y - player2.sizeOffset.y,
+	//	player2.pos.x + player2.sizeOffset.x, -mapPos.y + player2.pos.y + player2.sizeOffset.y, GetColor(255, 255, 255), false);
 }
 
 void PlayerControl2(void)
 {
+	player2.AnimCnt++;
+	actTime2--;
 	//digFlag2 = true;
 	////if (player1.pos.y < 112)
 	////{
@@ -362,7 +365,8 @@ void PlayerControl2(void)
 	// 穴掘りアクション
 	if (actTime2==ACT_SPEED)
 	{
-		CliateDig(player2.pos, player2.moveDir,player2.type,actTime2);
+		// 採掘エフェクト調整のためactTime2を10として使う
+		CliateDig(player2.pos, player2.moveDir, player2.type, 10);// actTime2);
 	}
 	if (actTime2 > 0)
 	{

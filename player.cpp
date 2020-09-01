@@ -1,4 +1,4 @@
-#include "DxLib.h"
+#include <DxLib.h>
 #include "main.h"
 #include "player.h"
 #include "player2.h"
@@ -82,8 +82,9 @@ void PlayerGameInit(void)
 
 void PlayerGameDraw(void)
 {
-	player1.AnimCnt++;
-	actTime--;
+	//player1.AnimCnt++;
+	//actTime--;
+
 	// 仮置きのプレイヤー
 	//if (player1.moveDir == DIR_DOWN)
 	//{
@@ -101,11 +102,45 @@ void PlayerGameDraw(void)
 	//{
 	//	DrawBox(player1.pos.x, player1.pos.y, player1.pos.x + 32, player1.pos.y + 32, GetColor(255, 255, 255), true);
 	//}
-	for (int tre = 0;tre < player1.slot;tre++)
+
+	if (itemFlag)
+	{
+		DrawGraph(player1.pos.x - SELECT_SIZE_X / 2, -mapPos.y + player1.pos.y - SELECT_SIZE_Y/2, selectImage[player1.AnimCnt / 10 % 2], true);
+	}
+	else if (player1.Flag)
+	{
+		// ダメージ時に表示する処理
+		DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, damageImage[(player1.AnimCnt / 5) % 4], true);
+	}
+	else
+	{
+		if (actTime > 0)
+		{
+			DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerAct[player1.moveDir], true);
+
+		}
+		else
+		{
+			if (player1.moveSpeed>=PLAYER_DASH_SPEED)
+			{
+				DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
+			}
+			else
+			{
+				DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
+			}
+		}
+	}
+
+	DrawGraph(144, 32, radarImage[radarSearch], true);
+
+
+	// 所持アイテム画像
+	for (int tre = 0; tre < player1.slot; tre++)
 	{
 		DrawGraph(32 + 32 * tre, 0, treasureGetImage, true);
 	}
-	for (int Item = 0;Item < player1.itemStock;Item++)
+	for (int Item = 0; Item < player1.itemStock; Item++)
 	{
 		switch (player1.item)
 		{
@@ -126,53 +161,26 @@ void PlayerGameDraw(void)
 		}
 	}
 
-	if (itemFlag)
-	{
-		DrawGraph(player1.pos.x - SELECT_SIZE_X / 2, -mapPos.y + player1.pos.y - SELECT_SIZE_Y/2, selectImage[player1.AnimCnt / 10 % 2], true);
-	}
-	else if (player1.Flag)
-	{
-		// ダメージ時に表示する処理
-		DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, damageImage[(player1.AnimCnt / 5) % 4], true);
-	}
-	else
-	{
-		if (actTime >= 0)
-		{
-			DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerAct[player1.moveDir], true);
-
-		}
-		else
-		{
-			if (player1.moveSpeed>=PLAYER_DASH_SPEED)
-			{
-				DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 5) % 4], true);
-			}
-			else
-			{
-				DrawGraph(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y, playerImage[player1.moveDir * 4 + (player1.AnimCnt / 10) % 4], true);
-			}
-		}
-	}
-
-	DrawGraph(144, 32, radarImage[radarSearch], true);
-	DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
-	DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
-	DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
-	DrawFormatString(0, 64, GetColor(255, 0, 0), "SLOT:%d", player1.slot);
-	DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
-	DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
-	DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
-	DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime);
-	DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player1.moveSpeed);
-	//DrawFormatString(0, 202, GetColor(0, 255, 0), "DSpeed:%d", DamageSpeed);
-	// デバッグ用のプレイヤーの当たり枠
-	DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
-		player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
+	//DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
+	//DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
+	//DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
+	//DrawFormatString(0, 64, GetColor(255, 0, 0), "SLOT:%d", player1.slot);
+	//DrawFormatString(120, 0, GetColor(255, 0, 0), "%d", itemFlag);
+	//DrawFormatString(0, 128, GetColor(255, 0, 0), "%d", player1.Flag);
+	//DrawFormatString(0, 154, GetColor(255, 0, 0), "%d", radarSearch);
+	//DrawFormatString(0, 170, GetColor(255, 0, 0), "Search:%d", SearchTime);
+	//DrawFormatString(0, 186, GetColor(0, 255, 0), "Speed:%d", player1.moveSpeed);
+	////DrawFormatString(0, 202, GetColor(0, 255, 0), "DSpeed:%d", DamageSpeed);
+	//// デバッグ用のプレイヤーの当たり枠
+	//DrawBox(player1.pos.x - player1.sizeOffset.x, -mapPos.y + player1.pos.y - player1.sizeOffset.y,
+	//	player1.pos.x + player1.sizeOffset.x, -mapPos.y + player1.pos.y + player1.sizeOffset.y, GetColor(255, 255, 255), false);
 }
 
 void PlayerControl(void)
 {
+	player1.AnimCnt++;
+	actTime--;
+
 	digFlag = true;
 	////if (player1.pos.y < 112)
 	////{
@@ -202,6 +210,7 @@ void PlayerControl(void)
 		player1.pos.y -= player1.velocity.y * FRAME_TIME;
 		if (playerDamagePos.y < player1.pos.y)
 		{
+			// ダメージを受けた場所を記録
 			player1.pos = playerDamagePos;
 			// 移動中にダメージを受けた際に微妙にずれる座標を調整
 			if (moveFlag)
@@ -368,7 +377,27 @@ void PlayerControl(void)
 		}
 		runFlag = true;
 	}
-
+	// 一定座標以上にいる場合アイテムを補充する
+	if (player1.pos.y < 144 && player1.distance == 0 && !player1.Flag)
+	{
+		switch (player1.item)
+		{
+		case ITEM_DRILL:
+			player1.itemStock = 3;
+			break;
+		case ITEM_BOMB:
+			player1.itemStock = 2;
+			break;
+		case ITEM_CALL:
+			player1.itemStock = 2;
+			break;
+		case ITEM_RADAR:
+			player1.itemStock = 1;
+			break;
+		default:
+			break;
+		}
+	}
 	// 一定座標でアイテムボタンを押した場合
 	if (player1.pos.y < 144 && player1.distance == 0 && keyDownTrigger[KEY_ID_P1_ITEM] && !player1.Flag)
 	{
@@ -376,6 +405,7 @@ void PlayerControl(void)
 	}
 	if (itemFlag)
 	{
+		GameStop();
 		player1.moveDir = DIR_UP;
 		player1.distance = 0;
 		if (keyUpTrigger[KEY_ID_P1UP])
@@ -395,7 +425,7 @@ void PlayerControl(void)
 		if (keyUpTrigger[KEY_ID_P1DOWN])
 		{
 			player1.item = ITEM_CALL;
-			player1.itemStock = 1;
+			player1.itemStock = 2;
 			player1.moveDir = DIR_DOWN;
 			itemFlag = false;
 		}
@@ -508,20 +538,21 @@ void PlayerControl(void)
 				{
 				case ITEM_DRILL:
 					CliateDrill(player1.pos, player1.moveDir);
-					//player1.itemStock--;
+					player1.itemStock--;
 					break;
 				case ITEM_BOMB:
 					CliateBomb(player1.pos, player1.moveDir);
-					//player1.itemStock--;
+					player1.itemStock--;
 					break;
 				case ITEM_CALL:
 					if (player1.slot > 0)
 					{
 						callScoreFlag = true;
-						//player1.itemStock--;
+						player1.itemStock--;
 					}
 					break;
 				case ITEM_RADAR:
+					player1.itemStock--;
 					SearchTime = 60;
 					break;
 				default:
@@ -560,7 +591,7 @@ void PlayerControl(void)
 	}
 
 	// ワームが当たった時の処理
-	if (WarmControl(player1.pos, player1.sizeOffset.x) && player1.slot > 0 && !player1.Flag)
+	if (WarmHitControl() && player1.slot > 0 && !player1.Flag)
 	{
 		player1.slot--;
 		Player2ItemPoint();
@@ -640,4 +671,9 @@ int PlayerScere(void)
 		callScoreFlag = false;
 	}
 	return Point;
+}
+
+XY PlayerGetPos()
+{
+	return player1.pos;
 }
