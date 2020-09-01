@@ -18,6 +18,8 @@
 
 #define INIT_VELOCITY		70.0f	// リアクション跳躍の初速度
 
+#define INIT_VELOCITY		70.0f	// リアクション跳躍の初速度
+
 // 変数
 SCENE_ID sceneID;
 int StartTime;		// ゲーム開始までの時間
@@ -32,12 +34,17 @@ int jumpImage1[4];	// リザルト時のプレイヤー1画像格納用
 int winImage1[2];	// リザルト時のプレイヤー1勝利画像格納用
 int loseImage1[2];	// リザルト時のプレイヤー1勝利画像格納用
 CHARACTER result1;	// リザルト時に呼ぶプレイヤー１の構造
+<<<<<<< HEAD
 int jumpStopTime1;	// リザルト時にプレイヤー1を頂点で停止させる時間の処理用
 int jumpStopTime2;	// リザルト時にプレイヤー2頂点で停止させる時間の処理用
+=======
+int jumpStopTime;	// リザルト時に頂点で停止させる時間の処理用
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 int jumpImage2[4];	// リザルト時のプレイヤー2画像格納用
 int winImage2[2];	// リザルト時のプレイヤー2勝利画像格納用
 int loseImage2[2];	// リザルト時のプレイヤー2勝利画像格納用
 CHARACTER result2;	// リザルト時に呼ぶプレイヤー１の構造体
+<<<<<<< HEAD
 int HiScore;		// ハイスコア
 bool newScoreFlag;	// ハイスコアが更新された際に使用
 int titleImage;		// タイトル画像格納用
@@ -46,6 +53,8 @@ bool stopFlag;		// ゲームを一時停止させるためのフラグ
 bool p1ResultEnd;	// プレイヤー1のリザルト終了フラグ
 bool p2ResultEnd;	// プレイヤー2のリザルト終了フラグ
 int namedTime;		// 称号が表示されるまでの時間
+=======
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 
 // プロトタイプ宣言
 
@@ -120,6 +129,15 @@ bool SystemInit(void)
 	EffectInit();
 	// 変数初期化
 	sceneID = SCENE_ID_INIT;
+	// リザルト用グラの読み込み
+	// プレイヤー1
+	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, jumpImage1, false);
+	LoadDivGraph("image/moleWin.png", 2, 2, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, winImage1, false);
+	LoadDivGraph("image/moleLose.png", 2, 2, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, loseImage1, false);
+	// プレイヤー2
+	LoadDivGraph("image/moleDamage.png", 4, 4, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, jumpImage2, false);
+	LoadDivGraph("image/moleWin.png", 2, 2, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, winImage2, false);
+	LoadDivGraph("image/moleLose.png", 2, 2, 1, PLAYER_SIZE_X, PLAYER_SIZE_Y, loseImage2, false);
 
 	// リザルト用グラの読み込み
 	// プレイヤー1
@@ -147,11 +165,18 @@ void InitScene(void)
 	ItemGameInit();
 	TreasureGameInit();
 	SoilGameInit();
+<<<<<<< HEAD
 	EffectGameInit();
 	StringGameInit();
 	FadeInit();
 	StartTime = 240;
 	GameTime = 720;
+=======
+	TreasureEffectGameInit();
+	FadeInit();
+	StartTime = 240;
+	GameTime = 300;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 	EndTime = 60;
 	bonus = 0;
 	p1Point = 0;
@@ -162,6 +187,7 @@ void InitScene(void)
 	result1.velocity = { 0,0 };
 	result2.pos = { SCREEN_SIZE_X - 232, SCREEN_SIZE_Y /2 }; //SCREEN_SIZE_Y - 132 };
 	result2.velocity = { 0,0 };
+<<<<<<< HEAD
 	jumpStopTime1 = 0;
 	jumpStopTime2 = 0;
 	p1Result = 0;
@@ -172,6 +198,11 @@ void InitScene(void)
 	newScoreFlag = false;
 	stopFlag = false;
 	namedTime = 0;
+=======
+	jumpStopTime = 30;
+	p1Result = 0;
+	p2Result = 0;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 }
 
 void TitleScene(void)
@@ -197,6 +228,7 @@ void TitleDraw(void)
 
 void GameScene(void)
 {
+<<<<<<< HEAD
 	stopFlag = false;
 	if (keyNew[KEY_ID_SPACE] || EndTime <= 0)
 	{
@@ -213,10 +245,25 @@ void GameScene(void)
 			if (bonus >= 10)
 			{
 				p1Point += bonus / 5;
+=======
+	if (keyNew[KEY_ID_SPACE] || EndTime <= 0)
+	{
+		p1Point = 15;
+		p2Point = 10;
+		bonus = 20;
+
+		if (FadeOutScreen(5) >= 255)
+		{
+			// ゲーム終了確定時に敵討伐数ボーナスを加算
+			if (bonus >= 10)
+			{
+				p1Point += bonus / 10;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 			}
 			// 終了時にジャンプの初速度を追加
 			result1.velocity.y = INIT_VELOCITY;
 			result2.velocity.y = INIT_VELOCITY;
+<<<<<<< HEAD
 			// 得点に応じた停止時間を与える
 			jumpStopTime1 = p1Point * 3;
 			jumpStopTime2 = p2Point * 3;
@@ -231,6 +278,8 @@ void GameScene(void)
 
 				newScoreFlag = true;
 			}
+=======
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 
 			FadeInit();
 			sceneID = SCENE_ID_GAMEOVER;
@@ -286,6 +335,7 @@ void GameDraw(void)
 		PlayerGameDraw();
 	}
 	PlayerGameDraw2();
+<<<<<<< HEAD
 	EffectDraw();
 	if (stopFlag)
 	{
@@ -299,6 +349,20 @@ void GameDraw(void)
 	else
 	{
 		DrawFormatString(SCREEN_SIZE_X / 2 - 32, 32, GetColor(255, 128, 128), "%d", (GameTime+60) / 60);
+=======
+	//DrawFormatString(500, 0, GetColor(255, 255, 255), "%d,%d", mapPos.x,mapPos.y);
+	//DrawFormatString(0, 300, GetColor(255, 255, 0), "bonus:%d",bonus );
+	//DrawFormatString(0, 316, GetColor(255, 255, 0), "p1Point:%d", p1Point);
+	//DrawFormatString(0, 332, GetColor(255, 255, 0), "p2Point:%d", p2Point);
+	//DrawFormatString(0, 348, GetColor(255, 255, 0), "start:%d", StartTime/60);
+	if (GameTime/60 <= 10)
+	{
+		DrawFormatString(SCREEN_SIZE_X / 2 - 32, 32, GetColor(255, 0, 0), "%d", GameTime / 60);
+	}
+	else
+	{
+		DrawFormatString(SCREEN_SIZE_X / 2 - 32, 32, GetColor(0, 0, 0), "%d", GameTime / 60);
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 	}
 
 	if (GameTime <= 0)
@@ -327,6 +391,7 @@ void GameDraw(void)
 
 void GameOverScene(void)
 {
+<<<<<<< HEAD
 	//XY jumpPosCopy = {0,0};
 	if (FadeInScreen(5) >= 0)
 	{
@@ -337,12 +402,22 @@ void GameOverScene(void)
 				InitScene();
 				sceneID = SCENE_ID_TITLE;
 			}
+=======
+	XY jumpPosCopy = {0,0};
+	if (FadeInScreen(5) >= 0)
+	{
+		if (keyDownTrigger[KEY_ID_SPACE] && FadeInScreen(5) >= 255)
+		{
+			InitScene();
+			sceneID = SCENE_ID_TITLE;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 		}
 		//bonus = 0;
 
 	// 得点ゲージの増加処理
 		if (p1Point > 0)
 		{
+<<<<<<< HEAD
 			if (result1.AnimCnt % 3 == 0 && result1.velocity.y == 0)
 			{
 				p1Point--;
@@ -356,11 +431,21 @@ void GameOverScene(void)
 				p2Point--;
 				p2Result += 10;
 			}
+=======
+			p1Point--;
+			p1Result += 10;
+		}
+		if (p2Point > 0)
+		{
+			p2Point--;
+			p2Result += 10;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 		}
 		//if (result1.pos.y+10 > SCREEN_SIZE_Y - 100 - p1Result)
 
 		// リザルトのプレイヤーアニメーション処理
 		// プレイヤー1の処理
+<<<<<<< HEAD
 		if (result1.velocity.y != 0 || jumpStopTime1 < 0)
 		{
 			// 速度の変更
@@ -372,11 +457,18 @@ void GameOverScene(void)
 			//		result1.velocity.y = 0;
 			//	}
 			//}
+=======
+		if (result1.velocity.y != 0 || jumpStopTime < 0)
+		{
+			// 速度の変更
+			result1.velocity.y -= ACC_G * FRAME_TIME;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 			// 移動距離の追加
 			result1.pos.y -= result1.velocity.y * FRAME_TIME;
 		}
 		else
 		{
+<<<<<<< HEAD
 			jumpStopTime1--;
 		}
 		// ジャンプを止めゲージに乗せる処理
@@ -410,6 +502,31 @@ void GameOverScene(void)
 		{
 			StringDraw();
 		}
+=======
+			jumpStopTime--;
+		}
+		// ジャンプを止めゲージに乗せる処理
+		if (result1.pos.y >= SCREEN_SIZE_Y - 100 - p1Result - 32)
+		{
+			//jumpStopFlag = true;
+			result1.pos.y = SCREEN_SIZE_Y - 100 - p1Result - 32;
+		}
+		// プレイヤー2の処理
+		if (result2.velocity.y != 0 || jumpStopTime < 0)
+		{
+				// 速度の変更
+				result2.velocity.y -= ACC_G * FRAME_TIME;
+				// 移動距離の追加
+				result2.pos.y -= result2.velocity.y * FRAME_TIME;
+			//}
+		}
+		// ジャンプを止めゲージに乗せる処理
+		if (result2.pos.y >= SCREEN_SIZE_Y - 100 - p2Result - 32)
+		{
+			result2.pos.y = SCREEN_SIZE_Y - 100 - p2Result - 32;
+		}
+		GameOverDraw();
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 	}
 }
 
@@ -421,12 +538,17 @@ void GameOverDraw(void)
 	StageDrawInit();
 	SoilDrawInit();
 
+<<<<<<< HEAD
 	DrawBox(100, 100, SCREEN_SIZE_X - 100, SCREEN_SIZE_Y - 100, GetColor(255, 255, 255), true);
+=======
+	DrawBox(100, 100, SCREEN_SIZE_X - 100, SCREEN_SIZE_Y - 100, GetColor(0, 255, 255), true);
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 	//SetDrawBright(100, 100, 100);
 	DrawFormatString(0, 316, GetColor(255, 255, 0), "p1Point:%d", p1Point);
 	DrawFormatString(0, 348, GetColor(255, 255, 0), "p2Point:%d", p2Point);
 	DrawFormatString(0, 380, GetColor(255, 255, 0), "bonus:%d", bonus);
 	DrawFormatString(0, 422, GetColor(255, 255, 0), "total:%d", p1Point + bonus / 10);
+<<<<<<< HEAD
 	// 得点の描画
 	DrawFormatString(200, SCREEN_SIZE_Y - 132, GetColor(0, 0, 0), "%2d", p1Result / 10);
 	DrawFormatString(SCREEN_SIZE_X - 232, SCREEN_SIZE_Y - 132, GetColor(0, 0, 0), "%2d", p2Result / 10);
@@ -437,6 +559,14 @@ void GameOverDraw(void)
 	if (result1.pos.y <= SCREEN_SIZE_Y - 132 - p1Result)
 	{
 		if (result1.pos.y >= SCREEN_SIZE_Y - 132 - p1Result - 32)
+=======
+
+	// 着地時に画像を変更する
+	// プレイヤー1の画像
+	if (result1.pos.y <= SCREEN_SIZE_Y - 100 - p1Result)
+	{
+		if (result1.pos.y >= SCREEN_SIZE_Y - 100 - p1Result - 32)
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 		{
 			if (p1Result > p2Result)
 			{
@@ -453,9 +583,15 @@ void GameOverDraw(void)
 		}
 	}
 	// プレイヤー2の画像
+<<<<<<< HEAD
 	if (result2.pos.y <= SCREEN_SIZE_Y - 132 - p2Result)
 	{
 		if (result2.pos.y >= SCREEN_SIZE_Y - 132 - p2Result - 32)
+=======
+	if (result2.pos.y <= SCREEN_SIZE_Y - 100 - p2Result)
+	{
+		if (result2.pos.y >= SCREEN_SIZE_Y - 100 - p2Result - 32)
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 		{
 			if (p2Result > p1Result)
 			{
@@ -474,6 +610,7 @@ void GameOverDraw(void)
 
 	// 得点のゲージの表示
 	// プレイヤー1のゲージ
+<<<<<<< HEAD
 	DrawBox(200, SCREEN_SIZE_Y - 132, 200+32, SCREEN_SIZE_Y - 132 - p1Result, GetColor(0, 128, 0), true);
 	// プレイヤー2のゲージ
 	DrawBox(SCREEN_SIZE_X - 200 - 32, SCREEN_SIZE_Y - 132, SCREEN_SIZE_X - 200, SCREEN_SIZE_Y - 132 - p2Result, GetColor(0, 0, 128), true);
@@ -524,4 +661,10 @@ void HiScoreLoad()
 void GameStop()
 {
 	stopFlag = true;
+=======
+	DrawBox(200, SCREEN_SIZE_Y - 132, 200+32, SCREEN_SIZE_Y - 100 - p1Result, GetColor(0, 255, 0), true);
+	// プレイヤー2のゲージ
+	DrawBox(SCREEN_SIZE_X - 200, SCREEN_SIZE_Y - 132, SCREEN_SIZE_X - 200 - 32, SCREEN_SIZE_Y - 100 - p2Result, GetColor(0, 255, 0), true);
+	//DrawBox(182 + 32, SCREEN_SIZE_Y - 100,182+ 64, SCREEN_SIZE_Y - 100 - p2Point, GetColor(255, 255, 255), true);
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 }

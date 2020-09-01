@@ -21,7 +21,12 @@ void EffectInit(void)
 
 void EffectGameInit(void)
 {
+<<<<<<< HEAD
 	for (int ef = 0; ef < TREASURE_MAX; ef++)
+=======
+
+	for (int ef = 0;ef < TREASURE_MAX;ef++)
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 	{
 		effect[ef].pos.x = 0;
 		effect[ef].pos.y = 0;
@@ -42,6 +47,7 @@ void EffectGameInit(void)
 }
 
 void FadeInit(void)
+<<<<<<< HEAD
 {
 	// フェード初期化
 	fadeIn = true;
@@ -52,6 +58,18 @@ void FadeInit(void)
 // フェードイン処理
 int FadeInScreen(int fadeStep)
 {
+=======
+{
+	// フェード初期化
+	fadeIn = true;
+	fadeOut = false;
+	fadeCnt = 0;
+}
+
+// フェードイン処理
+int FadeInScreen(int fadeStep)
+{
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 	//if (fadeCnt >= 255)
 	//{
 	//	fadeCnt = 0;
@@ -62,6 +80,20 @@ int FadeInScreen(int fadeStep)
 		fadeCnt += fadeStep;
 	}
 	return fadeCnt;
+<<<<<<< HEAD
+=======
+}
+
+// フェードアウト処理
+int FadeOutScreen(int fadeStep)
+{
+	if (fadeCnt <= 255)
+	{
+		SetDrawBright(255 - fadeCnt, 255 - fadeCnt, 255 - fadeCnt);
+		fadeCnt += fadeStep;
+	}
+	return fadeCnt;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 }
 
 // フェードアウト処理

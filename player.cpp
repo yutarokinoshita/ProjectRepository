@@ -133,6 +133,7 @@ void PlayerGameDraw(void)
 	}
 
 	DrawGraph(144, 32, radarImage[radarSearch], true);
+<<<<<<< HEAD
 
 
 	// ŠŽƒAƒCƒeƒ€‰æ‘œ
@@ -161,6 +162,8 @@ void PlayerGameDraw(void)
 		}
 	}
 
+=======
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 	//DrawFormatString(0, 16, GetColor(255, 0, 0), "pos.x:%d,pos.y%d", player1.pos.x, player1.pos.y);
 	//DrawFormatString(0, 32, GetColor(255, 0, 0), "DIR%d", player1.moveDir);
 	//DrawFormatString(0, 48, GetColor(255, 0, 0), "DISTANCE:%d", player1.distance);
@@ -389,7 +392,11 @@ void PlayerControl(void)
 			player1.itemStock = 2;
 			break;
 		case ITEM_CALL:
+<<<<<<< HEAD
 			player1.itemStock = 2;
+=======
+			player1.itemStock = 1;
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 			break;
 		case ITEM_RADAR:
 			player1.itemStock = 1;

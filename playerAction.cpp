@@ -114,6 +114,7 @@ void ItemDrawInit(void)
 	}
 	//DrawFormatString(0, 96, GetColor(255, 0, 0), "D.Move:%d", drill.moveDir);
 	//DrawFormatString(0, 112, GetColor(255, 0, 0), "D.Cnt:%d", drill.AnimCnt);
+<<<<<<< HEAD
 	for (int p = 0; p < PLAYER_MAX; p++)
 	{
 		if (dig[p].life>0)
@@ -121,6 +122,8 @@ void ItemDrawInit(void)
 			DrawGraph(dig[p].pos.x - dig[p].sizeOffset.x, -mapPos.y + dig[p].pos.y - dig[p].sizeOffset.y, DigImage[dig[p].moveDir * 2 + (dig[p].life/5)%2], true);
 		}
 	}
+=======
+>>>>>>> e686ce240afe81a29fe3b035459777d97375fbd1
 }
 
 void ItemControl(void)
